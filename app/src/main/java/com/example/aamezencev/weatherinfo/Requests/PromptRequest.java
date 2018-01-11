@@ -27,7 +27,7 @@ public class PromptRequest extends AsyncTask<Void, Void, JsonPromptModel> {
     public static final String apiKey = "&key=AIzaSyClYMjC6UsJ4KaB1EjUCTgVQR9-qh0VnP8";
     private String city;
     private final String language = "&language=en";
-    private final String types = "&types=geocode";
+    private final String types = "&types=(regions)";
 
     private static PromptRequest promptRequest;
 

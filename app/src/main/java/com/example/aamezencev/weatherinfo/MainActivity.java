@@ -8,8 +8,12 @@ import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 
 import com.example.aamezencev.weatherinfo.Fragments.MainRetainFragment;
 import com.example.aamezencev.weatherinfo.Recievers.CityReceiver;
@@ -18,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     private BroadcastReceiver cityReceiver;
     private MainRetainFragment mainRetainFragment;
+    private View spinner;
 
 
     public MainActivity() {
@@ -37,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             mainRetainFragment = (MainRetainFragment) fragment;
             mainRetainFragment.paint();
         }
+
+        paintSpinner();
 
     }
 
@@ -62,14 +69,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         //paintSpinner();
     }
 
-//    private void paintSpinner() {
-//        FrameLayout frameLayout = findViewById(R.id.flSpinner);
-//        LayoutInflater layoutInflater = getLayoutInflater();
-//        spinner = layoutInflater.inflate(R.layout.spinner_layout, frameLayout, false);
-//        spinner.setVisibility(View.VISIBLE);
-//        frameLayout.addView(spinner);
-//
-//    }
+    private void paintSpinner() {
+        FrameLayout frameLayout = findViewById(R.id.flSpinner);
+        LayoutInflater layoutInflater = getLayoutInflater();
+        spinner = layoutInflater.inflate(R.layout.spinner_layout, frameLayout, false);
+        spinner.setVisibility(View.INVISIBLE);
+        frameLayout.addView(spinner);
+    }
 
 
     @Override
@@ -85,10 +91,26 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public boolean onQueryTextSubmit(String query) {
+        createMainReatainFragment(query);
 
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+
+        if (newText.length() >= 4) {
+            createMainReatainFragment(newText);
+        }
+
+        return false;
+    }
+
+    private void createMainReatainFragment(String query) {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.mainRetainFragment);
 
         if (fragment == null || (fragment != null && fragment.getArguments().getString("city").toString().equals(query) == false)) {
+            spinner.setVisibility(View.VISIBLE);
             mainRetainFragment = new MainRetainFragment();
             Bundle bundle = new Bundle();
             bundle.putString("city", query);
@@ -99,12 +121,5 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         } else {
             mainRetainFragment.paint();
         }
-
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        return false;
     }
 }

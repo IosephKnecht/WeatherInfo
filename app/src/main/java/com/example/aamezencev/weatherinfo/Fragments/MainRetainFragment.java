@@ -59,6 +59,10 @@ public class MainRetainFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void paint(CityEvent cityEvent) {
+
+        View view=getActivity().findViewById(R.id.spinner_view);
+        view.setVisibility(View.INVISIBLE);
+
         viewCityModelList=cityEvent.getViewPromptCityModelList();
 
         mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.mainRecyclerView);
@@ -74,6 +78,9 @@ public class MainRetainFragment extends Fragment {
     }
 
     public void paint() {
+        View view=getActivity().findViewById(R.id.spinner_view);
+        view.setVisibility(View.INVISIBLE);
+
         mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.mainRecyclerView);
 
         mRecyclerView.setHasFixedSize(true);

@@ -1,6 +1,7 @@
 package com.example.aamezencev.weatherinfo.Events;
 
 import com.example.aamezencev.weatherinfo.ViewModels.ViewCityModel;
+import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
 
 import java.util.List;
 
@@ -10,13 +11,13 @@ import java.util.List;
 
 public class CityEvent {
 
-    private List<ViewCityModel> viewCityModelList;
+    private List<ViewPromptCityModel> viewPromptCityModelList;
 
-    public CityEvent(List<ViewCityModel> viewCityModelList) {
-        this.viewCityModelList = viewCityModelList;
+    public CityEvent(List<ViewPromptCityModel> viewPromptCityModelList) {
+        this.viewPromptCityModelList = viewPromptCityModelList;
     }
 
-    public List<ViewCityModel> getViewCityModelList() {
-        return viewCityModelList;
+    public List<ViewPromptCityModel> getViewPromptCityModelList() {
+        return viewPromptCityModelList;
     }
 }

@@ -7,10 +7,16 @@ import android.content.Intent;
 import com.example.aamezencev.weatherinfo.App;
 import com.example.aamezencev.weatherinfo.Events.CityEvent;
 import com.example.aamezencev.weatherinfo.JsonModels.JsonCityModel;
+import com.example.aamezencev.weatherinfo.JsonModels.JsonPromptCityModel;
+import com.example.aamezencev.weatherinfo.JsonModels.JsonPromptModel;
+import com.example.aamezencev.weatherinfo.MainActivity;
 import com.example.aamezencev.weatherinfo.Mappers.JsonCityModelToCityDbModel;
 import com.example.aamezencev.weatherinfo.Mappers.JsonCityModelToViewCityModel;
+import com.example.aamezencev.weatherinfo.Mappers.JsonPromptModelToViewPromptModel;
 import com.example.aamezencev.weatherinfo.Requests.GetCytyList;
+import com.example.aamezencev.weatherinfo.Requests.PromptRequest;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewCityModel;
+import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptModel;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -28,33 +34,19 @@ public class CityReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        List<JsonCityModel> jsonCityModelList = null;
+        JsonPromptModel jsonPromptModel= new JsonPromptModel();
         try {
-            jsonCityModelList = GetCytyList.instance(context).get();
+            jsonPromptModel=PromptRequest.instance(context).get();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
 
-        List<ViewCityModel> viewCityModelList = new ArrayList<>();
+        JsonPromptModelToViewPromptModel jsonPromptModelToViewPromptModel = new JsonPromptModelToViewPromptModel(jsonPromptModel);
+        ViewPromptModel viewPromptModel = new ViewPromptModel();
+        viewPromptModel = jsonPromptModelToViewPromptModel.map();
 
-        JsonCityModelToViewCityModel jsonCityModelToViewCityModel =
-                new JsonCityModelToViewCityModel(jsonCityModelList);
-        jsonCityModelToViewCityModel.execute();
-
-        JsonCityModelToCityDbModel jsonCityModelToCityDbModel =
-                new JsonCityModelToCityDbModel(jsonCityModelList, ((App)context.getApplicationContext()).getDaoSession());
-        jsonCityModelToCityDbModel.execute();
-
-        try {
-            viewCityModelList=jsonCityModelToViewCityModel.get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-
-        EventBus.getDefault().post(new CityEvent(viewCityModelList));
+        EventBus.getDefault().post(new CityEvent(viewPromptModel.getViewPromptCityModelList()));
     }
 }

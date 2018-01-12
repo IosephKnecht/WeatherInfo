@@ -12,16 +12,21 @@ public class ViewPromptCityModel {
     private String id;
     private ViewPromptCityStructureFormatting structuredFormatting;
     private boolean isChecked = false;
+    private String placeId;
 
     public ViewPromptCityModel() {
 
     }
 
     public ViewPromptCityModel(String description, String id,
-                               ViewPromptCityStructureFormatting structuredFormatting) {
+                               ViewPromptCityStructureFormatting structuredFormatting,
+                               String placeId, boolean isChecked) {
         this.description = description;
         this.id = id;
         this.structuredFormatting = structuredFormatting;
+        this.placeId = placeId;
+        this.isChecked = isChecked;
+
     }
 
     public String getDescription() {
@@ -54,5 +59,13 @@ public class ViewPromptCityModel {
 
     public void setChecked(boolean checked) {
         isChecked = checked;
+    }
+
+    public String getPlaceId() {
+        return placeId;
+    }
+
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
     }
 }

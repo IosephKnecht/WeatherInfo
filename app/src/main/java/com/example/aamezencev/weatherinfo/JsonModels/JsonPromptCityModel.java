@@ -13,6 +13,8 @@ public class JsonPromptCityModel {
     private String description;
     @SerializedName("id")
     private String id;
+    @SerializedName("place_id")
+    private String placeId;
     @SerializedName("structured_formatting")
     private JsonPromptCityStructureFormatting structuredFormatting;
 
@@ -33,5 +35,9 @@ public class JsonPromptCityModel {
 
     public JsonPromptCityStructureFormatting getStructuredFormatting() {
         return structuredFormatting;
+    }
+
+    public String getPlaceId() {
+        return placeId;
     }
 }

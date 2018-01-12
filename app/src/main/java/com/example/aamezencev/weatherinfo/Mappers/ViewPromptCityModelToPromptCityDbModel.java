@@ -1,5 +1,6 @@
 package com.example.aamezencev.weatherinfo.Mappers;
 
+import com.example.aamezencev.weatherinfo.DaoModels.DaoMaster;
 import com.example.aamezencev.weatherinfo.DaoModels.PromptCityDbModel;
 import com.example.aamezencev.weatherinfo.DaoModels.PromptCityStructureFormattingDbModel;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
@@ -27,6 +28,7 @@ public class ViewPromptCityModelToPromptCityDbModel {
             promptCityDbModel.setDescription(viewPromptCityModel.getDescription());
             promptCityDbModel.setStructuredFormatting(mapStructureFormatting(viewPromptCityModel.getStructuredFormatting()));
             promptCityDbModel.setStructureFormattingId((long)promptCityDbModel.getId().hashCode());
+            promptCityDbModel.setPlaceId(viewPromptCityModel.getPlaceId());
             promptCityDbModelList.add(promptCityDbModel);
         }
         return promptCityDbModelList;

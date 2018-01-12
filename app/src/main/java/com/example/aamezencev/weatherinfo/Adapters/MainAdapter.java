@@ -14,6 +14,7 @@ import com.example.aamezencev.weatherinfo.MainActivity;
 import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewCityModel;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
+import com.example.aamezencev.weatherinfo.WeatherListActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,9 +43,9 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FloatingButtonEventDb floatingButtonEventDb=new FloatingButtonEventDb(selectIsCheckedItem(),viewHolder.context);
+                FloatingButtonEventDb floatingButtonEventDb = new FloatingButtonEventDb(selectIsCheckedItem(), viewHolder.context);
                 floatingButtonEventDb.execute();
-                //viewHolder.context.startActivity(new Intent(viewHolder.context,sdasdasdasd));
+                viewHolder.context.startActivity(new Intent(viewHolder.context, WeatherListActivity.class));
             }
         });
         return viewHolder;

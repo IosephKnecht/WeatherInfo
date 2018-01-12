@@ -40,6 +40,7 @@ public class JsonPromptModelToViewPromptModel {
             viewPromptCityModel.setId(jsonPromptCityModel.getId());
             viewPromptCityModel.setDescription(jsonPromptCityModel.getDescription());
             viewPromptCityModel.setStructuredFormatting(mapStructureFormatting(jsonPromptCityModel.getStructuredFormatting()));
+            viewPromptCityModel.setPlaceId(jsonPromptCityModel.getPlaceId());
             viewPromptCityModelList.add(viewPromptCityModel);
         }
 

@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 
 import com.example.aamezencev.weatherinfo.Fragments.MainRetainFragment;
 import com.example.aamezencev.weatherinfo.Recievers.CityReceiver;
+import com.example.aamezencev.weatherinfo.Requests.GetGeoToPlaceId;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
@@ -65,8 +66,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //sendBroadcast(new Intent(CityReceiver.CITY_RECEIVER_ID));
-        //paintSpinner();
     }
 
     private void paintSpinner() {

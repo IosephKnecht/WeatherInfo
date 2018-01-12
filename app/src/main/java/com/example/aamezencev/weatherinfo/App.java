@@ -18,7 +18,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
 
-        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "city-db");
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "weatherInfoDb-db");
         Database db = helper.getWritableDb();
         daoSession=new DaoMaster(db).newSession();
     }

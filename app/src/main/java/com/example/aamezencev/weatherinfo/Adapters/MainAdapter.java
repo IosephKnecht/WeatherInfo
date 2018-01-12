@@ -1,6 +1,7 @@
 package com.example.aamezencev.weatherinfo.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.example.aamezencev.weatherinfo.Events.FloatingButtonEventDb;
 import com.example.aamezencev.weatherinfo.MainActivity;
 import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewCityModel;
@@ -23,7 +25,7 @@ import java.util.List;
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     private List<ViewPromptCityModel> viewPromptCityModelList;
-    private  View floatingButton;
+    private View floatingButton;
 
     public MainAdapter(List<ViewPromptCityModel> viewPromptCityModelList) {
         this.viewPromptCityModelList = viewPromptCityModelList;
@@ -33,9 +35,18 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.city_item, parent, false);
 
-        ViewHolder viewHolder = new ViewHolder(view);
-        floatingButton=((MainActivity)viewHolder.context).findViewById(R.id.floatingActionButton);
+        final ViewHolder viewHolder = new ViewHolder(view);
+        floatingButton = ((MainActivity) viewHolder.context).findViewById(R.id.floatingActionButton);
         floatingButton.setVisibility(isVisibleFloatingButton());
+
+        floatingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FloatingButtonEventDb floatingButtonEventDb=new FloatingButtonEventDb(selectIsCheckedItem(),viewHolder.context);
+                floatingButtonEventDb.execute();
+                //viewHolder.context.startActivity(new Intent(viewHolder.context,sdasdasdasd));
+            }
+        });
         return viewHolder;
     }
 
@@ -54,6 +65,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
                 floatingButton.setVisibility(isVisibleFloatingButton());
             }
         });
+    }
+
+    private List<ViewPromptCityModel> selectIsCheckedItem() {
+        List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
+        for (ViewPromptCityModel viewPromptCityModel : this.viewPromptCityModelList) {
+            if (viewPromptCityModel.isChecked()) viewPromptCityModelList.add(viewPromptCityModel);
+        }
+        return viewPromptCityModelList;
     }
 
     @Override

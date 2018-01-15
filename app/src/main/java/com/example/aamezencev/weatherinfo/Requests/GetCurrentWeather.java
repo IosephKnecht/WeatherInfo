@@ -16,7 +16,7 @@ import okhttp3.Response;
  */
 
 public class GetCurrentWeather extends AsyncTask<Void, Void, JsonWeatherModel> {
-    private String link = "api.openweathermap.org/data/2.5/weather?";
+    private String link = "http://api.openweathermap.org/data/2.5/weather?";
     private String lat = "lat=";
     private String lng = "&lon=";
     private String appId = "&APPID=1929d22867616c7ad0d33873b6d1f32d";

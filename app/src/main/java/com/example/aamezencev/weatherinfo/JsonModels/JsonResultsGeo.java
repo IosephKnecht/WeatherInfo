@@ -16,7 +16,7 @@ public class JsonResultsGeo {
         this.jsonReverseGeoModelList = jsonReverseGeoModelList;
     }
 
-    public JsonResultsGeo(){
+    public JsonResultsGeo() {
 
     }
 
@@ -26,5 +26,12 @@ public class JsonResultsGeo {
 
     public void setJsonReverseGeoModelList(List<JsonReverseGeoModel> jsonReverseGeoModelList) {
         this.jsonReverseGeoModelList = jsonReverseGeoModelList;
+    }
+
+    public JsonLocationModel getJsonLocationModel() {
+        if (jsonReverseGeoModelList.size() != 0) {
+            return jsonReverseGeoModelList.get(0).getJsonGeometryModel().getJsonLocationModel();
+        }
+        return null;
     }
 }

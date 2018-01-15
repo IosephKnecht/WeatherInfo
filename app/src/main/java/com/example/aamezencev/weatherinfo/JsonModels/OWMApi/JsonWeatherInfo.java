@@ -38,4 +38,12 @@ public class JsonWeatherInfo {
     public String getIcon() {
         return icon;
     }
+
+    @Override
+    public String toString() {
+        String lineSep = System.lineSeparator();
+        return "id:" + id + lineSep +
+                "main:" + main + lineSep +
+                "description:" + description;
+    }
 }

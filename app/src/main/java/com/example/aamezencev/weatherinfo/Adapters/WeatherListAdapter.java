@@ -1,6 +1,7 @@
 package com.example.aamezencev.weatherinfo.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.example.aamezencev.weatherinfo.Events.WeatherDeleteItemEvent;
 import com.example.aamezencev.weatherinfo.Queries.DeleteItemOfDb;
 import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
+import com.example.aamezencev.weatherinfo.WeatherInfoActivity;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -49,6 +51,16 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
         holder.textView.setText(viewPromptCityModelList.get(position).getStructuredFormatting().getMainText() +
                 System.lineSeparator()
                 + viewPromptCityModelList.get(position).getStructuredFormatting().getSecondaryText());
+
+        holder.textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(holder.context, WeatherInfoActivity.class);
+                String placeId = viewPromptCityModelList.get(position).getPlaceId();
+                intent.putExtra("placeId", placeId);
+                holder.context.startActivity(intent);
+            }
+        });
 
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override

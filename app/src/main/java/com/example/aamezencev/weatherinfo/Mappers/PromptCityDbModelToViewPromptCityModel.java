@@ -27,7 +27,7 @@ public class PromptCityDbModelToViewPromptCityModel {
             ViewPromptCityModel viewPromptCityModel=new ViewPromptCityModel();
             viewPromptCityModel.setId(promptCityDbModel.getId());
             viewPromptCityModel.setDescription(promptCityDbModel.getDescription());
-            viewPromptCityModel.setStructuredFormatting(mapStructureFormatting(promptCityDbModel.getStructureFormattingLOL()));
+            viewPromptCityModel.setStructuredFormatting(mapStructureFormatting(promptCityDbModel.getStructuredFormatting()));
             viewPromptCityModel.setPlaceId(promptCityDbModel.getPlaceId());
             viewPromptCityModelList.add(viewPromptCityModel);
         }

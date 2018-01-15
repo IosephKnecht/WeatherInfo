@@ -10,7 +10,7 @@ import org.greenrobot.greendao.annotation.Generated;
  */
 @Entity
 public class PromptCityStructureFormattingDbModel {
-    @Id
+    @Id(autoincrement = true)
     private Long key;
     @NotNull
     private String mainText;

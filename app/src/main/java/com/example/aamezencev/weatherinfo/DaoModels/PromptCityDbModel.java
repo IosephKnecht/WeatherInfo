@@ -12,7 +12,7 @@ import org.greenrobot.greendao.DaoException;
  */
 @Entity
 public class PromptCityDbModel {
-    @Id
+    @Id(autoincrement = true)
     private Long key;
     @NotNull
     private Long structureFormattingId;
@@ -31,8 +31,9 @@ public class PromptCityDbModel {
     @Generated(hash = 1554318806)
     private transient PromptCityDbModelDao myDao;
     @Generated(hash = 1815841651)
-    public PromptCityDbModel(Long key, @NotNull Long structureFormattingId, @NotNull String description,
-            @NotNull String id, @NotNull String placeId) {
+    public PromptCityDbModel(Long key, @NotNull Long structureFormattingId,
+            @NotNull String description, @NotNull String id,
+            @NotNull String placeId) {
         this.key = key;
         this.structureFormattingId = structureFormattingId;
         this.description = description;
@@ -41,10 +42,6 @@ public class PromptCityDbModel {
     }
     @Generated(hash = 1021489601)
     public PromptCityDbModel() {
-    }
-
-    public PromptCityStructureFormattingDbModel getStructureFormattingLOL(){
-        return structuredFormatting;
     }
     public Long getKey() {
         return this.key;
@@ -69,6 +66,12 @@ public class PromptCityDbModel {
     }
     public void setId(String id) {
         this.id = id;
+    }
+    public String getPlaceId() {
+        return this.placeId;
+    }
+    public void setPlaceId(String placeId) {
+        this.placeId = placeId;
     }
     @Generated(hash = 618877247)
     private transient Long structuredFormatting__resolvedKey;
@@ -139,12 +142,6 @@ public class PromptCityDbModel {
             throw new DaoException("Entity is detached from DAO context");
         }
         myDao.update(this);
-    }
-    public String getPlaceId() {
-        return this.placeId;
-    }
-    public void setPlaceId(String placeId) {
-        this.placeId = placeId;
     }
     /** called by internal mechanisms, do not call yourself. */
     @Generated(hash = 238356009)

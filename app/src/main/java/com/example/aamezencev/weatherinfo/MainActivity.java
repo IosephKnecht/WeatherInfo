@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         RxSearchView.queryTextChanges(searchView)
-                .debounce(2000, TimeUnit.MILLISECONDS)
+                .debounce(500, TimeUnit.MILLISECONDS)
                 .subscribe(aVoid->{
                     if(aVoid.length()>=4){
                         runOnUiThread(new Runnable() {

@@ -18,8 +18,11 @@ import android.widget.ProgressBar;
 import com.example.aamezencev.weatherinfo.Fragments.MainRetainFragment;
 import com.example.aamezencev.weatherinfo.Recievers.CityReceiver;
 import com.example.aamezencev.weatherinfo.Requests.GetGeoToPlaceId;
+import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView;
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+import java.util.concurrent.TimeUnit;
+
+public class MainActivity extends AppCompatActivity {
 
     private BroadcastReceiver cityReceiver;
     private MainRetainFragment mainRetainFragment;
@@ -83,26 +86,20 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setOnQueryTextListener(this);
+        RxSearchView.queryTextChanges(searchView)
+                .debounce(2000, TimeUnit.MILLISECONDS)
+                .subscribe(aVoid->{
+                    if(aVoid.length()>=4){
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                createMainReatainFragment(aVoid.toString());
+                            }
+                        });
+                    }
+                });
 
         return true;
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        createMainReatainFragment(query);
-
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-
-        if (newText.length() >= 4) {
-            createMainReatainFragment(newText);
-        }
-
-        return false;
     }
 
     private void createMainReatainFragment(String query) {

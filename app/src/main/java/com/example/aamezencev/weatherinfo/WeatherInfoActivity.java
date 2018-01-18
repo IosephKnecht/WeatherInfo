@@ -1,10 +1,12 @@
 package com.example.aamezencev.weatherinfo;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.example.aamezencev.weatherinfo.Fragments.WeatherInfoRetainFragment;
 
@@ -29,6 +31,20 @@ public class WeatherInfoActivity extends AppCompatActivity {
             ((WeatherInfoRetainFragment) fragment).paint();
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.returnHomeItem:
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.settingsItem:
+
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

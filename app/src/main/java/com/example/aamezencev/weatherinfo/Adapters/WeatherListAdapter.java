@@ -65,7 +65,7 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DeleteItemOfDb deleteItemOfDb = new DeleteItemOfDb(promptCityDbModelList.get(position).getStructureFormattingId(), daoSession);
+                DeleteItemOfDb deleteItemOfDb = new DeleteItemOfDb(promptCityDbModelList.get(position).getKey(), daoSession);
                 deleteItemOfDb.execute();
             }
         });

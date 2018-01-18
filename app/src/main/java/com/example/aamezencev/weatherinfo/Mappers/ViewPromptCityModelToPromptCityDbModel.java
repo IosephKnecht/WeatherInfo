@@ -1,8 +1,6 @@
 package com.example.aamezencev.weatherinfo.Mappers;
 
-import com.example.aamezencev.weatherinfo.DaoModels.DaoMaster;
 import com.example.aamezencev.weatherinfo.DaoModels.PromptCityDbModel;
-import com.example.aamezencev.weatherinfo.DaoModels.PromptCityStructureFormattingDbModel;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityStructureFormatting;
 
@@ -26,19 +24,12 @@ public class ViewPromptCityModelToPromptCityDbModel {
             PromptCityDbModel promptCityDbModel = new PromptCityDbModel();
             promptCityDbModel.setId(viewPromptCityModel.getId());
             promptCityDbModel.setDescription(viewPromptCityModel.getDescription());
-            PromptCityStructureFormattingDbModel structureFormattingDbModel = mapStructureFormatting(viewPromptCityModel.getStructuredFormatting());
-            promptCityDbModel.setStructuredFormatting(structureFormattingDbModel);
+            promptCityDbModel.setMainText(viewPromptCityModel.getStructuredFormatting().getMainText());
+            promptCityDbModel.setSecondaryText(viewPromptCityModel.getStructuredFormatting().getSecondaryText());
             promptCityDbModel.setPlaceId(viewPromptCityModel.getPlaceId());
-            promptCityDbModel.setStructureFormattingId((long)promptCityDbModel.getId().hashCode());
             promptCityDbModelList.add(promptCityDbModel);
         }
         return promptCityDbModelList;
     }
 
-    private PromptCityStructureFormattingDbModel mapStructureFormatting(ViewPromptCityStructureFormatting structureFormatting) {
-        PromptCityStructureFormattingDbModel structureFormattingDbModel = new PromptCityStructureFormattingDbModel();
-        structureFormattingDbModel.setMainText(structureFormatting.getMainText());
-        structureFormattingDbModel.setSecondaryText(structureFormatting.getSecondaryText());
-        return structureFormattingDbModel;
-    }
 }

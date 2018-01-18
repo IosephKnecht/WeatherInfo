@@ -5,13 +5,10 @@ import android.os.AsyncTask;
 import com.example.aamezencev.weatherinfo.DaoModels.DaoSession;
 import com.example.aamezencev.weatherinfo.DaoModels.PromptCityDbModel;
 import com.example.aamezencev.weatherinfo.DaoModels.PromptCityDbModelDao;
-import com.example.aamezencev.weatherinfo.DaoModels.PromptCityStructureFormattingDbModel;
-import com.example.aamezencev.weatherinfo.DaoModels.PromptCityStructureFormattingDbModelDao;
 import com.example.aamezencev.weatherinfo.Events.WeatherDeleteItemEvent;
 import com.example.aamezencev.weatherinfo.Mappers.PromptCityDbModelToViewPromptCityModel;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.greendao.Property;
 import org.greenrobot.greendao.query.QueryBuilder;
 
 import java.util.ArrayList;
@@ -36,7 +33,7 @@ public class DeleteItemOfDb extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... voids) {
         PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
         QueryBuilder<PromptCityDbModel> queryBuilder = promptCityDbModelDao.queryBuilder();
-        queryBuilder.where(PromptCityDbModelDao.Properties.StructureFormattingId.eq(structureFormattingId));
+        queryBuilder.where(PromptCityDbModelDao.Properties.Key.eq(structureFormattingId));
         if (queryBuilder.list().size() != 0)
             promptCityDbModelDao.delete(queryBuilder.list().get(0));
         return null;

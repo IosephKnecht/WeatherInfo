@@ -13,13 +13,25 @@ public class JsonWeatherModel {
     private List<JsonWeatherInfo> jsonWeatherInfoList;
     @SerializedName("cod")
     private String cod;
+    @SerializedName("coord")
+    private JsonCoordInfo jsonCoordInfo;
+    @SerializedName("main")
+    private JsonMainInfo jsonMainInfo;
+    @SerializedName("wind")
+    private JsonWindInfo jsonWindInfo;
+    @SerializedName("clouds")
+    private JsonCloudsInfo jsonCloudsInfo;
 
-    public JsonWeatherModel(List<JsonWeatherInfo> jsonWeatherInfoList, String cod) {
+    public JsonWeatherModel(List<JsonWeatherInfo> jsonWeatherInfoList, String cod, JsonCoordInfo jsonCoordInfo, JsonMainInfo jsonMainInfo, JsonWindInfo jsonWindInfo, JsonCloudsInfo jsonCloudsInfo) {
         this.jsonWeatherInfoList = jsonWeatherInfoList;
         this.cod = cod;
+        this.jsonCoordInfo = jsonCoordInfo;
+        this.jsonMainInfo = jsonMainInfo;
+        this.jsonWindInfo = jsonWindInfo;
+        this.jsonCloudsInfo = jsonCloudsInfo;
     }
 
-    public JsonWeatherModel(){
+    public JsonWeatherModel() {
 
     }
 
@@ -29,5 +41,21 @@ public class JsonWeatherModel {
 
     public String getCod() {
         return cod;
+    }
+
+    public JsonCoordInfo getJsonCoordInfo() {
+        return jsonCoordInfo;
+    }
+
+    public JsonMainInfo getJsonMainInfo() {
+        return jsonMainInfo;
+    }
+
+    public JsonWindInfo getJsonWindInfo() {
+        return jsonWindInfo;
+    }
+
+    public JsonCloudsInfo getJsonCloudsInfo() {
+        return jsonCloudsInfo;
     }
 }

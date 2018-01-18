@@ -61,4 +61,11 @@ public class JsonMainInfo {
     public Long getGrndLevel() {
         return grndLevel;
     }
+
+    public String getInfMain() {
+        String lineSep = System.lineSeparator();
+        return lineSep + temp + lineSep +
+                tempMax + lineSep +
+                tempMin + lineSep;
+    }
 }

@@ -32,25 +32,4 @@ public class WeatherInfoActivity extends AppCompatActivity {
         }
 
     }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.returnHomeItem:
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.settingsItem:
-
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.weather_info_menu, menu);
-        return true;
-    }
 }

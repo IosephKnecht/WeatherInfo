@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide;
 import com.example.aamezencev.weatherinfo.JsonModels.OWMApi.JsonWeatherInfo;
 import com.example.aamezencev.weatherinfo.JsonModels.OWMApi.JsonWeatherModel;
 import com.example.aamezencev.weatherinfo.R;
+import com.example.aamezencev.weatherinfo.ViewModels.ViewCurrentWeatherModel;
 
 import java.util.List;
 
@@ -20,10 +21,10 @@ import java.util.List;
 
 public class WeatherInfoAdapter extends RecyclerView.Adapter<WeatherInfoAdapter.ViewHolder> {
 
-    private List<JsonWeatherInfo> jsonWeatherInfoList;
+    private ViewCurrentWeatherModel viewCurrentWeatherModel;
 
-    public WeatherInfoAdapter(List<JsonWeatherInfo> jsonWeatherInfoList) {
-        this.jsonWeatherInfoList = jsonWeatherInfoList;
+    public WeatherInfoAdapter(ViewCurrentWeatherModel viewCurrentWeatherModel) {
+        this.viewCurrentWeatherModel = viewCurrentWeatherModel;
     }
 
     @Override
@@ -35,16 +36,15 @@ public class WeatherInfoAdapter extends RecyclerView.Adapter<WeatherInfoAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        JsonWeatherInfo jsonWeatherInfo = jsonWeatherInfoList.get(position);
-        holder.tvWeatherInfo.setText(jsonWeatherInfo.toString());
+        holder.tvWeatherInfo.setText(viewCurrentWeatherModel.toString());
         Glide.with(holder.ivIconWeather.getContext())
-                .load("http://openweathermap.org/img/w/" + jsonWeatherInfo.getIcon()+".png")
+                .load("http://openweathermap.org/img/w/" + viewCurrentWeatherModel.getIcon() + ".png")
                 .into(holder.ivIconWeather);
     }
 
     @Override
     public int getItemCount() {
-        return jsonWeatherInfoList.size();
+        return 1;
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder {

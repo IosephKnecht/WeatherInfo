@@ -3,6 +3,7 @@ package com.example.aamezencev.weatherinfo;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
@@ -61,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         cityReceiver = null;
-
+        stopService(new Intent(this, UpdateService.class));
         super.onDestroy();
     }
 
@@ -88,8 +89,8 @@ public class MainActivity extends AppCompatActivity {
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         RxSearchView.queryTextChanges(searchView)
                 .debounce(500, TimeUnit.MILLISECONDS)
-                .subscribe(aVoid->{
-                    if(aVoid.length()>=4){
+                .subscribe(aVoid -> {
+                    if (aVoid.length() >= 4) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

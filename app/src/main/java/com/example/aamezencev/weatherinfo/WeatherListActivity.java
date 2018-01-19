@@ -24,6 +24,12 @@ public class WeatherListActivity extends AppCompatActivity {
         createWeatherRetainFragment();
     }
 
+    @Override
+    protected void onDestroy() {
+        stopService(new Intent(this, UpdateService.class));
+        super.onDestroy();
+    }
+
     private void createWeatherRetainFragment() {
         Fragment fragment = getFragmentManager().findFragmentById(R.id.weatherRetainFragment);
 
@@ -33,7 +39,7 @@ public class WeatherListActivity extends AppCompatActivity {
             fragmentTransaction.replace(R.id.weatherRetainFragment, weatherListRetainFragment);
             fragmentTransaction.commit();
         } else {
-            ((WeatherListRetainFragment)fragment).paint();
+            ((WeatherListRetainFragment) fragment).paint();
         }
     }
 

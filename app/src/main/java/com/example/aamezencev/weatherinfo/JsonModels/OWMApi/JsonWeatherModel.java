@@ -13,6 +13,8 @@ public class JsonWeatherModel {
     private List<JsonWeatherInfo> jsonWeatherInfoList;
     @SerializedName("cod")
     private String cod;
+    @SerializedName("id")
+    private Long id;
 //    @SerializedName("coord")
 //    private JsonCoordInfo jsonCoordInfo;
 //    @SerializedName("main")
@@ -41,6 +43,10 @@ public class JsonWeatherModel {
 
     public String getCod() {
         return cod;
+    }
+
+    public Long getId() {
+        return id;
     }
 
 //    public JsonCoordInfo getJsonCoordInfo() {

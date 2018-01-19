@@ -36,6 +36,7 @@ public class ActivityController extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
+        startService(new Intent(this, UpdateService.class));
     }
 
     private void writePreferences() {

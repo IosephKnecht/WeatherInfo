@@ -71,40 +71,13 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
         JsonWeatherModel currentModel = new JsonWeatherModel();
 
         Subscriber<JsonWeatherModel> jsonWeatherModelSubscribe;
-        Disposable disposable = listObservable.just(viewPromptCityModelList.get(position))
-                .subscribeOn(Schedulers.io())
-                .map(geo -> {
-                    GetGeoToPlaceId getGeoToPlaceId = new GetGeoToPlaceId(geo.getPlaceId());
-                    getGeoToPlaceId.execute();
-                    JsonResultsGeo jsonResultsGeo = null;
-                    jsonResultsGeo = getGeoToPlaceId.get();
-                    return jsonResultsGeo;
-                })
-                .map(weather -> {
-                    GetCurrentWeather getCurrentWeather = new GetCurrentWeather(weather.getJsonLocationModel().getLat(), weather.getJsonLocationModel().getLng());
-                    getCurrentWeather.execute();
-                    JsonWeatherModel jsonWeatherModel = new JsonWeatherModel();
-                    jsonWeatherModel = getCurrentWeather.get();
-                    return jsonWeatherModel;
-                })
-                .repeatWhen(completed -> {
-                    Log.d("WLA", "Repeat at position " + position);
-                    return completed.delay(10000, TimeUnit.MILLISECONDS);
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(subscriber -> {
-                    String output = holder.textView.getText().toString();
-                    output += subscriber.getCod();
-                    holder.textView.setText(output);
-                });
-
 
         holder.textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(holder.context, WeatherInfoActivity.class);
-                String placeId = viewPromptCityModelList.get(position).getPlaceId();
-                intent.putExtra("placeId", placeId);
+                Long key = promptCityDbModelList.get(position).getKey();
+                intent.putExtra("key", key);
                 holder.context.startActivity(intent);
             }
         });
@@ -112,7 +85,6 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
         holder.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                disposable.dispose();
                 DeleteItemOfDb deleteItemOfDb = new DeleteItemOfDb(promptCityDbModelList.get(position).getKey(), daoSession);
                 deleteItemOfDb.execute();
             }

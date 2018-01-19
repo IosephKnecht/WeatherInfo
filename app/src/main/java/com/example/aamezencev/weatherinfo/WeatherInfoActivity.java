@@ -23,7 +23,7 @@ public class WeatherInfoActivity extends AppCompatActivity {
         if (fragment == null) {
             weatherInfoRetainFragment = new WeatherInfoRetainFragment();
             Bundle bundle = new Bundle();
-            bundle.putString("placeId", getIntent().getStringExtra("placeId"));
+            bundle.putLong("key", getIntent().getLongExtra("key", 0));
             weatherInfoRetainFragment.setArguments(bundle);
             getFragmentManager().beginTransaction().replace(R.id.weatherInfoRetainFragment,
                     weatherInfoRetainFragment).commit();

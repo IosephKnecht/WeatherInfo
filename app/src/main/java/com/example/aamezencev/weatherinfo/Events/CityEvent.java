@@ -1,6 +1,5 @@
 package com.example.aamezencev.weatherinfo.Events;
 
-import com.example.aamezencev.weatherinfo.ViewModels.ViewCityModel;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
 
 import java.util.List;

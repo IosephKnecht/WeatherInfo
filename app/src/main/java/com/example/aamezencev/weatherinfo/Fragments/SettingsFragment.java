@@ -45,10 +45,4 @@ public class SettingsFragment extends PreferenceFragment {
             return false;
         }));
     }
-
-    @Override
-    public void onDestroyView() {
-        ((View) getActivity().findViewById(R.id.weatherRecycler)).setVisibility(View.VISIBLE);
-        super.onDestroyView();
-    }
 }

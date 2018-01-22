@@ -10,21 +10,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.aamezencev.weatherinfo.Adapters.WeatherInfoAdapter;
-import com.example.aamezencev.weatherinfo.Adapters.WeatherListAdapter;
 import com.example.aamezencev.weatherinfo.App;
 import com.example.aamezencev.weatherinfo.DaoModels.CurrentWeatherDbModel;
 import com.example.aamezencev.weatherinfo.DaoModels.DaoSession;
-import com.example.aamezencev.weatherinfo.JsonModels.JsonResultsGeo;
-import com.example.aamezencev.weatherinfo.JsonModels.OWMApi.JsonWeatherModel;
 import com.example.aamezencev.weatherinfo.Mappers.CurrentWeatherDbModelToView;
 import com.example.aamezencev.weatherinfo.R;
-import com.example.aamezencev.weatherinfo.Requests.CurrentWeatherByCityId;
-import com.example.aamezencev.weatherinfo.Requests.FindWeatherByKey;
-import com.example.aamezencev.weatherinfo.Requests.GetCurrentWeather;
-import com.example.aamezencev.weatherinfo.Requests.GetGeoToPlaceId;
+import com.example.aamezencev.weatherinfo.Queries.FindWeatherByKey;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewCurrentWeatherModel;
 
-import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -56,30 +49,6 @@ public class WeatherInfoRetainFragment extends Fragment {
         }
         CurrentWeatherDbModelToView mapper = new CurrentWeatherDbModelToView(currentWeatherDbModel);
         viewCurrentWeatherModel = mapper.map();
-//        GetGeoToPlaceId getGeoToPlaceId = new GetGeoToPlaceId(placeId);
-//        getGeoToPlaceId.execute();
-//        JsonResultsGeo jsonResultsGeo = new JsonResultsGeo();
-//        try {
-//            jsonResultsGeo = getGeoToPlaceId.get();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        }
-//
-//        String lat = jsonResultsGeo.getJsonLocationModel().getLat();
-//        String lng = jsonResultsGeo.getJsonLocationModel().getLng();
-//
-//        GetCurrentWeather getCurrentWeather = new GetCurrentWeather(lat, lng);
-//        getCurrentWeather.execute();
-//
-//        try {
-//            jsonWeatherModel = getCurrentWeather.get();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        } catch (ExecutionException e) {
-//            e.printStackTrace();
-//        }
 
         paint();
 

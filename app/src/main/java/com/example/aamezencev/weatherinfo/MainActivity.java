@@ -2,9 +2,7 @@ package com.example.aamezencev.weatherinfo;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -14,18 +12,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
 
 import com.example.aamezencev.weatherinfo.Fragments.MainRetainFragment;
-import com.example.aamezencev.weatherinfo.Recievers.CityReceiver;
-import com.example.aamezencev.weatherinfo.Requests.GetGeoToPlaceId;
 import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView;
 
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
-    private BroadcastReceiver cityReceiver;
     private MainRetainFragment mainRetainFragment;
     private View spinner;
 
@@ -37,10 +31,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        cityReceiver = new CityReceiver();
-
-        IntentFilter intentFilter = new IntentFilter(CityReceiver.CITY_RECEIVER_ID);
-        registerReceiver(cityReceiver, intentFilter);
 
         Fragment fragment = getFragmentManager().findFragmentById(R.id.mainRetainFragment);
         if (fragment != null) {
@@ -54,14 +44,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        unregisterReceiver(cityReceiver);
-
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        cityReceiver = null;
         stopService(new Intent(this, UpdateService.class));
         super.onDestroy();
     }

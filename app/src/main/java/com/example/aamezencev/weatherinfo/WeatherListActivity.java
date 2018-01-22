@@ -19,13 +19,11 @@ public class WeatherListActivity extends AppCompatActivity {
 
     private WeatherListRetainFragment weatherListRetainFragment;
     private final String prefTag = "settingsPreference";
-    private View weatherRecycler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_list);
-        weatherRecycler = findViewById(R.id.weatherRecycler);
 
         Intent intent = new Intent(this, UpdateService.class);
 
@@ -53,8 +51,6 @@ public class WeatherListActivity extends AppCompatActivity {
             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.weatherRetainFragment, weatherListRetainFragment);
             fragmentTransaction.commit();
-        } else {
-            ((WeatherListRetainFragment) fragment).paint();
         }
     }
 
@@ -69,8 +65,7 @@ public class WeatherListActivity extends AppCompatActivity {
                 Fragment fragment = getFragmentManager().findFragmentByTag(prefTag);
                 if (fragment == null) {
                     fragment = new SettingsFragment();
-                    getFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.settingsPrefFragment, fragment, prefTag).commit();
-                    weatherRecycler.setVisibility(View.INVISIBLE);
+                    getFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.weatherRetainFragment, fragment, prefTag).commit();
                 }
                 break;
         }

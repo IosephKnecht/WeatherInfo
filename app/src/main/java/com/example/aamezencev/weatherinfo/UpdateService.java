@@ -34,10 +34,6 @@ public class UpdateService extends Service {
 
     private Timer timer;
 
-    public UpdateService() {
-
-    }
-
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -103,7 +99,7 @@ public class UpdateService extends Service {
                         jsonWeatherModelList.add(jsonWeatherModel);
                     }
                 }
-                JsonWeatherModelToDb mapper = new JsonWeatherModelToDb(jsonWeatherModelList,promptCityDbModelList);
+                JsonWeatherModelToDb mapper = new JsonWeatherModelToDb(jsonWeatherModelList, promptCityDbModelList);
                 List<CurrentWeatherDbModel> currentWeatherDbModelList = mapper.map();
                 AddListToDb addListToDb = new AddListToDb(currentWeatherDbModelList, daoSession);
                 if (currentWeatherDbModelList.size() != 0) {

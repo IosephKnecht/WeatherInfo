@@ -4,15 +4,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 
+import com.example.aamezencev.weatherinfo.Events.CityEvent;
 import com.example.aamezencev.weatherinfo.JsonModels.JsonPromptModel;
-import com.example.aamezencev.weatherinfo.Recievers.CityReceiver;
+import com.example.aamezencev.weatherinfo.Mappers.JsonPromptModelToViewPromptModel;
+import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptModel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -84,7 +89,12 @@ public class PromptRequest extends AsyncTask<Void, Void, JsonPromptModel> {
     @Override
     protected void onPostExecute(JsonPromptModel jsonPromptModel) {
         super.onPostExecute(jsonPromptModel);
-        context.sendBroadcast(new Intent(CityReceiver.CITY_RECEIVER_ID));
+
+        JsonPromptModelToViewPromptModel jsonPromptModelToViewPromptModel = new JsonPromptModelToViewPromptModel(jsonPromptModel);
+        ViewPromptModel viewPromptModel = new ViewPromptModel();
+        viewPromptModel = jsonPromptModelToViewPromptModel.map();
+
+        EventBus.getDefault().post(new CityEvent(viewPromptModel.getViewPromptCityModelList()));
     }
 
     public void setCity(String city) {

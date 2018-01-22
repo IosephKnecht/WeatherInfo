@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">WeatherInfo</string>
+    <string name="btnDeleteItemTitle">Delete</string>
+    <string name="mainMenuTitle">Search</string>
+    <string name="returnHomeItemTitle">Return Home</string>
+    <string name="settingsItemTitle">Settings</string>
+    <string name="switchPrefKey">serviceSwitch</string>
+    <string name="etPrefKey">etDelayService</string>
+    <string name="switchPrefTitle">Enable auto-update</string>
+    <string name="etPrefTitle">Number of milliseconds</string>
 </resources>

@@ -11,14 +11,9 @@ import android.view.ViewGroup;
 
 import com.example.aamezencev.weatherinfo.Adapters.MainAdapter;
 import com.example.aamezencev.weatherinfo.Events.CityEvent;
-import com.example.aamezencev.weatherinfo.JsonModels.JsonPromptModel;
-import com.example.aamezencev.weatherinfo.Mappers.JsonPromptModelToViewPromptModel;
 import com.example.aamezencev.weatherinfo.R;
-import com.example.aamezencev.weatherinfo.Requests.GetCytyList;
 import com.example.aamezencev.weatherinfo.Requests.PromptRequest;
-import com.example.aamezencev.weatherinfo.ViewModels.ViewCityModel;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
-import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptModel;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -26,7 +21,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by aa.mezencev on 10.01.2018.

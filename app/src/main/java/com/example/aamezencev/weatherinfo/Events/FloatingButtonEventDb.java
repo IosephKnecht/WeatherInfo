@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.example.aamezencev.weatherinfo.App;
+import com.example.aamezencev.weatherinfo.DaoModels.CurrentWeatherDbModelDao;
 import com.example.aamezencev.weatherinfo.DaoModels.DaoSession;
 import com.example.aamezencev.weatherinfo.DaoModels.PromptCityDbModel;
 import com.example.aamezencev.weatherinfo.DaoModels.PromptCityDbModelDao;
@@ -35,8 +36,10 @@ public class FloatingButtonEventDb extends AsyncTask<Void, Void, Void> {
         List<PromptCityDbModel> promptCityDbModelList = new ArrayList<>();
         ViewPromptCityModelToPromptCityDbModel mapper = new ViewPromptCityModelToPromptCityDbModel(viewPromptCityModelList);
         promptCityDbModelList = mapper.map();
-        PromptCityDbModelDao promptCityDbModelDao=daoSession.getPromptCityDbModelDao();
+        PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
+        CurrentWeatherDbModelDao currentWeatherDbModelDao = daoSession.getCurrentWeatherDbModelDao();
         promptCityDbModelDao.deleteAll();
+        currentWeatherDbModelDao.deleteAll();
         promptCityDbModelDao.insertInTx(promptCityDbModelList);
 
         return null;

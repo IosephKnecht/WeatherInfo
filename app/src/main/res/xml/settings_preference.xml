@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <SwitchPreference
+        android:title="Enable auto-update"
+        android:defaultValue="true"
+        android:persistent="true"
+        android:id="@+id/serviceSwitch"
+        android:key="serviceSwitch">
+    </SwitchPreference>
+    <EditTextPreference
+        android:title="Number of milliseconds"
+        android:persistent="true"
+        android:defaultValue="60000"
+        android:inputType="number"
+        android:id="@+id/etDelayService"
+        android:key="etDelayService"
+        android:dependency="serviceSwitch">
+    </EditTextPreference>
+</PreferenceScreen>

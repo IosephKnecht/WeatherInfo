@@ -11,17 +11,21 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.aamezencev.weatherinfo.Fragments.MainRetainFragment;
+import com.example.aamezencev.weatherinfo.Fragments.SettingsFragment;
 import com.example.aamezencev.weatherinfo.Fragments.WeatherListRetainFragment;
 
 public class WeatherListActivity extends AppCompatActivity {
 
     private WeatherListRetainFragment weatherListRetainFragment;
+    private final String prefTag = "settingsPreference";
+    private View weatherRecycler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_list);
         createWeatherRetainFragment();
+        weatherRecycler = findViewById(R.id.weatherRecycler);
     }
 
     @Override
@@ -51,7 +55,12 @@ public class WeatherListActivity extends AppCompatActivity {
                 startActivity(intent);
                 break;
             case R.id.settingsItem:
-
+                Fragment fragment = getFragmentManager().findFragmentByTag(prefTag);
+                if (fragment == null) {
+                    fragment = new SettingsFragment();
+                    getFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.settingsPrefFragment, fragment, prefTag).commit();
+                    weatherRecycler.setVisibility(View.INVISIBLE);
+                }
                 break;
         }
         return super.onOptionsItemSelected(item);

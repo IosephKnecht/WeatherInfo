@@ -3,6 +3,7 @@ package com.example.aamezencev.weatherinfo;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
 import com.example.aamezencev.weatherinfo.DaoModels.CurrentWeatherDbModel;
@@ -49,7 +50,14 @@ public class UpdateService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         timer = new Timer();
-        int periodValue = 10000;
+        String prefString = PreferenceManager.getDefaultSharedPreferences(this).getString("etDelayService", null);
+        int periodValue = 0;
+        if (prefString != null) {
+            periodValue = Integer.valueOf(prefString);
+            if (periodValue < 60_000) periodValue = 60_000;
+        } else {
+            periodValue = 60_000;
+        }
         DaoSession daoSession = ((App) getApplicationContext()).getDaoSession();
         TimerTask timerTask = new TimerTask() {
             @Override

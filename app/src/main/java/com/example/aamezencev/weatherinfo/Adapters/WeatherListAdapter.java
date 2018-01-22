@@ -76,7 +76,7 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(holder.context, WeatherInfoActivity.class);
-                Long key = promptCityDbModelList.get(position).getKey();
+                Long key = (long) (position + 1);
                 intent.putExtra("key", key);
                 holder.context.startActivity(intent);
             }

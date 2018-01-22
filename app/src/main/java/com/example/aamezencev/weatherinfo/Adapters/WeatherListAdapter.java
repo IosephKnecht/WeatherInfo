@@ -44,14 +44,11 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
     private List<ViewPromptCityModel> viewPromptCityModelList;
     private List<PromptCityDbModel> promptCityDbModelList;
     private DaoSession daoSession;
-    private Observable listObservable;
 
     public WeatherListAdapter(List<ViewPromptCityModel> viewPromptCityModelList,
                               List<PromptCityDbModel> promptCityDbModelList) {
         this.viewPromptCityModelList = viewPromptCityModelList;
         this.promptCityDbModelList = promptCityDbModelList;
-        listObservable = Observable.timer(10000, TimeUnit.MILLISECONDS)
-                .subscribeOn(Schedulers.io());
     }
 
     @Override
@@ -66,7 +63,8 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.textView.setText(viewPromptCityModelList.get(position).getStructuredFormatting().getMainText() +
                 System.lineSeparator()
-                + viewPromptCityModelList.get(position).getStructuredFormatting().getSecondaryText());
+                + viewPromptCityModelList.get(position).getStructuredFormatting().getSecondaryText() + System.lineSeparator() +
+                viewPromptCityModelList.get(position).getBriefInformation());
 
         JsonWeatherModel currentModel = new JsonWeatherModel();
 
@@ -76,8 +74,9 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(holder.context, WeatherInfoActivity.class);
-                Long key = (long) (position + 1);
-                intent.putExtra("key", key);
+                Long key = Long.valueOf(viewPromptCityModelList.get(position).getKey());
+                intent.putExtra("promptKey", key);
+                intent.putExtra("actionTitle", holder.textView.getText());
                 holder.context.startActivity(intent);
             }
         });

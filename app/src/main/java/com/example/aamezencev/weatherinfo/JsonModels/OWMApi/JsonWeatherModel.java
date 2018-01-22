@@ -15,23 +15,23 @@ public class JsonWeatherModel {
     private String cod;
     @SerializedName("id")
     private Long id;
-//    @SerializedName("coord")
-//    private JsonCoordInfo jsonCoordInfo;
-//    @SerializedName("main")
-//    private JsonMainInfo jsonMainInfo;
-//    @SerializedName("wind")
-//    private JsonWindInfo jsonWindInfo;
-//    @SerializedName("clouds")
-//    private JsonCloudsInfo jsonCloudsInfo;
+    @SerializedName("coord")
+    private JsonCoordInfo jsonCoordInfo;
+    @SerializedName("main")
+    private JsonMainInfo jsonMainInfo;
+    @SerializedName("wind")
+    private JsonWindInfo jsonWindInfo;
+    @SerializedName("clouds")
+    private JsonCloudsInfo jsonCloudsInfo;
 
-    public JsonWeatherModel(List<JsonWeatherInfo> jsonWeatherInfoList, String cod, JsonCoordInfo jsonCoordInfo, JsonMainInfo jsonMainInfo, JsonWindInfo jsonWindInfo, JsonCloudsInfo jsonCloudsInfo) {
-        this.jsonWeatherInfoList = jsonWeatherInfoList;
-        this.cod = cod;
-//        this.jsonCoordInfo = jsonCoordInfo;
-//        this.jsonMainInfo = jsonMainInfo;
-//        this.jsonWindInfo = jsonWindInfo;
-//        this.jsonCloudsInfo = jsonCloudsInfo;
-    }
+//    public JsonWeatherModel(List<JsonWeatherInfo> jsonWeatherInfoList, String cod, JsonCoordInfo jsonCoordInfo, JsonMainInfo jsonMainInfo, JsonWindInfo jsonWindInfo, JsonCloudsInfo jsonCloudsInfo) {
+//        this.jsonWeatherInfoList = jsonWeatherInfoList;
+//        this.cod = cod;
+////        this.jsonCoordInfo = jsonCoordInfo;
+////        this.jsonMainInfo = jsonMainInfo;
+////        this.jsonWindInfo = jsonWindInfo;
+////        this.jsonCloudsInfo = jsonCloudsInfo;
+//    }
 
     public JsonWeatherModel() {
 
@@ -49,19 +49,19 @@ public class JsonWeatherModel {
         return id;
     }
 
-//    public JsonCoordInfo getJsonCoordInfo() {
-//        return jsonCoordInfo;
-//    }
-//
-//    public JsonMainInfo getJsonMainInfo() {
-//        return jsonMainInfo;
-//    }
-//
-//    public JsonWindInfo getJsonWindInfo() {
-//        return jsonWindInfo;
-//    }
-//
-//    public JsonCloudsInfo getJsonCloudsInfo() {
-//        return jsonCloudsInfo;
-//    }
+    public JsonCoordInfo getJsonCoordInfo() {
+        return jsonCoordInfo;
+    }
+
+    public JsonMainInfo getJsonMainInfo() {
+        return jsonMainInfo;
+    }
+
+    public JsonWindInfo getJsonWindInfo() {
+        return jsonWindInfo;
+    }
+
+    public JsonCloudsInfo getJsonCloudsInfo() {
+        return jsonCloudsInfo;
+    }
 }

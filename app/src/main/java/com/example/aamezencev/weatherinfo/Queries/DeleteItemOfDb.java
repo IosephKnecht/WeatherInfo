@@ -2,6 +2,7 @@ package com.example.aamezencev.weatherinfo.Queries;
 
 import android.os.AsyncTask;
 
+import com.example.aamezencev.weatherinfo.DaoModels.CurrentWeatherDbModelDao;
 import com.example.aamezencev.weatherinfo.DaoModels.DaoSession;
 import com.example.aamezencev.weatherinfo.DaoModels.PromptCityDbModel;
 import com.example.aamezencev.weatherinfo.DaoModels.PromptCityDbModelDao;
@@ -32,6 +33,8 @@ public class DeleteItemOfDb extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
+        CurrentWeatherDbModelDao currentWeatherDbModelDao=daoSession.getCurrentWeatherDbModelDao();
+        currentWeatherDbModelDao.deleteByKey(structureFormattingId);
         QueryBuilder<PromptCityDbModel> queryBuilder = promptCityDbModelDao.queryBuilder();
         queryBuilder.where(PromptCityDbModelDao.Properties.Key.eq(structureFormattingId));
         if (queryBuilder.list().size() != 0)

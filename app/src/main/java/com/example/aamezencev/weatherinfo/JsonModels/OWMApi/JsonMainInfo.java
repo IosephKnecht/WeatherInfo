@@ -8,23 +8,23 @@ import com.google.gson.annotations.SerializedName;
 
 public class JsonMainInfo {
     @SerializedName("temp")
-    private Long temp;
+    private String temp;
     @SerializedName("pressure")
-    private Long pressure;
+    private String pressure;
     @SerializedName("humidity")
-    private Long humidity;
+    private String humidity;
     @SerializedName("temp_min")
-    private Long tempMin;
+    private String tempMin;
     @SerializedName("temp_max")
-    private Long tempMax;
+    private String tempMax;
     @SerializedName("sea_level")
-    private Long seaLevel;
+    private String seaLevel;
     @SerializedName("grnd_level")
-    private Long grndLevel;
+    private String grndLevel;
 
-    public JsonMainInfo(Long temp, Long pressure, Long humidity,
-                        Long tempMin, Long tempMax, Long seaLevel,
-                        Long grndLevel) {
+    public JsonMainInfo(String temp, String pressure, String humidity,
+                        String tempMin, String tempMax, String seaLevel,
+                        String grndLevel) {
         this.temp = temp;
         this.pressure = pressure;
         this.humidity = humidity;
@@ -34,31 +34,31 @@ public class JsonMainInfo {
         this.grndLevel = grndLevel;
     }
 
-    public Long getTemp() {
+    public String getTemp() {
         return temp;
     }
 
-    public Long getPressure() {
+    public String getPressure() {
         return pressure;
     }
 
-    public Long getHumidity() {
+    public String getHumidity() {
         return humidity;
     }
 
-    public Long getTempMin() {
+    public String getTempMin() {
         return tempMin;
     }
 
-    public Long getTempMax() {
+    public String getTempMax() {
         return tempMax;
     }
 
-    public Long getSeaLevel() {
+    public String getSeaLevel() {
         return seaLevel;
     }
 
-    public Long getGrndLevel() {
+    public String getGrndLevel() {
         return grndLevel;
     }
 

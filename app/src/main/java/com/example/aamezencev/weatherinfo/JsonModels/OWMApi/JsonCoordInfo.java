@@ -8,20 +8,24 @@ import com.google.gson.annotations.SerializedName;
 
 public class JsonCoordInfo {
     @SerializedName("lon")
-    private Long lon;
+    private String lon;
     @SerializedName("lat")
-    private Long lat;
+    private String lat;
 
-    public JsonCoordInfo(Long lon, Long lat) {
+    public JsonCoordInfo(String lon, String lat) {
         this.lon = lon;
         this.lat = lat;
     }
 
-    public Long getLat() {
+    public JsonCoordInfo() {
+
+    }
+
+    public String getLat() {
         return lat;
     }
 
-    public Long getLon() {
+    public String getLon() {
         return lon;
     }
 }

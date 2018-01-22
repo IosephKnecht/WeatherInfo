@@ -2,6 +2,7 @@ package com.example.aamezencev.weatherinfo.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 import com.example.aamezencev.weatherinfo.Events.FloatingButtonEventDb;
 import com.example.aamezencev.weatherinfo.MainActivity;
 import com.example.aamezencev.weatherinfo.R;
+import com.example.aamezencev.weatherinfo.UpdateService;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewCityModel;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
 import com.example.aamezencev.weatherinfo.WeatherListActivity;
@@ -45,6 +47,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             public void onClick(View view) {
                 FloatingButtonEventDb floatingButtonEventDb = new FloatingButtonEventDb(selectIsCheckedItem(), viewHolder.context);
                 floatingButtonEventDb.execute();
+                viewHolder.context.startService(new Intent(viewHolder.context, UpdateService.class));
                 viewHolder.context.startActivity(new Intent(viewHolder.context, WeatherListActivity.class));
             }
         });

@@ -20,10 +20,10 @@ public class App extends Application {
 
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(this, "weatherInfoDb-db");
         Database db = helper.getWritableDb();
-        daoSession=new DaoMaster(db).newSession();
+        daoSession = new DaoMaster(db).newSession();
     }
 
-    public DaoSession getDaoSession(){
+    public DaoSession getDaoSession() {
         return daoSession;
     }
 }

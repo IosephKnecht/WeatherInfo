@@ -36,7 +36,7 @@ public class WeatherInfoAdapter extends RecyclerView.Adapter<WeatherInfoAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.tvWeatherInfo.setText(viewCurrentWeatherModel.toString());
+        holder.tvWeatherInfo.setText(viewCurrentWeatherModel.getFullInfotmation());
         Glide.with(holder.ivIconWeather.getContext())
                 .load("http://openweathermap.org/img/w/" + viewCurrentWeatherModel.getIcon() + ".png")
                 .into(holder.ivIconWeather);

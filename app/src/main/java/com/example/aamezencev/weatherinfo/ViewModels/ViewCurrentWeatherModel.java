@@ -11,6 +11,18 @@ public class ViewCurrentWeatherModel {
     private String icon;
     private String cod;
     private Long id;
+    private String lon;
+    private String lat;
+    private String temp;
+    private String pressure;
+    private String humidity;
+    private String tempMin;
+    private String tempMax;
+    private String seaLevel;
+    private String grndLevel;
+    private String speed;
+    private String deg;
+    private Long all;
 
     public ViewCurrentWeatherModel() {
     }
@@ -63,11 +75,119 @@ public class ViewCurrentWeatherModel {
         this.id = id;
     }
 
-    @Override
-    public String toString() {
+    public String getBriefInformation() {
         String lineSep = System.lineSeparator();
-        return main +
-                lineSep +
-                description;
+        return "weather: " + main + " " + description + lineSep;
     }
+
+    public String getFullInfotmation() {
+        String lineSep = System.lineSeparator();
+        return "coordinates: " + lat + " " + lon + lineSep +
+                "weather: " + main + " " + description + lineSep +
+                "temp: " + temp + lineSep +
+                "pressure: " + pressure + lineSep +
+                "humidity: " + humidity + lineSep +
+                "temp_min: " + tempMin + lineSep +
+                "temp_max: " + tempMax + lineSep +
+                "wind_speed" + speed + lineSep +
+                "wind_deg" + deg + lineSep +
+                "clouds" + all + lineSep;
+    }
+
+    public String getLon() {
+        return lon;
+    }
+
+    public void setLon(String lon) {
+        this.lon = lon;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getTemp() {
+        return temp;
+    }
+
+    public void setTemp(String temp) {
+        this.temp = temp;
+    }
+
+    public String getPressure() {
+        return pressure;
+    }
+
+    public void setPressure(String pressure) {
+        this.pressure = pressure;
+    }
+
+    public String getHumidity() {
+        return humidity;
+    }
+
+    public void setHumidity(String humidity) {
+        this.humidity = humidity;
+    }
+
+    public String getTempMin() {
+        return tempMin;
+    }
+
+    public void setTempMin(String tempMin) {
+        this.tempMin = tempMin;
+    }
+
+    public String getTempMax() {
+        return tempMax;
+    }
+
+    public void setTempMax(String tempMax) {
+        this.tempMax = tempMax;
+    }
+
+    public String getSeaLevel() {
+        return seaLevel;
+    }
+
+    public void setSeaLevel(String seaLevel) {
+        this.seaLevel = seaLevel;
+    }
+
+    public String getGrndLevel() {
+        return grndLevel;
+    }
+
+    public void setGrndLevel(String grndLevel) {
+        this.grndLevel = grndLevel;
+    }
+
+    public String getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(String speed) {
+        this.speed = speed;
+    }
+
+    public String getDeg() {
+        return deg;
+    }
+
+    public void setDeg(String deg) {
+        this.deg = deg;
+    }
+
+    public Long getAll() {
+        return all;
+    }
+
+    public void setAll(Long all) {
+        this.all = all;
+    }
+
 }

@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.example.aamezencev.weatherinfo.Adapters.WeatherInfoAdapter;
 import com.example.aamezencev.weatherinfo.Adapters.WeatherListAdapter;
@@ -39,7 +42,7 @@ public class WeatherInfoRetainFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        Long key = getArguments().getLong("key");
+        Long key = getArguments().getLong("promptKey");
         DaoSession daoSession = ((App) getActivity().getApplicationContext()).getDaoSession();
         FindWeatherByKey findWeatherByKey = new FindWeatherByKey(key, daoSession);
         findWeatherByKey.execute();
@@ -80,6 +83,13 @@ public class WeatherInfoRetainFragment extends Fragment {
 
         paint();
 
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        getActivity().setTitle(getArguments().getString("actionTitle"));
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     public void paint() {

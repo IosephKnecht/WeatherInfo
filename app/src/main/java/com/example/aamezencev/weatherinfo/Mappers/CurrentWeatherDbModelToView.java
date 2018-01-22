@@ -25,6 +25,17 @@ public class CurrentWeatherDbModelToView {
             viewCurrentWeatherModel.setIcon(currentWeatherDbModel.getIcon());
             viewCurrentWeatherModel.setId(currentWeatherDbModel.getId());
             viewCurrentWeatherModel.setMain(currentWeatherDbModel.getMain());
+            viewCurrentWeatherModel.setLon(currentWeatherDbModel.getLon());
+            viewCurrentWeatherModel.setLat(currentWeatherDbModel.getLat());
+            viewCurrentWeatherModel.setPressure(currentWeatherDbModel.getPressure());
+            viewCurrentWeatherModel.setTemp(currentWeatherDbModel.getTemp());
+            viewCurrentWeatherModel.setHumidity(currentWeatherDbModel.getHumidity());
+            viewCurrentWeatherModel.setTempMin(currentWeatherDbModel.getTempMin());
+            viewCurrentWeatherModel.setTempMax(currentWeatherDbModel.getTempMax());
+            viewCurrentWeatherModel.setSpeed(currentWeatherDbModel.getSpeed());
+            viewCurrentWeatherModel.setDeg(currentWeatherDbModel.getDeg());
+            viewCurrentWeatherModel.setAll(currentWeatherDbModel.getAll());
+
         }
         else {
             viewCurrentWeatherModel.setCod("1");

@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 
 import com.example.aamezencev.weatherinfo.DaoModels.CurrentWeatherDbModel;
 import com.example.aamezencev.weatherinfo.DaoModels.DaoSession;
+import com.example.aamezencev.weatherinfo.Events.UpdatedCurrentWeather;
 import com.example.aamezencev.weatherinfo.Mappers.JsonWeatherModelToDb;
 import com.example.aamezencev.weatherinfo.DaoModels.PromptCityDbModel;
 import com.example.aamezencev.weatherinfo.JsonModels.JsonResultsGeo;
@@ -16,6 +17,8 @@ import com.example.aamezencev.weatherinfo.Queries.AddListToDb;
 import com.example.aamezencev.weatherinfo.Queries.AllItemQuery;
 import com.example.aamezencev.weatherinfo.Requests.GetCurrentWeather;
 import com.example.aamezencev.weatherinfo.Requests.GetGeoToPlaceId;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,10 +103,13 @@ public class UpdateService extends Service {
                         jsonWeatherModelList.add(jsonWeatherModel);
                     }
                 }
-                JsonWeatherModelToDb mapper = new JsonWeatherModelToDb(jsonWeatherModelList);
+                JsonWeatherModelToDb mapper = new JsonWeatherModelToDb(jsonWeatherModelList,promptCityDbModelList);
                 List<CurrentWeatherDbModel> currentWeatherDbModelList = mapper.map();
                 AddListToDb addListToDb = new AddListToDb(currentWeatherDbModelList, daoSession);
-                if (currentWeatherDbModelList.size() != 0) addListToDb.execute();
+                if (currentWeatherDbModelList.size() != 0) {
+                    addListToDb.execute();
+                    EventBus.getDefault().post(new UpdatedCurrentWeather(currentWeatherDbModelList));
+                }
 
             }
         };

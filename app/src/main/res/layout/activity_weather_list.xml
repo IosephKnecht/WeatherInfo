@@ -7,16 +7,18 @@
     tools:context="com.example.aamezencev.weatherinfo.WeatherListActivity">
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/weatherRecycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/weatherRecycler"/>
+        android:layout_height="match_parent" />
+
     <FrameLayout
+        android:id="@+id/weatherRetainFragment"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/weatherRetainFragment"/>
+        android:layout_height="wrap_content"></FrameLayout>
+
     <FrameLayout
+        android:id="@+id/settingsPrefFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/settingsPrefFragment"/>
+        android:layout_height="match_parent" />
 
 </android.support.constraint.ConstraintLayout>

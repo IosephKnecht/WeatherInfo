@@ -3,6 +3,7 @@ package com.example.aamezencev.weatherinfo;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -24,8 +25,18 @@ public class WeatherListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_list);
-        createWeatherRetainFragment();
         weatherRecycler = findViewById(R.id.weatherRecycler);
+
+        Intent intent = new Intent(this, UpdateService.class);
+
+        boolean state = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("serviceSwitch", true);
+        if (state) {
+            startService(intent);
+        } else {
+            this.stopService(intent);
+        }
+
+        createWeatherRetainFragment();
     }
 
     @Override

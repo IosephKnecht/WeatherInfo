@@ -8,20 +8,20 @@ import com.google.gson.annotations.SerializedName;
 
 public class JsonWindInfo {
     @SerializedName("speed")
-    private Long speed;
+    private String speed;
     @SerializedName("deg")
-    private Long deg;
+    private String deg;
 
-    public JsonWindInfo(Long speed, Long deg) {
+    public JsonWindInfo(String speed, String deg) {
         this.speed = speed;
         this.deg = deg;
     }
 
-    public Long getSpeed() {
+    public String getSpeed() {
         return speed;
     }
 
-    public Long getDeg() {
+    public String getDeg() {
         return deg;
     }
 }

@@ -9,7 +9,9 @@ import android.support.v7.widget.RecyclerView;
 import com.example.aamezencev.weatherinfo.Adapters.MainAdapter;
 import com.example.aamezencev.weatherinfo.Adapters.WeatherListAdapter;
 import com.example.aamezencev.weatherinfo.App;
+import com.example.aamezencev.weatherinfo.DaoModels.CurrentWeatherDbModel;
 import com.example.aamezencev.weatherinfo.DaoModels.PromptCityDbModel;
+import com.example.aamezencev.weatherinfo.Events.UpdatedCurrentWeather;
 import com.example.aamezencev.weatherinfo.Events.WeatherDeleteItemEvent;
 import com.example.aamezencev.weatherinfo.Mappers.PromptCityDbModelToViewPromptCityModel;
 import com.example.aamezencev.weatherinfo.Queries.AllItemQuery;
@@ -18,6 +20,7 @@ import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +41,16 @@ public class WeatherListRetainFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().unregister(this);
+        super.onDestroy();
     }
 
     @Override
     public void onStop() {
-        EventBus.getDefault().unregister(this);
         super.onStop();
     }
 
@@ -51,6 +58,7 @@ public class WeatherListRetainFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        EventBus.getDefault().register(this);
         AllItemQuery allItemQuery = new AllItemQuery(((App) getActivity().getApplicationContext()).getDaoSession());
         allItemQuery.execute();
         promptCityDbModelList = new ArrayList<>();
@@ -83,7 +91,7 @@ public class WeatherListRetainFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void paint(WeatherDeleteItemEvent weatherDeleteItemEvent) {
         mRecyclerView = (RecyclerView) getActivity().findViewById(R.id.weatherRecycler);
 
@@ -98,6 +106,18 @@ public class WeatherListRetainFragment extends Fragment {
         mAdapter = new WeatherListAdapter(weatherDeleteItemEvent.getViewCityModelList(), weatherDeleteItemEvent.getPromptCityDbModelList());
 
         mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void updatedCurrentWeather(UpdatedCurrentWeather updatedCurrentWeather) {
+        int i = -1;
+        for (CurrentWeatherDbModel dbModel : updatedCurrentWeather.getCurrentWeatherDbModelList()) {
+            i++;
+            String briefInformation = new String();
+            briefInformation += "weather: " + dbModel.getMain() + " " + dbModel.getDescription();
+            viewPromptCityModelList.get(i).setBriefInformation(briefInformation);
+            paint();
+        }
     }
 
 

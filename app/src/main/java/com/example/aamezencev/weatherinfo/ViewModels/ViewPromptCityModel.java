@@ -13,6 +13,9 @@ public class ViewPromptCityModel {
     private ViewPromptCityStructureFormatting structuredFormatting;
     private boolean isChecked = false;
     private String placeId;
+    private String key;
+
+    private String briefInformation;
 
     public ViewPromptCityModel() {
 
@@ -67,5 +70,21 @@ public class ViewPromptCityModel {
 
     public void setPlaceId(String placeId) {
         this.placeId = placeId;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getBriefInformation() {
+        return briefInformation;
+    }
+
+    public void setBriefInformation(String briefInformation) {
+        this.briefInformation = briefInformation;
     }
 }

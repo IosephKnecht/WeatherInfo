@@ -24,38 +24,24 @@ public class CurrentWeatherDbModel {
     private String cod;
     @NotNull
     private Long id;
-    @NotNull
     private String lon;
-    @NotNull
     private String lat;
-    @NotNull
     private String temp;
-    @NotNull
     private String pressure;
-    @NotNull
     private String humidity;
-    @NotNull
     private String tempMin;
-    @NotNull
     private String tempMax;
-    @Nullable
     private String seaLevel;
-    @Nullable
     private String grndLevel;
-    @NotNull
     private String speed;
-    @NotNull
     private String deg;
-    @NotNull
     private Long all;
-    @Generated(hash = 63842790)
+    @Generated(hash = 938086516)
     public CurrentWeatherDbModel(Long key, @NotNull String main,
             @NotNull String description, @NotNull String icon, @NotNull String cod,
-            @NotNull Long id, @NotNull String lon, @NotNull String lat,
-            @NotNull String temp, @NotNull String pressure,
-            @NotNull String humidity, @NotNull String tempMin,
-            @NotNull String tempMax, String seaLevel, String grndLevel,
-            @NotNull String speed, @NotNull String deg, @NotNull Long all) {
+            @NotNull Long id, String lon, String lat, String temp, String pressure,
+            String humidity, String tempMin, String tempMax, String seaLevel,
+            String grndLevel, String speed, String deg, Long all) {
         this.key = key;
         this.main = main;
         this.description = description;

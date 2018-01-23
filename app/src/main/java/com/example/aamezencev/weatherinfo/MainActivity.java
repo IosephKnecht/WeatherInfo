@@ -1,11 +1,14 @@
 package com.example.aamezencev.weatherinfo;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
-import android.content.Intent;
+import android.app.LoaderManager;
+import android.content.AsyncTaskLoader;
+import android.content.Context;
+import android.content.Loader;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -13,50 +16,60 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.example.aamezencev.weatherinfo.Fragments.MainRetainFragment;
+import com.example.aamezencev.weatherinfo.Adapters.MainAdapter;
+import com.example.aamezencev.weatherinfo.Fragments.WeatherListRetainFragment;
+import com.example.aamezencev.weatherinfo.Requests.PromptRequest;
+import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
 import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView;
 
+import org.reactivestreams.Subscription;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity {
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 
-    private MainRetainFragment mainRetainFragment;
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<ViewPromptCityModel>> {
+
     private View spinner;
-
-
-    public MainActivity() {
-        super();
-    }
+    private RecyclerView mRecyclerView;
+    private SearchView searchView;
+    private CompositeDisposable disposables;
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.mainRetainFragment);
-        if (fragment != null) {
-            mainRetainFragment = (MainRetainFragment) fragment;
-            mainRetainFragment.paint();
-        }
-
         paintSpinner();
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        stopService(new Intent(this, UpdateService.class));
-        super.onDestroy();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        disposables = new CompositeDisposable();
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.mainRecyclerView);
+        mRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        mRecyclerView.setLayoutManager(layoutManager);
+
+        if (getLoaderManager().getLoader(1) != null) {
+            Loader loader = getLoaderManager().getLoader(1);
+            paint(((MainLoader)loader).getViewPromptCityModelList());
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        disposables.dispose();
     }
 
     private void paintSpinner() {
@@ -72,38 +85,96 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
-        final MenuItem searchItem = menu.findItem(R.id.action_search);
-        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        RxSearchView.queryTextChanges(searchView)
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        //paint(((MainLoader) getLoaderManager().initLoader(1, null, this)).getViewPromptCityModelList());
+        disposables.add(RxSearchView.queryTextChanges(searchView)
                 .debounce(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .filter(str -> str.length() >= 4)
                 .subscribe(aVoid -> {
-                    if (aVoid.length() >= 4) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                createMainReatainFragment(aVoid.toString());
-                            }
-                        });
-                    }
-                });
+                    getLoaderManager().restartLoader(1, null, this);
+                }));
 
         return true;
     }
 
-    private void createMainReatainFragment(String query) {
-        Fragment fragment = getFragmentManager().findFragmentById(R.id.mainRetainFragment);
+    private void paint(List<ViewPromptCityModel> viewCityModelList) {
+        View view = findViewById(R.id.spinner_view);
+        if (view != null) view.setVisibility(View.INVISIBLE);
 
-        if (fragment == null || (fragment != null && fragment.getArguments().getString("city").toString().equals(query) == false)) {
-            spinner.setVisibility(View.VISIBLE);
-            mainRetainFragment = new MainRetainFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString("city", query);
-            mainRetainFragment.setArguments(bundle);
-            FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.mainRetainFragment, mainRetainFragment);
-            fragmentTransaction.commit();
-        } else {
-            mainRetainFragment.paint();
+        MainAdapter mAdapter = new MainAdapter(viewCityModelList);
+
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public Loader<List<ViewPromptCityModel>> onCreateLoader(int i, Bundle bundle) {
+        Loader<List<ViewPromptCityModel>> loader = null;
+        if (i == 1) {
+            loader = new MainLoader(this, searchView.getQuery().toString());
+        }
+        return loader;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<ViewPromptCityModel>> loader, List<ViewPromptCityModel> viewPromptCityModels) {
+        paint(viewPromptCityModels);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<ViewPromptCityModel>> loader) {
+    }
+
+
+    private static class MainLoader extends AsyncTaskLoader<List<ViewPromptCityModel>> {
+        private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
+        private String city;
+
+        public MainLoader(Context context, String city) {
+            super(context);
+            this.city = city;
+        }
+
+        @Override
+        public List<ViewPromptCityModel> loadInBackground() {
+            PromptRequest promptRequest = new PromptRequest(city);
+            promptRequest.execute();
+            viewPromptCityModelList = new ArrayList<>();
+            try {
+                viewPromptCityModelList = promptRequest.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+            return viewPromptCityModelList;
+        }
+
+        @Override
+        protected void onStartLoading() {
+            super.onStartLoading();
+            if (viewPromptCityModelList == null || viewPromptCityModelList.size() == 0) forceLoad();
+        }
+
+
+        @Override
+        protected void onAbandon() {
+            super.onAbandon();
+        }
+
+        public List<ViewPromptCityModel> getViewPromptCityModelList() {
+            return viewPromptCityModelList;
+        }
+
+        @Override
+        protected void onReset() {
+            super.onReset();
+        }
+
+        @Override
+        public void deliverResult(List<ViewPromptCityModel> data) {
+            super.deliverResult(data);
         }
     }
 }

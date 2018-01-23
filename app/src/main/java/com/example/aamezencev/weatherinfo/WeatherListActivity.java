@@ -9,9 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
-import com.example.aamezencev.weatherinfo.Fragments.MainRetainFragment;
 import com.example.aamezencev.weatherinfo.Fragments.SettingsFragment;
 import com.example.aamezencev.weatherinfo.Fragments.WeatherListRetainFragment;
 

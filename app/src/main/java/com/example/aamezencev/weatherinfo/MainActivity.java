@@ -3,8 +3,10 @@ package com.example.aamezencev.weatherinfo;
 import android.app.LoaderManager;
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.example.aamezencev.weatherinfo.Adapters.MainAdapter;
+import com.example.aamezencev.weatherinfo.Events.FloatingButtonEventDb;
 import com.example.aamezencev.weatherinfo.Fragments.WeatherListRetainFragment;
 import com.example.aamezencev.weatherinfo.Requests.PromptRequest;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         if (getLoaderManager().getLoader(1) != null) {
             Loader loader = getLoaderManager().getLoader(1);
-            paint(((MainLoader)loader).getViewPromptCityModelList());
+            paint(((MainLoader) loader).getViewPromptCityModelList());
         }
     }
 
@@ -104,6 +107,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if (view != null) view.setVisibility(View.INVISIBLE);
 
         MainAdapter mAdapter = new MainAdapter(viewCityModelList);
+
+        FloatingActionButton floatingButton = (FloatingActionButton) findViewById(R.id.floatingActionButton);
+        floatingButton.setVisibility(mAdapter.isVisibleFloatingButton());
+
+        floatingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FloatingButtonEventDb floatingButtonEventDb = new FloatingButtonEventDb(mAdapter.selectIsCheckedItem(), MainActivity.this);
+                floatingButtonEventDb.execute();
+                startService(new Intent(MainActivity.this, UpdateService.class));
+                startActivity(new Intent(MainActivity.this, WeatherListActivity.class));
+            }
+        });
 
         mRecyclerView.setAdapter(mAdapter);
     }

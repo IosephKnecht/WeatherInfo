@@ -2,6 +2,7 @@ package com.example.aamezencev.weatherinfo.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,18 +37,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.city_item, parent, false);
 
         final ViewHolder viewHolder = new ViewHolder(view);
-        floatingButton = ((MainActivity) viewHolder.context).findViewById(R.id.floatingActionButton);
-        floatingButton.setVisibility(isVisibleFloatingButton());
-
-        floatingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FloatingButtonEventDb floatingButtonEventDb = new FloatingButtonEventDb(selectIsCheckedItem(), viewHolder.context);
-                floatingButtonEventDb.execute();
-                viewHolder.context.startService(new Intent(viewHolder.context, UpdateService.class));
-                viewHolder.context.startActivity(new Intent(viewHolder.context, WeatherListActivity.class));
-            }
-        });
+        floatingButton = ((MainActivity) parent.getContext()).findViewById(R.id.floatingActionButton);
         return viewHolder;
     }
 
@@ -56,19 +46,15 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         final ViewPromptCityModel viewPromptCityModel = viewPromptCityModelList.get(position);
         holder.cbCity.setText(stringConcatenation(viewPromptCityModelList.get(position)));
         holder.cbCity.setChecked(viewPromptCityModel.isChecked());
+        holder.cbCity.setOnClickListener(view -> {
+            boolean state = viewPromptCityModel.isChecked();
+            viewPromptCityModel.setChecked(!state);
 
-        holder.cbCity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                boolean state = viewPromptCityModel.isChecked();
-                viewPromptCityModel.setChecked(!state);
-
-                floatingButton.setVisibility(isVisibleFloatingButton());
-            }
+            floatingButton.setVisibility(isVisibleFloatingButton());
         });
     }
 
-    private List<ViewPromptCityModel> selectIsCheckedItem() {
+    public List<ViewPromptCityModel> selectIsCheckedItem() {
         List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
         for (ViewPromptCityModel viewPromptCityModel : this.viewPromptCityModelList) {
             if (viewPromptCityModel.isChecked()) viewPromptCityModelList.add(viewPromptCityModel);
@@ -97,7 +83,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         this.viewPromptCityModelList = viewPromptCityModelList;
     }
 
-    private int isVisibleFloatingButton() {
+    public int isVisibleFloatingButton() {
         for (ViewPromptCityModel viewPromptCityModel : viewPromptCityModelList) {
             if (viewPromptCityModel.isChecked()) return View.VISIBLE;
         }

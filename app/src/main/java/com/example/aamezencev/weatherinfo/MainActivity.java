@@ -20,12 +20,9 @@ import android.widget.FrameLayout;
 
 import com.example.aamezencev.weatherinfo.Adapters.MainAdapter;
 import com.example.aamezencev.weatherinfo.Events.FloatingButtonEventDb;
-import com.example.aamezencev.weatherinfo.Fragments.WeatherListRetainFragment;
 import com.example.aamezencev.weatherinfo.Requests.PromptRequest;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
 import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView;
-
-import org.reactivestreams.Subscription;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -2,6 +2,7 @@ package com.example.aamezencev.weatherinfo.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,12 +17,14 @@ import com.example.aamezencev.weatherinfo.DaoModels.PromptCityDbModel;
 import com.example.aamezencev.weatherinfo.Events.WeatherDeleteItemEvent;
 import com.example.aamezencev.weatherinfo.JsonModels.JsonResultsGeo;
 import com.example.aamezencev.weatherinfo.JsonModels.OWMApi.JsonWeatherModel;
+import com.example.aamezencev.weatherinfo.MainActivity;
 import com.example.aamezencev.weatherinfo.Queries.DeleteItemOfDb;
 import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.Requests.GetCurrentWeather;
 import com.example.aamezencev.weatherinfo.Requests.GetGeoToPlaceId;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
 import com.example.aamezencev.weatherinfo.WeatherInfoActivity;
+import com.example.aamezencev.weatherinfo.WeatherListActivity;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -86,6 +89,7 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
             public void onClick(View view) {
                 DeleteItemOfDb deleteItemOfDb = new DeleteItemOfDb(promptCityDbModelList.get(position).getKey(), daoSession);
                 deleteItemOfDb.execute();
+
             }
         });
     }

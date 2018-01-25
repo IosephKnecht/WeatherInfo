@@ -6,25 +6,20 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
-import com.example.aamezencev.weatherinfo.DaoModels.CurrentWeatherDbModel;
 import com.example.aamezencev.weatherinfo.DaoModels.DaoSession;
 import com.example.aamezencev.weatherinfo.Events.UpdatedCurrentWeather;
 import com.example.aamezencev.weatherinfo.Mappers.JsonWeatherModelToDb;
-import com.example.aamezencev.weatherinfo.DaoModels.PromptCityDbModel;
-import com.example.aamezencev.weatherinfo.JsonModels.JsonResultsGeo;
-import com.example.aamezencev.weatherinfo.JsonModels.OWMApi.JsonWeatherModel;
-import com.example.aamezencev.weatherinfo.Queries.AddListToDb;
-import com.example.aamezencev.weatherinfo.Queries.AllItemQuery;
-import com.example.aamezencev.weatherinfo.Requests.GetCurrentWeather;
-import com.example.aamezencev.weatherinfo.Requests.GetGeoToPlaceId;
+import com.example.aamezencev.weatherinfo.Queries.RxDbManager;
+import com.example.aamezencev.weatherinfo.Requests.RxGoogleApiManager;
+import com.example.aamezencev.weatherinfo.Requests.RxOWMApiManager;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.ExecutionException;
+
+import io.reactivex.Observable;
+import io.reactivex.disposables.CompositeDisposable;
 
 /**
  * Created by aa.mezencev on 19.01.2018.
@@ -33,6 +28,7 @@ import java.util.concurrent.ExecutionException;
 public class UpdateService extends Service {
 
     private Timer timer;
+    private CompositeDisposable compositeDisposable;
 
     @Nullable
     @Override
@@ -44,10 +40,12 @@ public class UpdateService extends Service {
     public void onDestroy() {
         super.onDestroy();
         timer.cancel();
+        compositeDisposable.dispose();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        compositeDisposable = new CompositeDisposable();
         timer = new Timer();
         String prefString = PreferenceManager.getDefaultSharedPreferences(this).getString("etDelayService", null);
         int periodValue = 0;
@@ -61,55 +59,25 @@ public class UpdateService extends Service {
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                AllItemQuery allItemQuery = new AllItemQuery(daoSession);
-                allItemQuery.execute();
-                List<PromptCityDbModel> promptCityDbModelList = new ArrayList<>();
-                try {
-                    promptCityDbModelList = allItemQuery.get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                }
-
-                List<JsonWeatherModel> jsonWeatherModelList = new ArrayList<>();
-                for (PromptCityDbModel dbModel : promptCityDbModelList) {
-                    GetGeoToPlaceId getGeoToPlaceId = new GetGeoToPlaceId(dbModel.getPlaceId());
-                    getGeoToPlaceId.execute();
-                    JsonResultsGeo jsonResultsGeo = new JsonResultsGeo();
-                    try {
-                        jsonResultsGeo = getGeoToPlaceId.get();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (ExecutionException e) {
-                        e.printStackTrace();
-                    }
-                    JsonWeatherModel jsonWeatherModel = new JsonWeatherModel();
-                    if (jsonResultsGeo != null) {
-                        GetCurrentWeather getCurrentWeather = new GetCurrentWeather(jsonResultsGeo.getJsonLocationModel().getLat(),
-                                jsonResultsGeo.getJsonLocationModel().getLng());
-                        getCurrentWeather.execute();
-                        try {
-                            jsonWeatherModel = getCurrentWeather.get();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        }
-                        jsonWeatherModelList.add(jsonWeatherModel);
-                    }
-                }
-                JsonWeatherModelToDb mapper = new JsonWeatherModelToDb(jsonWeatherModelList, promptCityDbModelList);
-                List<CurrentWeatherDbModel> currentWeatherDbModelList = mapper.map();
-                AddListToDb addListToDb = new AddListToDb(currentWeatherDbModelList, daoSession);
-                if (currentWeatherDbModelList.size() != 0) {
-                    addListToDb.execute();
-                    EventBus.getDefault().post(new UpdatedCurrentWeather(currentWeatherDbModelList));
-                }
+                RxDbManager.setDaoSession(daoSession);
+                compositeDisposable.add(RxDbManager.instance().allItemQuery()
+                        .flatMap(cities -> Observable.fromIterable(cities)
+                                .flatMap(city -> RxGoogleApiManager.instance().geoRequest(city.getPlaceId()))
+                                .flatMap(geo -> RxOWMApiManager.instance().currentWeatherRequest(geo.getJsonLocationModel().getLat(), geo.getJsonLocationModel().getLng()))
+                                .toList()
+                                .map(weatherModels-> new JsonWeatherModelToDb(weatherModels,cities).map())
+                                .toObservable()
+                                .flatMap(aVoid -> RxDbManager.instance().addListToDbQuery(aVoid))
+                        )
+                        .subscribe(dbList -> {
+                            EventBus.getDefault().post(new UpdatedCurrentWeather(dbList));
+                        }));
 
             }
         };
         timer.schedule(timerTask, 0, periodValue);
-        return super.onStartCommand(intent, flags, startId);
+        return super.
+
+                onStartCommand(intent, flags, startId);
     }
 }

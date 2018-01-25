@@ -1,20 +1,15 @@
 package com.example.aamezencev.weatherinfo.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 
-import com.example.aamezencev.weatherinfo.Events.FloatingButtonEventDb;
 import com.example.aamezencev.weatherinfo.MainActivity;
 import com.example.aamezencev.weatherinfo.R;
-import com.example.aamezencev.weatherinfo.UpdateService;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
-import com.example.aamezencev.weatherinfo.WeatherListActivity;
 
 import java.util.ArrayList;
 import java.util.List;

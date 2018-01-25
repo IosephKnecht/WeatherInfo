@@ -1,7 +1,6 @@
 package com.example.aamezencev.weatherinfo;
 
 import android.app.LoaderManager;
-import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
@@ -19,18 +18,24 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.example.aamezencev.weatherinfo.Adapters.MainAdapter;
-import com.example.aamezencev.weatherinfo.Events.FloatingButtonEventDb;
-import com.example.aamezencev.weatherinfo.Requests.PromptRequest;
+import com.example.aamezencev.weatherinfo.JsonModels.JsonPromptModel;
+import com.example.aamezencev.weatherinfo.Mappers.JsonPromptModelToViewPromptModel;
+import com.example.aamezencev.weatherinfo.Queries.RxDbManager;
+import com.example.aamezencev.weatherinfo.Requests.RxGoogleApiManager;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
+import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptModel;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<ViewPromptCityModel>> {
 
@@ -38,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private RecyclerView mRecyclerView;
     private SearchView searchView;
     private CompositeDisposable disposables;
+    private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
 
     @Override
     protected void onStart() {
@@ -59,10 +65,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        if (getLoaderManager().getLoader(1) != null) {
-            Loader loader = getLoaderManager().getLoader(1);
-            paint(((MainLoader) loader).getViewPromptCityModelList());
-        }
+        getLoaderManager().initLoader(1, null, this);
     }
 
     @Override
@@ -87,13 +90,30 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        //paint(((MainLoader) getLoaderManager().initLoader(1, null, this)).getViewPromptCityModelList());
         disposables.add(RxSearchView.queryTextChanges(searchView)
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .filter(str -> str.length() >= 4)
                 .subscribe(aVoid -> {
-                    getLoaderManager().restartLoader(1, null, this);
+                    disposables.add(RxGoogleApiManager.instance().promptRequest(aVoid.toString())
+                            .map(response -> {
+                                String jsonString = response.body().string();
+                                Gson gson = new Gson();
+                                Type type = new TypeToken<JsonPromptModel>() {
+                                }.getType();
+                                JsonPromptModel jsonPromptModel = gson.fromJson(jsonString, type);
+                                return jsonPromptModel;
+                            })
+                            .map(jsonPromptModel -> {
+                                JsonPromptModelToViewPromptModel mapper = new JsonPromptModelToViewPromptModel(jsonPromptModel);
+                                ViewPromptModel viewPromptModel = mapper.map();
+                                return viewPromptModel.getViewPromptCityModelList();
+                            })
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(viewPromptCityModelList -> {
+                                this.viewPromptCityModelList = viewPromptCityModelList;
+                                getLoaderManager().restartLoader(1, null, this);
+                            }));
                 }));
 
         return true;
@@ -111,10 +131,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         floatingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FloatingButtonEventDb floatingButtonEventDb = new FloatingButtonEventDb(mAdapter.selectIsCheckedItem(), MainActivity.this);
-                floatingButtonEventDb.execute();
-                startService(new Intent(MainActivity.this, UpdateService.class));
-                startActivity(new Intent(MainActivity.this, WeatherListActivity.class));
+                RxDbManager.setDaoSession(((App) getApplicationContext()).getDaoSession());
+                RxDbManager.instance().addPromptListToDb(mAdapter.selectIsCheckedItem())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(subs -> {
+                            startService(new Intent(MainActivity.this, UpdateService.class));
+                            startActivity(new Intent(MainActivity.this, WeatherListActivity.class));
+                        });
+
             }
         });
 
@@ -125,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public Loader<List<ViewPromptCityModel>> onCreateLoader(int i, Bundle bundle) {
         Loader<List<ViewPromptCityModel>> loader = null;
         if (i == 1) {
-            loader = new MainLoader(this, searchView.getQuery().toString());
+            loader = new MainLoader(this, viewPromptCityModelList);
         }
         return loader;
     }
@@ -140,54 +165,34 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
 
-    private static class MainLoader extends AsyncTaskLoader<List<ViewPromptCityModel>> {
-        private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
-        private String city;
+    private static class MainLoader extends Loader<List<ViewPromptCityModel>> {
+        private List<ViewPromptCityModel> viewPromptCityModelList;
 
-        public MainLoader(Context context, String city) {
+        public MainLoader(Context context, List<ViewPromptCityModel> viewPromptCityModelList) {
             super(context);
-            this.city = city;
-        }
-
-        @Override
-        public List<ViewPromptCityModel> loadInBackground() {
-            PromptRequest promptRequest = new PromptRequest(city);
-            promptRequest.execute();
-            viewPromptCityModelList = new ArrayList<>();
-            try {
-                viewPromptCityModelList = promptRequest.get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-            return viewPromptCityModelList;
+            this.viewPromptCityModelList = viewPromptCityModelList;
         }
 
         @Override
         protected void onStartLoading() {
             super.onStartLoading();
-            if (viewPromptCityModelList == null || viewPromptCityModelList.size() == 0) forceLoad();
+            if (viewPromptCityModelList != null) {
+                deliverResult(viewPromptCityModelList);
+                return;
+            }
+            forceLoad();
         }
-
 
         @Override
-        protected void onAbandon() {
-            super.onAbandon();
-        }
-
-        public List<ViewPromptCityModel> getViewPromptCityModelList() {
-            return viewPromptCityModelList;
+        public void forceLoad() {
+            super.forceLoad();
+            deliverResult(viewPromptCityModelList);
         }
 
         @Override
         protected void onReset() {
             super.onReset();
-        }
-
-        @Override
-        public void deliverResult(List<ViewPromptCityModel> data) {
-            super.deliverResult(data);
+            viewPromptCityModelList = null;
         }
     }
 }

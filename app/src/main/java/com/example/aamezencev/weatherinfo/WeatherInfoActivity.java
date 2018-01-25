@@ -25,6 +25,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class WeatherInfoActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ViewCurrentWeatherModel> {
@@ -33,11 +34,15 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
 
     private RecyclerView mRecyclerView;
     private WeatherInfoAdapter mAdapter;
+    private CompositeDisposable compositeDisposable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_info);
+
+
+        compositeDisposable = new CompositeDisposable();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.weatherInfoRecycler);
         mRecyclerView.setHasFixedSize(true);
@@ -45,21 +50,29 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
 
+        setTitle(getIntent().getStringExtra("actionTitle"));
+
 
         btnDeleteWeather = (ImageButton) findViewById(R.id.btnDeleteWeather);
         btnDeleteWeather.setOnClickListener(btn -> {
-            RxDbManager.setDaoSession(((App) getApplicationContext()).getDaoSession());
-            RxDbManager.instance().deleteItemOdDbQuery(getIntent().getLongExtra("promptKey", 0))
+            RxDbManager dbManager = ((App) getApplicationContext()).getDbManager();
+            compositeDisposable.add(dbManager.deleteItemOdDbQuery(getIntent().getLongExtra("promptKey", 0))
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(subs -> {
                         PromptCityDbModelToViewPromptCityModel mapper = new PromptCityDbModelToViewPromptCityModel((List<PromptCityDbModel>) subs);
                         WeatherDeleteItemEvent weatherDeleteItemEvent = new WeatherDeleteItemEvent(mapper.map(), (List<PromptCityDbModel>) subs);
                         EventBus.getDefault().post(weatherDeleteItemEvent);
-                    });
-            finish();
+                        finish();
+                    }));
         });
         getLoaderManager().initLoader(1234, null, this);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        compositeDisposable.dispose();
+        super.onDestroy();
     }
 
     public void paint(ViewCurrentWeatherModel viewCurrentWeatherModel) {
@@ -91,12 +104,12 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
 
         private ViewCurrentWeatherModel viewCurrentWeatherModel;
         private Long key;
-        private DaoSession daoSession;
+        private Context context;
 
         public InfoLoader(Context context, Long key) {
             super(context);
             this.key = key;
-            daoSession = ((App) context.getApplicationContext()).getDaoSession();
+            this.context = context;
         }
 
         @Override
@@ -108,8 +121,8 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         @Override
         public void forceLoad() {
             super.forceLoad();
-            RxDbManager.setDaoSession(daoSession);
-            RxDbManager.instance().findWeatherByKey(key)
+            RxDbManager dbManager = ((App) context.getApplicationContext()).getDbManager();
+            dbManager.findWeatherByKey(key)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(subscriber -> {

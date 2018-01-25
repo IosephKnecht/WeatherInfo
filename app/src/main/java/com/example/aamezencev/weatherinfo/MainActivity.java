@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.example.aamezencev.weatherinfo.Adapters.MainAdapter;
+import com.example.aamezencev.weatherinfo.Inrerfaces.CheckBoxClick;
 import com.example.aamezencev.weatherinfo.JsonModels.JsonPromptModel;
 import com.example.aamezencev.weatherinfo.Mappers.JsonPromptModelToViewPromptModel;
 import com.example.aamezencev.weatherinfo.Queries.RxDbManager;
@@ -37,13 +38,15 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<ViewPromptCityModel>> {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<ViewPromptCityModel>>, CheckBoxClick {
 
     private View spinner;
     private RecyclerView mRecyclerView;
     private SearchView searchView;
     private CompositeDisposable disposables;
     private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
+    private MainAdapter mAdapter;
+    private FloatingActionButton floatingActionButton;
 
     @Override
     protected void onStart() {
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.floatingActionButton);
 
         getLoaderManager().initLoader(1, null, this);
     }
@@ -95,7 +99,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 .observeOn(AndroidSchedulers.mainThread())
                 .filter(str -> str.length() >= 4)
                 .subscribe(aVoid -> {
-                    disposables.add(RxGoogleApiManager.instance().promptRequest(aVoid.toString())
+                    RxGoogleApiManager googleApiManager = ((App) getApplicationContext().getApplicationContext()).getGoogleApiManager();
+                    disposables.add(googleApiManager.promptRequest(aVoid.toString())
                             .map(response -> {
                                 String jsonString = response.body().string();
                                 Gson gson = new Gson();
@@ -123,22 +128,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         View view = findViewById(R.id.spinner_view);
         if (view != null) view.setVisibility(View.INVISIBLE);
 
-        MainAdapter mAdapter = new MainAdapter(viewCityModelList);
+        mAdapter = new MainAdapter(viewCityModelList, this);
 
-        FloatingActionButton floatingButton = (FloatingActionButton) findViewById(R.id.floatingActionButton);
-        floatingButton.setVisibility(mAdapter.isVisibleFloatingButton());
+        floatingActionButton.setVisibility(mAdapter.isVisibleFloatingButton());
 
-        floatingButton.setOnClickListener(new View.OnClickListener() {
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RxDbManager.setDaoSession(((App) getApplicationContext()).getDaoSession());
-                RxDbManager.instance().addPromptListToDb(mAdapter.selectIsCheckedItem())
+                RxDbManager dbManager = ((App) getApplicationContext()).getDbManager();
+                disposables.add(dbManager.addPromptListViewToDb(mAdapter.selectIsCheckedItem())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(subs -> {
                             startService(new Intent(MainActivity.this, UpdateService.class));
                             startActivity(new Intent(MainActivity.this, WeatherListActivity.class));
-                        });
+                        }));
 
             }
         });
@@ -162,6 +166,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoaderReset(Loader<List<ViewPromptCityModel>> loader) {
+    }
+
+    @Override
+    public void checkBoxClick(View view, ViewPromptCityModel viewPromptCityModel) {
+        boolean state = viewPromptCityModel.isChecked();
+        viewPromptCityModel.setChecked(!state);
+
+        floatingActionButton.setVisibility(mAdapter.isVisibleFloatingButton());
     }
 
 

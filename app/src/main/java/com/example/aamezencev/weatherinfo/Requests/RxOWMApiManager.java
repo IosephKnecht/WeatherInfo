@@ -15,13 +15,11 @@ import okhttp3.Response;
  */
 
 public class RxOWMApiManager {
-
-    private static RxOWMApiManager rxOWMApiManager;
     private OkHttpClient okHttpClient = new OkHttpClient();
 
     private final String appId = "1929d22867616c7ad0d33873b6d1f32d";
 
-    private RxOWMApiManager() {
+    public RxOWMApiManager() {
 
     }
 
@@ -41,10 +39,5 @@ public class RxOWMApiManager {
                     return jsonWeatherModel;
                 })
                 .subscribeOn(Schedulers.io());
-    }
-
-    public static RxOWMApiManager instance() {
-        if (rxOWMApiManager == null) return rxOWMApiManager = new RxOWMApiManager();
-        return rxOWMApiManager;
     }
 }

@@ -14,21 +14,14 @@ import okhttp3.Response;
  */
 
 public class RxGoogleApiManager {
-
-    private static RxGoogleApiManager rxGoogleApiManager;
     private OkHttpClient okHttpClient = new OkHttpClient();
 
     private final String promptApiKey = "AIzaSyClYMjC6UsJ4KaB1EjUCTgVQR9-qh0VnP8";
 
     private final String geoApiKey = "AIzaSyD14lhUaBFiw8ZWPNXvSy3DszB7sPJfX3Y";
 
-    private RxGoogleApiManager() {
+    public RxGoogleApiManager() {
 
-    }
-
-    public static RxGoogleApiManager instance() {
-        if (rxGoogleApiManager == null) return rxGoogleApiManager = new RxGoogleApiManager();
-        return rxGoogleApiManager;
     }
 
     public Observable<Response> promptRequest(String city) {

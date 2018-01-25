@@ -23,19 +23,10 @@ import io.reactivex.schedulers.Schedulers;
 
 public class RxDbManager {
 
-    private static RxDbManager rxDbManager;
-    private static DaoSession daoSession;
+    private DaoSession daoSession;
 
-    private RxDbManager() {
-    }
-
-    public static void setDaoSession(DaoSession inputDaoSession) {
-        daoSession = inputDaoSession;
-    }
-
-    public static RxDbManager instance() {
-        if (rxDbManager == null) rxDbManager = new RxDbManager();
-        return rxDbManager;
+    public RxDbManager(DaoSession daoSession) {
+        this.daoSession = daoSession;
     }
 
     public Observable<List<PromptCityDbModel>> allItemQuery() {
@@ -86,8 +77,8 @@ public class RxDbManager {
         });
     }
 
-    public Observable addPromptListToDb(List<ViewPromptCityModel> viewPromptCityModelList){
-        return Observable.create(e->{
+    public Observable addPromptListViewToDb(List<ViewPromptCityModel> viewPromptCityModelList) {
+        return Observable.create(e -> {
             List<PromptCityDbModel> promptCityDbModelList = new ArrayList<>();
             ViewPromptCityModelToPromptCityDbModel mapper = new ViewPromptCityModelToPromptCityDbModel(viewPromptCityModelList);
             promptCityDbModelList = mapper.map();
@@ -98,6 +89,15 @@ public class RxDbManager {
             promptCityDbModelDao.insertInTx(promptCityDbModelList);
             e.onNext(e);
             e.onComplete();
+        });
+    }
+
+    public Observable<List<PromptCityDbModel>> addPromptListToDb(List<PromptCityDbModel> promptCityDbModelList) {
+        return Observable.<List<PromptCityDbModel>>create(emitter -> {
+            PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
+            promptCityDbModelDao.insertInTx(promptCityDbModelList);
+            emitter.onNext(promptCityDbModelDao.queryBuilder().list());
+            emitter.onComplete();
         });
     }
 

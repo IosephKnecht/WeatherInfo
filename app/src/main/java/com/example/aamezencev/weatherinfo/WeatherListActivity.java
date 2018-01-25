@@ -13,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.aamezencev.weatherinfo.Adapters.WeatherListAdapter;
 import com.example.aamezencev.weatherinfo.DaoModels.CurrentWeatherDbModel;
@@ -20,6 +21,8 @@ import com.example.aamezencev.weatherinfo.DaoModels.PromptCityDbModel;
 import com.example.aamezencev.weatherinfo.Events.UpdatedCurrentWeather;
 import com.example.aamezencev.weatherinfo.Events.WeatherDeleteItemEvent;
 import com.example.aamezencev.weatherinfo.Fragments.SettingsFragment;
+import com.example.aamezencev.weatherinfo.Inrerfaces.DeleteBtnClick;
+import com.example.aamezencev.weatherinfo.Inrerfaces.WeatherItemClick;
 import com.example.aamezencev.weatherinfo.Mappers.PromptCityDbModelToViewPromptCityModel;
 import com.example.aamezencev.weatherinfo.Queries.RxDbManager;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
@@ -30,12 +33,12 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 
-public class WeatherListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<ViewPromptCityModel>> {
+public class WeatherListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<ViewPromptCityModel>>,
+        WeatherItemClick,DeleteBtnClick{
     private final String prefTag = "settingsPreference";
 
     private RecyclerView mRecyclerView;
@@ -120,7 +123,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     }
 
     public void paint() {
-        mAdapter = new WeatherListAdapter(viewPromptCityModelList, promptCityDbModelList);
+        mAdapter = new WeatherListAdapter(viewPromptCityModelList, promptCityDbModelList, this,this);
 
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -144,6 +147,26 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     @Override
     public void onLoaderReset(Loader<List<ViewPromptCityModel>> loader) {
 
+    }
+
+    @Override
+    public void weatherItemClick(View view, Long key, String actionTitle) {
+        Intent intent = new Intent(this, WeatherInfoActivity.class);
+        intent.putExtra("promptKey", key);
+        intent.putExtra("actionTitle", actionTitle);
+        startActivity(intent);
+    }
+
+    @Override
+    public void deleteBtnClick(View view,PromptCityDbModel promptCityDbModel) {
+        RxDbManager dbManager = ((App) (getApplicationContext())).getDbManager();
+        dbManager.deleteItemOdDbQuery(promptCityDbModel.getKey())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aVoid -> {
+                    PromptCityDbModelToViewPromptCityModel mapper = new PromptCityDbModelToViewPromptCityModel(aVoid);
+                    WeatherDeleteItemEvent weatherDeleteItemEvent = new WeatherDeleteItemEvent(mapper.map(), aVoid);
+                    EventBus.getDefault().post(weatherDeleteItemEvent);
+                });
     }
 
 
@@ -170,8 +193,8 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         public void forceLoad() {
             super.forceLoad();
             promptCityDbModelList = new ArrayList<>();
-            RxDbManager.setDaoSession(((App) context.getApplicationContext()).getDaoSession());
-            compositeDisposable.add(RxDbManager.instance().allItemQuery()
+            RxDbManager dbManager = ((App) context.getApplicationContext()).getDbManager();
+            compositeDisposable.add(dbManager.allItemQuery()
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(list -> {
                         promptCityDbModelList.addAll(list);

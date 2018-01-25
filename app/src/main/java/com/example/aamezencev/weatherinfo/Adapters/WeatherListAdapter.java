@@ -1,7 +1,6 @@
 package com.example.aamezencev.weatherinfo.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,15 +9,15 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.aamezencev.weatherinfo.App;
-import com.example.aamezencev.weatherinfo.DaoModels.DaoSession;
 import com.example.aamezencev.weatherinfo.DaoModels.PromptCityDbModel;
 import com.example.aamezencev.weatherinfo.Events.WeatherDeleteItemEvent;
+import com.example.aamezencev.weatherinfo.Inrerfaces.DeleteBtnClick;
+import com.example.aamezencev.weatherinfo.Inrerfaces.WeatherItemClick;
 import com.example.aamezencev.weatherinfo.JsonModels.OWMApi.JsonWeatherModel;
 import com.example.aamezencev.weatherinfo.Mappers.PromptCityDbModelToViewPromptCityModel;
 import com.example.aamezencev.weatherinfo.Queries.RxDbManager;
 import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
-import com.example.aamezencev.weatherinfo.WeatherInfoActivity;
 
 import org.greenrobot.eventbus.EventBus;
 import org.reactivestreams.Subscriber;
@@ -35,59 +34,37 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
 
     private List<ViewPromptCityModel> viewPromptCityModelList;
     private List<PromptCityDbModel> promptCityDbModelList;
-    private DaoSession daoSession;
+    private WeatherItemClick weatherItemClick;
+    private DeleteBtnClick deleteBtnClick;
 
     public WeatherListAdapter(List<ViewPromptCityModel> viewPromptCityModelList,
-                              List<PromptCityDbModel> promptCityDbModelList) {
+                              List<PromptCityDbModel> promptCityDbModelList, WeatherItemClick weatherItemClick,
+                              DeleteBtnClick deleteBtnClick) {
         this.viewPromptCityModelList = viewPromptCityModelList;
         this.promptCityDbModelList = promptCityDbModelList;
+        this.weatherItemClick = weatherItemClick;
+        this.deleteBtnClick = deleteBtnClick;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.weather_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
-        daoSession = ((App) viewHolder.context.getApplicationContext()).getDaoSession();
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
+        String lineSep = String.format("%n");
         holder.textView.setText(viewPromptCityModelList.get(position).getStructuredFormatting().getMainText() +
-                System.lineSeparator()
-                + viewPromptCityModelList.get(position).getStructuredFormatting().getSecondaryText() + System.lineSeparator() +
+                lineSep
+                + viewPromptCityModelList.get(position).getStructuredFormatting().getSecondaryText() + lineSep +
                 viewPromptCityModelList.get(position).getBriefInformation());
 
-        JsonWeatherModel currentModel = new JsonWeatherModel();
+        holder.textView.setOnClickListener(view -> weatherItemClick.weatherItemClick(view,
+                Long.valueOf(viewPromptCityModelList.get(position).getKey()), holder.textView.getText().toString()));
 
-        Subscriber<JsonWeatherModel> jsonWeatherModelSubscribe;
-
-        holder.textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(holder.context, WeatherInfoActivity.class);
-                Long key = Long.valueOf(viewPromptCityModelList.get(position).getKey());
-                intent.putExtra("promptKey", key);
-                intent.putExtra("actionTitle", holder.textView.getText());
-                holder.context.startActivity(intent);
-            }
-        });
-
-        holder.button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                DeleteItemOfDb deleteItemOfDb = new DeleteItemOfDb(promptCityDbModelList.get(position).getKey(), daoSession);
-//                deleteItemOfDb.execute();
-                RxDbManager.setDaoSession(((App) holder.context.getApplicationContext()).getDaoSession());
-                RxDbManager.instance().deleteItemOdDbQuery(promptCityDbModelList.get(position).getKey())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(aVoid -> {
-                            PromptCityDbModelToViewPromptCityModel mapper = new PromptCityDbModelToViewPromptCityModel(aVoid);
-                            WeatherDeleteItemEvent weatherDeleteItemEvent = new WeatherDeleteItemEvent(mapper.map(), aVoid);
-                            EventBus.getDefault().post(weatherDeleteItemEvent);
-                        });
-            }
-        });
+        holder.button.setOnClickListener(view -> deleteBtnClick.deleteBtnClick(view, promptCityDbModelList.get(position)));
     }
 
     @Override

@@ -20,6 +20,7 @@ import java.util.TimerTask;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by aa.mezencev on 19.01.2018.
@@ -29,6 +30,12 @@ public class UpdateService extends Service {
 
     private Timer timer;
     private CompositeDisposable compositeDisposable;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        timer = new Timer();
+    }
 
     @Nullable
     @Override
@@ -46,7 +53,6 @@ public class UpdateService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         compositeDisposable = new CompositeDisposable();
-        timer = new Timer();
         String prefString = PreferenceManager.getDefaultSharedPreferences(this).getString("etDelayService", null);
         int periodValue = 0;
         if (prefString != null) {
@@ -59,15 +65,19 @@ public class UpdateService extends Service {
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                RxDbManager.setDaoSession(daoSession);
-                compositeDisposable.add(RxDbManager.instance().allItemQuery()
+                RxDbManager dbManager = ((App) getApplicationContext()).getDbManager();
+                RxGoogleApiManager googleApiManager = ((App) getApplication()).getGoogleApiManager();
+                RxOWMApiManager owmApiManager = ((App) getApplicationContext()).getOwmApiManager();
+                compositeDisposable.add(dbManager.allItemQuery()
+                        //.flatMap(list->RxDbManager.instance().addPromptListToDb(list))
+                        .subscribeOn(Schedulers.io())
                         .flatMap(cities -> Observable.fromIterable(cities)
-                                .flatMap(city -> RxGoogleApiManager.instance().geoRequest(city.getPlaceId()))
-                                .flatMap(geo -> RxOWMApiManager.instance().currentWeatherRequest(geo.getJsonLocationModel().getLat(), geo.getJsonLocationModel().getLng()))
+                                .flatMap(city -> googleApiManager.geoRequest(city.getPlaceId()))
+                                .flatMap(geo -> owmApiManager.currentWeatherRequest(geo.getJsonLocationModel().getLat(), geo.getJsonLocationModel().getLng()))
                                 .toList()
-                                .map(weatherModels-> new JsonWeatherModelToDb(weatherModels,cities).map())
+                                .map(weatherModels -> new JsonWeatherModelToDb(weatherModels, cities).map())
                                 .toObservable()
-                                .flatMap(aVoid -> RxDbManager.instance().addListToDbQuery(aVoid))
+                                .flatMap(aVoid -> dbManager.addListToDbQuery(aVoid))
                         )
                         .subscribe(dbList -> {
                             EventBus.getDefault().post(new UpdatedCurrentWeather(dbList));
@@ -76,8 +86,6 @@ public class UpdateService extends Service {
             }
         };
         timer.schedule(timerTask, 0, periodValue);
-        return super.
-
-                onStartCommand(intent, flags, startId);
+        return super.onStartCommand(intent, flags, startId);
     }
 }

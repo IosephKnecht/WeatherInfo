@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 
+import com.example.aamezencev.weatherinfo.Inrerfaces.CheckBoxClick;
 import com.example.aamezencev.weatherinfo.MainActivity;
 import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.ViewModels.ViewPromptCityModel;
@@ -21,10 +22,11 @@ import java.util.List;
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
     private List<ViewPromptCityModel> viewPromptCityModelList;
-    private View floatingButton;
+    private CheckBoxClick checkBoxClick;
 
-    public MainAdapter(List<ViewPromptCityModel> viewPromptCityModelList) {
+    public MainAdapter(List<ViewPromptCityModel> viewPromptCityModelList, CheckBoxClick checkBoxClick) {
         this.viewPromptCityModelList = viewPromptCityModelList;
+        this.checkBoxClick = checkBoxClick;
     }
 
     @Override
@@ -32,7 +34,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.city_item, parent, false);
 
         final ViewHolder viewHolder = new ViewHolder(view);
-        floatingButton = ((MainActivity) parent.getContext()).findViewById(R.id.floatingActionButton);
         return viewHolder;
     }
 
@@ -42,10 +43,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         holder.cbCity.setText(stringConcatenation(viewPromptCityModelList.get(position)));
         holder.cbCity.setChecked(viewPromptCityModel.isChecked());
         holder.cbCity.setOnClickListener(view -> {
-            boolean state = viewPromptCityModel.isChecked();
-            viewPromptCityModel.setChecked(!state);
-
-            floatingButton.setVisibility(isVisibleFloatingButton());
+            checkBoxClick.checkBoxClick(view,viewPromptCityModelList.get(position));
         });
     }
 
@@ -63,19 +61,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     }
 
     private String stringConcatenation(ViewPromptCityModel viewPromptCityModel) {
-        String separator = System.lineSeparator();
+        String separator = String.format("%n");
         String output = viewPromptCityModel.getId() + separator + viewPromptCityModel.getDescription() + separator +
                 viewPromptCityModel.getStructuredFormatting().toString();
-
         return output;
-    }
-
-    public List<ViewPromptCityModel> getViewPromptCityModelList() {
-        return viewPromptCityModelList;
-    }
-
-    public void setViewPromptCityModelList(List<ViewPromptCityModel> viewPromptCityModelList) {
-        this.viewPromptCityModelList = viewPromptCityModelList;
     }
 
     public int isVisibleFloatingButton() {

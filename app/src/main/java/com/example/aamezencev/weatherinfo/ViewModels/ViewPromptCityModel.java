@@ -87,4 +87,14 @@ public class ViewPromptCityModel {
     public void setBriefInformation(String briefInformation) {
         this.briefInformation = briefInformation;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        ViewPromptCityModel viewModel = (ViewPromptCityModel) obj;
+        return this.description.equals(viewModel.getDescription()) &&
+                this.id.equals(viewModel.getId()) &&
+                this.isChecked == viewModel.isChecked() &&
+                this.placeId.equals(viewModel.getPlaceId()) &&
+                this.key.equals(viewModel.getKey());
+    }
 }

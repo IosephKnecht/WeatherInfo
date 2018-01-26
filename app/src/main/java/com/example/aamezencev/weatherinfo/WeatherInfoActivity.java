@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageButton;
 
+import com.example.aamezencev.weatherinfo.Adapters.DiffUtilWeatherInfoAdapter;
 import com.example.aamezencev.weatherinfo.Adapters.WeatherInfoAdapter;
 import com.example.aamezencev.weatherinfo.Adapters.WeatherListAdapter;
 import com.example.aamezencev.weatherinfo.DaoModels.DaoSession;
@@ -57,6 +59,7 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         btnDeleteWeather.setOnClickListener(btn -> {
             RxDbManager dbManager = ((App) getApplicationContext()).getDbManager();
             compositeDisposable.add(dbManager.deleteItemOdDbQuery(getIntent().getLongExtra("promptKey", 0))
+                    .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(subs -> {
                         PromptCityDbModelToViewPromptCityModel mapper = new PromptCityDbModelToViewPromptCityModel((List<PromptCityDbModel>) subs);
@@ -65,6 +68,8 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
                         finish();
                     }));
         });
+        paint(new ViewCurrentWeatherModel());
+
         getLoaderManager().initLoader(1234, null, this);
 
     }
@@ -81,6 +86,13 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         mRecyclerView.setAdapter(mAdapter);
     }
 
+    public void updateRecyclerView(ViewCurrentWeatherModel currentWeatherModel) {
+        DiffUtilWeatherInfoAdapter diffUtilWeatherInfoAdapter = new DiffUtilWeatherInfoAdapter(mAdapter.getViewCurrentWeatherModel(), currentWeatherModel);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilWeatherInfoAdapter);
+        mAdapter.setViewCurrentWeatherModel(currentWeatherModel);
+        diffResult.dispatchUpdatesTo(mAdapter);
+    }
+
     @Override
     public Loader<ViewCurrentWeatherModel> onCreateLoader(int i, Bundle bundle) {
         Loader<ViewCurrentWeatherModel> loader = null;
@@ -92,7 +104,7 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
 
     @Override
     public void onLoadFinished(Loader<ViewCurrentWeatherModel> loader, ViewCurrentWeatherModel viewCurrentWeatherModel) {
-        paint(viewCurrentWeatherModel);
+        updateRecyclerView(viewCurrentWeatherModel);
     }
 
     @Override
@@ -105,11 +117,13 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         private ViewCurrentWeatherModel viewCurrentWeatherModel;
         private Long key;
         private Context context;
+        private CompositeDisposable compositeDisposable;
 
         public InfoLoader(Context context, Long key) {
             super(context);
             this.key = key;
             this.context = context;
+            compositeDisposable = new CompositeDisposable();
         }
 
         @Override
@@ -122,18 +136,19 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         public void forceLoad() {
             super.forceLoad();
             RxDbManager dbManager = ((App) context.getApplicationContext()).getDbManager();
-            dbManager.findWeatherByKey(key)
+            compositeDisposable.add(dbManager.findWeatherByKey(key)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(subscriber -> {
                         CurrentWeatherDbModelToView mapper = new CurrentWeatherDbModelToView(subscriber);
                         deliverResult(mapper.map());
-                    });
+                    }));
         }
 
         @Override
         protected void onReset() {
             super.onReset();
+            compositeDisposable.dispose();
             viewCurrentWeatherModel = null;
         }
     }

@@ -8,6 +8,7 @@ import android.content.Loader;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -15,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.aamezencev.weatherinfo.Adapters.DiffUtilWeatherListAdapter;
 import com.example.aamezencev.weatherinfo.Adapters.WeatherListAdapter;
 import com.example.aamezencev.weatherinfo.DaoModels.CurrentWeatherDbModel;
 import com.example.aamezencev.weatherinfo.DaoModels.PromptCityDbModel;
@@ -36,13 +38,14 @@ import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class WeatherListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<ViewPromptCityModel>>,
         WeatherItemClick, DeleteBtnClick {
     //private final String prefTag = "settingsPreference";
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private WeatherListAdapter mAdapter;
 
     private List<PromptCityDbModel> promptCityDbModelList = new ArrayList<>();
     private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
@@ -73,6 +76,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
 
+        paint();
         getLoaderManager().initLoader(123, null, this);
 
     }
@@ -130,6 +134,13 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         mRecyclerView.setAdapter(mAdapter);
     }
 
+    public void updateRecyclerView(List<ViewPromptCityModel> newList) {
+        DiffUtilWeatherListAdapter diffUtilWeatherListAdapter = new DiffUtilWeatherListAdapter(mAdapter.getViewPromptCityModelList(), newList);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilWeatherListAdapter);
+        mAdapter.setViewPromptCityModelList(newList);
+        diffResult.dispatchUpdatesTo(mAdapter);
+    }
+
     @Override
     public Loader<List<ViewPromptCityModel>> onCreateLoader(int i, Bundle bundle) {
         android.content.Loader loader = null;
@@ -143,7 +154,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     public void onLoadFinished(Loader<List<ViewPromptCityModel>> loader, List<ViewPromptCityModel> viewPromptCityModelList) {
         this.viewPromptCityModelList = viewPromptCityModelList;
         this.promptCityDbModelList = ((MyLoader) loader).getPromptCityDbModelList();
-        paint();
+        updateRecyclerView(viewPromptCityModelList);
     }
 
     @Override
@@ -163,6 +174,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     public void deleteBtnClick(View view, PromptCityDbModel promptCityDbModel) {
         RxDbManager dbManager = ((App) (getApplicationContext())).getDbManager();
         compositeDisposable.add(dbManager.deleteItemOdDbQuery(promptCityDbModel.getKey())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aVoid -> {
                     PromptCityDbModelToViewPromptCityModel mapper = new PromptCityDbModelToViewPromptCityModel(aVoid);
@@ -197,6 +209,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
             promptCityDbModelList = new ArrayList<>();
             RxDbManager dbManager = ((App) context.getApplicationContext()).getDbManager();
             compositeDisposable.add(dbManager.allItemQuery()
+                    .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(list -> {
                         promptCityDbModelList.addAll(list);

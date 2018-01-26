@@ -5,24 +5,24 @@ package com.example.aamezencev.weatherinfo.ViewModels;
  */
 
 public class ViewCurrentWeatherModel {
-    private Long key;
-    private String main;
-    private String description;
-    private String icon;
-    private String cod;
-    private Long id;
-    private String lon;
-    private String lat;
-    private String temp;
-    private String pressure;
-    private String humidity;
-    private String tempMin;
-    private String tempMax;
-    private String seaLevel;
-    private String grndLevel;
-    private String speed;
-    private String deg;
-    private Long all;
+    private Long key = (long) 0;
+    private String main = new String();
+    private String description = new String();
+    private String icon = new String();
+    private String cod = new String();
+    private Long id = (long) 0;
+    private String lon = new String();
+    private String lat = new String();
+    private String temp = new String();
+    private String pressure = new String();
+    private String humidity = new String();
+    private String tempMin = new String();
+    private String tempMax = new String();
+    private String seaLevel = new String();
+    private String grndLevel = new String();
+    private String speed = new String();
+    private String deg = new String();
+    private Long all = (long) 0;
 
     public ViewCurrentWeatherModel() {
     }
@@ -190,4 +190,24 @@ public class ViewCurrentWeatherModel {
         this.all = all;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        ViewCurrentWeatherModel weatherModel = (ViewCurrentWeatherModel) obj;
+        return this.key.equals(weatherModel.getKey()) &&
+                this.main.equals(weatherModel.getMain()) &&
+                this.description.equals(weatherModel.getDescription()) &&
+                this.icon.equals(weatherModel.getIcon()) &&
+                this.cod.equals(weatherModel.getCod()) &&
+                this.id.equals(weatherModel.getId()) &&
+                this.lon.equals(weatherModel.getLon()) &&
+                this.lat.equals(weatherModel.getLat()) &&
+                this.temp.equals(weatherModel.getTemp()) &&
+                this.pressure.equals(weatherModel.getPressure()) &&
+                this.humidity.equals(weatherModel.getHumidity()) &&
+                this.tempMin.equals(weatherModel.getTempMin()) &&
+                this.tempMax.equals(weatherModel.getTempMax()) &&
+                this.speed.equals(weatherModel.getSpeed()) &&
+                this.deg.equals(weatherModel.getDeg()) &&
+                this.all.equals(weatherModel.getAll());
+    }
 }

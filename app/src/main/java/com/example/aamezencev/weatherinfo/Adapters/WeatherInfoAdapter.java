@@ -34,6 +34,14 @@ public class WeatherInfoAdapter extends RecyclerView.Adapter<WeatherInfoAdapter.
         return viewHolder;
     }
 
+    public ViewCurrentWeatherModel getViewCurrentWeatherModel() {
+        return viewCurrentWeatherModel;
+    }
+
+    public void setViewCurrentWeatherModel(ViewCurrentWeatherModel currentWeatherModel) {
+        this.viewCurrentWeatherModel = currentWeatherModel;
+    }
+
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.tvWeatherInfo.setText(viewCurrentWeatherModel.getFullInfotmation());

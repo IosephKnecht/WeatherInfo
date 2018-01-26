@@ -37,7 +37,7 @@ public class RxDbManager {
             promptCityDbModelList = queryBuilder.list();
             aVoid.onNext(promptCityDbModelList);
             aVoid.onComplete();
-        }).subscribeOn(Schedulers.io());
+        });
     }
 
     public Observable<List<PromptCityDbModel>> deleteItemOdDbQuery(Long key) {
@@ -49,8 +49,7 @@ public class RxDbManager {
             aVoid.onNext(promptCityDbModelDao);
             aVoid.onComplete();
         })
-                .flatMap(aVoid -> allItemQuery())
-                .subscribeOn(Schedulers.io());
+                .flatMap(aVoid -> allItemQuery());
     }
 
     public Observable<List<CurrentWeatherDbModel>> addListToDbQuery(List<CurrentWeatherDbModel> currentWeatherDbModelList) {
@@ -60,7 +59,7 @@ public class RxDbManager {
             currentWeatherDbModelDao.insertInTx(currentWeatherDbModelList);
             e.onNext(currentWeatherDbModelList);
             e.onComplete();
-        }).subscribeOn(Schedulers.io());
+        });
     }
 
     public Observable<CurrentWeatherDbModel> findWeatherByKey(Long key) {

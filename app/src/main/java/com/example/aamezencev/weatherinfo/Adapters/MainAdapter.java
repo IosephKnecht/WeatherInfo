@@ -43,7 +43,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         holder.cbCity.setText(stringConcatenation(viewPromptCityModelList.get(position)));
         holder.cbCity.setChecked(viewPromptCityModel.isChecked());
         holder.cbCity.setOnClickListener(view -> {
-            checkBoxClick.checkBoxClick(view,viewPromptCityModelList.get(position));
+            checkBoxClick.checkBoxClick(view, viewPromptCityModelList.get(position));
         });
     }
 
@@ -84,5 +84,13 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             cbCity = itemView.findViewById(R.id.cbCity);
             context = cbCity.getContext();
         }
+    }
+
+    public List<ViewPromptCityModel> getViewPromptCityModelList() {
+        return viewPromptCityModelList;
+    }
+
+    public void setViewPromptCityModelList(List<ViewPromptCityModel> viewPromptCityModelList) {
+        this.viewPromptCityModelList = viewPromptCityModelList;
     }
 }

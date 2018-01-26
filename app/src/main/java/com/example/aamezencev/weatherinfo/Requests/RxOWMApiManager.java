@@ -37,7 +37,6 @@ public class RxOWMApiManager {
                     String jsonString = response.body().string();
                     JsonWeatherModel jsonWeatherModel = gson.fromJson(jsonString, JsonWeatherModel.class);
                     return jsonWeatherModel;
-                })
-                .subscribeOn(Schedulers.io());
+                });
     }
 }

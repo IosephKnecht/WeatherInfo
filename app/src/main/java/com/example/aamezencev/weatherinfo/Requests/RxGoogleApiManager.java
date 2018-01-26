@@ -32,7 +32,7 @@ public class RxGoogleApiManager {
             Response response = okHttpClient.newCall(request).execute();
             aVoid.onNext(response);
             aVoid.onComplete();
-        }).subscribeOn(Schedulers.io());
+        });
     }
 
     public Observable<JsonResultsGeo> geoRequest(String placeId) {
@@ -49,7 +49,6 @@ public class RxGoogleApiManager {
                     String jsonString = response.body().string();
                     JsonResultsGeo jsonResultsGeo = gson.fromJson(jsonString, JsonResultsGeo.class);
                     return jsonResultsGeo;
-                })
-                .subscribeOn(Schedulers.io());
+                });
     }
 }

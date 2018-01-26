@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -18,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.example.aamezencev.weatherinfo.Adapters.DiffUtilMainAdapter;
 import com.example.aamezencev.weatherinfo.Adapters.MainAdapter;
 import com.example.aamezencev.weatherinfo.Inrerfaces.CheckBoxClick;
 import com.example.aamezencev.weatherinfo.JsonModels.JsonPromptModel;
@@ -63,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mRecyclerView.setLayoutManager(layoutManager);
         floatingActionButton = (FloatingActionButton) findViewById(R.id.floatingActionButton);
 
+        paint(viewPromptCityModelList);
+
         getLoaderManager().initLoader(1, null, this);
     }
 
@@ -96,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 .subscribe(aVoid -> {
                     RxGoogleApiManager googleApiManager = ((App) getApplicationContext().getApplicationContext()).getGoogleApiManager();
                     disposables.add(googleApiManager.promptRequest(aVoid.toString())
+                            .subscribeOn(Schedulers.io())
                             .map(response -> {
                                 String jsonString = response.body().string();
                                 Gson gson = new Gson();
@@ -148,6 +153,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mRecyclerView.setAdapter(mAdapter);
     }
 
+    private void updateRecyclerView(List<ViewPromptCityModel> newList) {
+        DiffUtilMainAdapter diffUtilMainAdapter = new DiffUtilMainAdapter(mAdapter.getViewPromptCityModelList(), newList);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilMainAdapter);
+        mAdapter.setViewPromptCityModelList(newList);
+        diffResult.dispatchUpdatesTo(mAdapter);
+        floatingActionButton.setVisibility(mAdapter.isVisibleFloatingButton());
+    }
+
     @Override
     public Loader<List<ViewPromptCityModel>> onCreateLoader(int i, Bundle bundle) {
         Loader<List<ViewPromptCityModel>> loader = null;
@@ -160,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<List<ViewPromptCityModel>> loader, List<ViewPromptCityModel> viewPromptCityModels) {
         paintSpinner(View.INVISIBLE);
-        paint(viewPromptCityModels);
+        updateRecyclerView(viewPromptCityModels);
     }
 
     @Override

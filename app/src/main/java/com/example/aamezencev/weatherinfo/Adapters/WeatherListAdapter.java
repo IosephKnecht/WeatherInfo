@@ -72,6 +72,14 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
         return viewPromptCityModelList.size();
     }
 
+    public List<ViewPromptCityModel> getViewPromptCityModelList() {
+        return viewPromptCityModelList;
+    }
+
+    public void setViewPromptCityModelList(List<ViewPromptCityModel> viewPromptCityModelList) {
+        this.viewPromptCityModelList = viewPromptCityModelList;
+    }
+
     protected class ViewHolder extends RecyclerView.ViewHolder {
         private TextView textView;
         private Button button;

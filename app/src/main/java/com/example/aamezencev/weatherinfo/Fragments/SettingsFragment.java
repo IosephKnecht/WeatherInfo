@@ -45,4 +45,10 @@ public class SettingsFragment extends PreferenceFragment {
             return false;
         }));
     }
+
+    @Override
+    public void onDestroy() {
+        //getActivity().finish();
+        super.onDestroy();
+    }
 }

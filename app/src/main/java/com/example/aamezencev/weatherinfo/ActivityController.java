@@ -17,7 +17,6 @@ public class ActivityController extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_controller);
         readPreferences();
-        writePreferences();
         finish();
     }
 
@@ -29,18 +28,20 @@ public class ActivityController extends AppCompatActivity {
         if (isFirstRun) {
             intent = new Intent(this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
             isFirstRun = !isFirstRun;
+            intent.putExtra("isFirstRun", isFirstRun);
+            startActivity(intent);
         } else {
             intent = new Intent(this, WeatherListActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("isFirstRun", isFirstRun);
             startActivity(intent);
         }
     }
 
-    private void writePreferences() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("state", isFirstRun);
-        editor.commit();
-    }
+//    public void writePreferences() {
+//        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        editor.putBoolean("state", isFirstRun);
+//        editor.commit();
+//    }
 }

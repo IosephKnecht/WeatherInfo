@@ -17,11 +17,17 @@
         <activity android:name=".WeatherInfoActivity" />
         <activity android:name=".ActivityController">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".UpdateService"/>
+
+        <service android:name=".UpdateService" />
+
+        <activity
+            android:name=".SettingsActivity"
+            android:noHistory="true"></activity>
     </application>
 
 </manifest>

@@ -4,6 +4,7 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
@@ -132,19 +133,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         floatingActionButton.setVisibility(mAdapter.isVisibleFloatingButton());
 
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                RxDbManager dbManager = ((App) getApplicationContext()).getDbManager();
-                disposables.add(dbManager.addPromptListViewToDb(mAdapter.selectIsCheckedItem())
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(subs -> {
-                            startService(new Intent(MainActivity.this, UpdateService.class));
-                            startActivity(new Intent(MainActivity.this, WeatherListActivity.class));
-                        }));
+        floatingActionButton.setOnClickListener(fabView -> {
+            SharedPreferences sharedPreferences = getSharedPreferences("isFirstRun", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("state", getIntent().getBooleanExtra("isFirstRun", true));
+            editor.commit();
 
-            }
+            RxDbManager dbManager = ((App) getApplicationContext()).getDbManager();
+            disposables.add(dbManager.addPromptListViewToDb(mAdapter.selectIsCheckedItem())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(subs -> {
+                        startService(new Intent(MainActivity.this, UpdateService.class));
+                        startActivity(new Intent(MainActivity.this, WeatherListActivity.class));
+                    }));
+
         });
 
         mRecyclerView.setAdapter(mAdapter);

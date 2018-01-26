@@ -50,13 +50,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private FloatingActionButton floatingActionButton;
 
     @Override
-    protected void onStart() {
-        super.onStart();
-
-        paintSpinner();
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -80,11 +73,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         disposables.dispose();
     }
 
-    private void paintSpinner() {
+    private void paintSpinner(int isVisible) {
         FrameLayout frameLayout = findViewById(R.id.flSpinner);
+        frameLayout.removeAllViews();
         LayoutInflater layoutInflater = getLayoutInflater();
         spinner = layoutInflater.inflate(R.layout.spinner_layout, frameLayout, false);
-        spinner.setVisibility(View.INVISIBLE);
+        spinner.setVisibility(isVisible);
         frameLayout.addView(spinner);
     }
 
@@ -117,6 +111,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                             })
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(viewPromptCityModelList -> {
+                                paintSpinner(View.VISIBLE);
                                 this.viewPromptCityModelList = viewPromptCityModelList;
                                 getLoaderManager().restartLoader(1, null, this);
                             }));
@@ -164,6 +159,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<List<ViewPromptCityModel>> loader, List<ViewPromptCityModel> viewPromptCityModels) {
+        paintSpinner(View.INVISIBLE);
         paint(viewPromptCityModels);
     }
 

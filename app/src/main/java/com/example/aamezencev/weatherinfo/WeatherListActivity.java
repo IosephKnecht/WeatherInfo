@@ -47,10 +47,14 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     private List<PromptCityDbModel> promptCityDbModelList = new ArrayList<>();
     private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
 
+    private CompositeDisposable compositeDisposable;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_list);
+
+        compositeDisposable = new CompositeDisposable();
 
         EventBus.getDefault().register(this);
 
@@ -77,6 +81,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     protected void onDestroy() {
         stopService(new Intent(this, UpdateService.class));
         EventBus.getDefault().unregister(this);
+        compositeDisposable.dispose();
         super.onDestroy();
     }
 
@@ -90,11 +95,6 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
             case R.id.settingsItem:
                 Intent settIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settIntent);
-//                Fragment fragment = getFragmentManager().findFragmentByTag(prefTag);
-//                if (fragment == null) {
-//                    fragment = new SettingsFragment();
-//                    getFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.weatherRetainFragment, fragment, prefTag).commit();
-//                }
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -162,13 +162,13 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     @Override
     public void deleteBtnClick(View view, PromptCityDbModel promptCityDbModel) {
         RxDbManager dbManager = ((App) (getApplicationContext())).getDbManager();
-        dbManager.deleteItemOdDbQuery(promptCityDbModel.getKey())
+        compositeDisposable.add(dbManager.deleteItemOdDbQuery(promptCityDbModel.getKey())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aVoid -> {
                     PromptCityDbModelToViewPromptCityModel mapper = new PromptCityDbModelToViewPromptCityModel(aVoid);
                     WeatherDeleteItemEvent weatherDeleteItemEvent = new WeatherDeleteItemEvent(mapper.map(), aVoid);
                     EventBus.getDefault().post(weatherDeleteItemEvent);
-                });
+                }));
     }
 
 

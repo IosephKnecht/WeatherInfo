@@ -14,20 +14,14 @@ import org.greenrobot.greendao.DaoException;
 public class PromptCityDbModel {
     @Id(autoincrement = true)
     private Long key;
-    @NotNull
     private String description;
-    @NotNull
     private String id;
-    @NotNull
     private String placeId;
-    @NotNull
     private String mainText;
-    @NotNull
     private String secondaryText;
-    @Generated(hash = 1858066437)
-    public PromptCityDbModel(Long key, @NotNull String description,
-            @NotNull String id, @NotNull String placeId, @NotNull String mainText,
-            @NotNull String secondaryText) {
+    @Generated(hash = 167358054)
+    public PromptCityDbModel(Long key, String description, String id,
+            String placeId, String mainText, String secondaryText) {
         this.key = key;
         this.description = description;
         this.id = id;

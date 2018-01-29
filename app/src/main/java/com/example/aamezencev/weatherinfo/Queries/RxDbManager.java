@@ -68,7 +68,7 @@ public class RxDbManager {
             QueryBuilder<CurrentWeatherDbModel> queryBuilder = currentWeatherDbModelDao.queryBuilder();
             queryBuilder.where(CurrentWeatherDbModelDao.Properties.Key.eq(key));
             if (queryBuilder.list().size() == 0 || queryBuilder.list() == null) {
-                aVoid.onNext(null);
+                aVoid.onNext(new CurrentWeatherDbModel());
             } else {
                 aVoid.onNext(queryBuilder.list().get(0));
             }

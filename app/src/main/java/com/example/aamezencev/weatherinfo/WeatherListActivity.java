@@ -65,7 +65,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
 
         boolean state = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("serviceSwitch", true);
         if (state) {
-            startService(intent);
+            this.startService(intent);
         } else {
             this.stopService(intent);
         }

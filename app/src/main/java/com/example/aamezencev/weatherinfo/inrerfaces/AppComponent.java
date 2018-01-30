@@ -5,6 +5,7 @@ import com.example.aamezencev.weatherinfo.domain.RxDbManager;
 import com.example.aamezencev.weatherinfo.domain.RxGoogleApiManager;
 import com.example.aamezencev.weatherinfo.domain.RxOWMApiManager;
 import com.example.aamezencev.weatherinfo.domain.interactors.MainActivityInteractor;
+import com.example.aamezencev.weatherinfo.domain.interactors.WeatherInfoInteractor;
 
 import javax.inject.Singleton;
 
@@ -19,4 +20,6 @@ public interface AppComponent {
     void inject(RxDbManager dbManager);
 
     void inject(MainActivityInteractor mainInteractor);
+
+    void inject(WeatherInfoInteractor weatherInfoInteractor);
 }

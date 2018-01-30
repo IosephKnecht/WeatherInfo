@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.example.aamezencev.weatherinfo.inrerfaces.view.IBaseRouter;
+import com.example.aamezencev.weatherinfo.view.WeatherInfoActivity;
 import com.example.aamezencev.weatherinfo.view.WeatherListActivity;
 
 /**
@@ -23,9 +24,19 @@ public class Router implements IBaseRouter {
         context.startActivity(intent);
     }
 
+
+
     @Override
     public void startUpdateService() {
         Intent intent = new Intent(context, UpdateService.class);
         context.startService(intent);
+    }
+
+    @Override
+    public void openWeatherInfoActivity(Long key, String actionTitle) {
+        Intent intent = new Intent(context, WeatherInfoActivity.class);
+        intent.putExtra("promptKey", key);
+        intent.putExtra("actionTitle", actionTitle);
+        context.startActivity(intent);
     }
 }

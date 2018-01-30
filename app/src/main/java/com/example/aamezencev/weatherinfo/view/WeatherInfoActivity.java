@@ -10,7 +10,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageButton;
 
+import com.example.aamezencev.weatherinfo.Router;
 import com.example.aamezencev.weatherinfo.data.PromptCityDbModel;
+import com.example.aamezencev.weatherinfo.inrerfaces.view.IBaseActivity;
+import com.example.aamezencev.weatherinfo.inrerfaces.view.IBaseRouter;
+import com.example.aamezencev.weatherinfo.inrerfaces.view.IWeatherInfoActivity;
+import com.example.aamezencev.weatherinfo.inrerfaces.view.IWeatherInfoPresenter;
 import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilWeatherInfoAdapter;
 import com.example.aamezencev.weatherinfo.view.adapters.WeatherInfoAdapter;
 import com.example.aamezencev.weatherinfo.App;
@@ -19,6 +24,7 @@ import com.example.aamezencev.weatherinfo.view.mappers.CurrentWeatherDbModelToVi
 import com.example.aamezencev.weatherinfo.view.mappers.PromptCityDbModelToViewPromptCityModel;
 import com.example.aamezencev.weatherinfo.domain.RxDbManager;
 import com.example.aamezencev.weatherinfo.R;
+import com.example.aamezencev.weatherinfo.view.presenters.WeatherInfoPresenter;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewCurrentWeatherModel;
 
 import org.greenrobot.eventbus.EventBus;
@@ -29,7 +35,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class WeatherInfoActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ViewCurrentWeatherModel> {
+public class WeatherInfoActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ViewCurrentWeatherModel>,
+        IWeatherInfoActivity {
 
     private ImageButton btnDeleteWeather;
 
@@ -37,11 +44,16 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
     private WeatherInfoAdapter mAdapter;
     private CompositeDisposable compositeDisposable;
 
+    private IWeatherInfoPresenter weatherInfoPresenter;
+    private IBaseRouter baseRouter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_info);
 
+        baseRouter = new Router(this);
+        weatherInfoPresenter = new WeatherInfoPresenter(this, baseRouter);
 
         compositeDisposable = new CompositeDisposable();
 
@@ -56,16 +68,7 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
 
         btnDeleteWeather = (ImageButton) findViewById(R.id.btnDeleteWeather);
         btnDeleteWeather.setOnClickListener(btn -> {
-//            RxDbManager dbManager = ((App) getApplicationContext()).getDbManager();
-//            compositeDisposable.add(dbManager.deleteItemOdDbQuery(getIntent().getLongExtra("promptKey", 0))
-//                    .subscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe(subs -> {
-//                        PromptCityDbModelToViewPromptCityModel mapper = new PromptCityDbModelToViewPromptCityModel((List<PromptCityDbModel>) subs);
-//                        WeatherDeleteItemEvent weatherDeleteItemEvent = new WeatherDeleteItemEvent(mapper.map(), (List<PromptCityDbModel>) subs);
-//                        EventBus.getDefault().post(weatherDeleteItemEvent);
-//                        finish();
-//                    }));
+            weatherInfoPresenter.deleteCurrentWeather(getIntent().getLongExtra("promptKey", 0));
         });
         paint(new ViewCurrentWeatherModel());
 
@@ -76,6 +79,9 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
     @Override
     protected void onDestroy() {
         compositeDisposable.dispose();
+        weatherInfoPresenter.onDestroy();
+        weatherInfoPresenter = null;
+        baseRouter = null;
         super.onDestroy();
     }
 
@@ -96,7 +102,7 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
     public Loader<ViewCurrentWeatherModel> onCreateLoader(int i, Bundle bundle) {
         Loader<ViewCurrentWeatherModel> loader = null;
         if (i == 1234) {
-            loader = new InfoLoader(this, getIntent().getLongExtra("promptKey", 0));
+            loader = new InfoLoader(this, getIntent().getLongExtra("promptKey", 0), weatherInfoPresenter);
         }
         return loader;
     }
@@ -111,17 +117,23 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
 
     }
 
+    @Override
+    public void paintWeather(Object viewModel) {
+        getLoaderManager().getLoader(1234).deliverResult(viewModel);
+    }
+
     private static class InfoLoader extends Loader<ViewCurrentWeatherModel> {
 
         private ViewCurrentWeatherModel viewCurrentWeatherModel;
         private Long key;
-        private Context context;
+        private IWeatherInfoPresenter weatherInfoPresenter;
         private CompositeDisposable compositeDisposable;
 
-        public InfoLoader(Context context, Long key) {
+        public InfoLoader(Context context, Long key,
+                          IWeatherInfoPresenter weatherInfoPresenter) {
             super(context);
             this.key = key;
-            this.context = context;
+            this.weatherInfoPresenter = weatherInfoPresenter;
             compositeDisposable = new CompositeDisposable();
         }
 
@@ -134,14 +146,7 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         @Override
         public void forceLoad() {
             super.forceLoad();
-//            RxDbManager dbManager = ((App) context.getApplicationContext()).getDbManager();
-//            compositeDisposable.add(dbManager.findWeatherByKey(key)
-//                    .subscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe(subscriber -> {
-//                        CurrentWeatherDbModelToView mapper = new CurrentWeatherDbModelToView(subscriber);
-//                        deliverResult(mapper.map());
-//                    }));
+            weatherInfoPresenter.getCurrentWeather(key);
         }
 
         @Override

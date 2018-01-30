@@ -87,6 +87,9 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         stopService(new Intent(this, UpdateService.class));
         EventBus.getDefault().unregister(this);
         compositeDisposable.dispose();
+        mainPresenter.onDestroy();
+        mainPresenter = null;
+        baseRouter = null;
         super.onDestroy();
     }
 
@@ -153,10 +156,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
 
     @Override
     public void weatherItemClick(View view, Long key, String actionTitle) {
-        Intent intent = new Intent(this, WeatherInfoActivity.class);
-        intent.putExtra("promptKey", key);
-        intent.putExtra("actionTitle", actionTitle);
-        startActivity(intent);
+        baseRouter.openWeatherInfoActivity(key, actionTitle);
     }
 
     @Override

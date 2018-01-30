@@ -27,9 +27,12 @@
         android:layout_height="wrap_content"
         android:id="@+id/mainRetainFragment"/>
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/flSpinner" />
+    <ProgressBar
+        android:id="@+id/spinner_view"
+        android:layout_width="117dp"
+        android:layout_height="104dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@android:dimen/thumbnail_width"
+        android:indeterminate="true" />
 
 </FrameLayout>

@@ -12,10 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" />
-        <activity android:name=".WeatherListActivity" />
-        <activity android:name=".WeatherInfoActivity" />
-        <activity android:name=".ActivityController">
+        <activity android:name=".view.MainActivity" />
+        <activity android:name=".view.WeatherListActivity" />
+        <activity android:name=".view.WeatherInfoActivity" />
+        <activity android:name=".view.ActivityController">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -26,7 +26,7 @@
         <service android:name=".UpdateService" />
 
         <activity
-            android:name=".SettingsActivity"
+            android:name=".view.SettingsActivity"
             android:noHistory="true"></activity>
     </application>
 

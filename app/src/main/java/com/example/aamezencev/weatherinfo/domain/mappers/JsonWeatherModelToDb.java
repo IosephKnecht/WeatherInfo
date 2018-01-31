@@ -14,11 +14,9 @@ import java.util.List;
 
 public class JsonWeatherModelToDb {
     private List<JsonWeatherModel> jsonWeatherModelList;
-    private List<PromptCityDbModel> promptCityDbModelList;
 
-    public JsonWeatherModelToDb(List<JsonWeatherModel> jsonWeatherModelList, List<PromptCityDbModel> promptCityDbModelList) {
+    public JsonWeatherModelToDb(List<JsonWeatherModel> jsonWeatherModelList) {
         this.jsonWeatherModelList = jsonWeatherModelList;
-        this.promptCityDbModelList = promptCityDbModelList;
     }
 
     public List<CurrentWeatherDbModel> map() {
@@ -27,7 +25,7 @@ public class JsonWeatherModelToDb {
         for (JsonWeatherModel jsonModel : jsonWeatherModelList) {
             CurrentWeatherDbModel currentWeatherDbModel = new CurrentWeatherDbModel();
             JsonWeatherInfo jsonWeatherInfo = jsonModel.getJsonWeatherInfoList().get(0);
-            currentWeatherDbModel.setKey(promptCityDbModelList.get(i).getKey());
+            //currentWeatherDbModel.setKey(promptCityDbModelList.get(i).getKey());
             currentWeatherDbModel.setCod(jsonModel.getCod());
             currentWeatherDbModel.setId(jsonModel.getId());
             currentWeatherDbModel.setDescription(jsonWeatherInfo.getDescription());

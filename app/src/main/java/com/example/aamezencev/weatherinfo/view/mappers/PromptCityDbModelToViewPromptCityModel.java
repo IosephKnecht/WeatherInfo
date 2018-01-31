@@ -20,20 +20,21 @@ public class PromptCityDbModelToViewPromptCityModel {
 
     public List<ViewPromptCityModel> map() {
         List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
-        for (PromptCityDbModel promptCityDbModel:promptCityDbModelList) {
-            ViewPromptCityModel viewPromptCityModel=new ViewPromptCityModel();
+        for (PromptCityDbModel promptCityDbModel : promptCityDbModelList) {
+            ViewPromptCityModel viewPromptCityModel = new ViewPromptCityModel();
             viewPromptCityModel.setId(promptCityDbModel.getId());
             viewPromptCityModel.setDescription(promptCityDbModel.getDescription());
             viewPromptCityModel.setStructuredFormatting(mapStructureFormatting(promptCityDbModel));
             viewPromptCityModel.setPlaceId(promptCityDbModel.getPlaceId());
             viewPromptCityModel.setKey(promptCityDbModel.getKey().toString());
+            viewPromptCityModel.setBriefInformation(promptCityDbModel.getWeatherDbModel().getDescription()+promptCityDbModel.getWeatherDbModel().getMain());
             viewPromptCityModelList.add(viewPromptCityModel);
         }
         return viewPromptCityModelList;
     }
 
-    private ViewPromptCityStructureFormatting mapStructureFormatting(PromptCityDbModel promptCityDbModel){
-        ViewPromptCityStructureFormatting structureFormatting=new ViewPromptCityStructureFormatting();
+    private ViewPromptCityStructureFormatting mapStructureFormatting(PromptCityDbModel promptCityDbModel) {
+        ViewPromptCityStructureFormatting structureFormatting = new ViewPromptCityStructureFormatting();
         structureFormatting.setMainText(promptCityDbModel.getMainText());
         structureFormatting.setSecondaryText(promptCityDbModel.getSecondaryText());
         return structureFormatting;

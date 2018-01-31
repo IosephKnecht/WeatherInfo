@@ -29,7 +29,8 @@ import io.reactivex.Observable;
 @Module
 public class RxDbManager {
 
-    @Inject DaoSession daoSession;
+    @Inject
+    DaoSession daoSession;
 
     public RxDbManager() {
 
@@ -64,7 +65,9 @@ public class RxDbManager {
         App.getAppComponent().inject(this);
         return Observable.<List<CurrentWeatherDbModel>>create(e -> {
             CurrentWeatherDbModelDao currentWeatherDbModelDao = daoSession.getCurrentWeatherDbModelDao();
+            PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
             currentWeatherDbModelDao.deleteAll();
+            promptCityDbModelDao.deleteAll();
             currentWeatherDbModelDao.insertInTx(currentWeatherDbModelList);
             e.onNext(currentWeatherDbModelList);
             e.onComplete();
@@ -74,15 +77,23 @@ public class RxDbManager {
     public Observable<CurrentWeatherDbModel> findWeatherByKey(Long key) {
         App.getAppComponent().inject(this);
         return Observable.<CurrentWeatherDbModel>create(aVoid -> {
-            CurrentWeatherDbModelDao currentWeatherDbModelDao = daoSession.getCurrentWeatherDbModelDao();
-            QueryBuilder<CurrentWeatherDbModel> queryBuilder = currentWeatherDbModelDao.queryBuilder();
-            queryBuilder.where(CurrentWeatherDbModelDao.Properties.Key.eq(key));
-            if (queryBuilder.list().size() == 0 || queryBuilder.list() == null) {
-                aVoid.onNext(new CurrentWeatherDbModel());
+            PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
+            PromptCityDbModel promptCityDbModel = promptCityDbModelDao.load(key);
+            if (promptCityDbModel != null) {
+                aVoid.onNext(promptCityDbModel.getWeatherDbModel());
             } else {
-                aVoid.onNext(queryBuilder.list().get(0));
+                aVoid.onNext(new CurrentWeatherDbModel());
             }
             aVoid.onComplete();
+//            CurrentWeatherDbModelDao currentWeatherDbModelDao = daoSession.getCurrentWeatherDbModelDao();
+//            QueryBuilder<CurrentWeatherDbModel> queryBuilder = currentWeatherDbModelDao.queryBuilder();
+//            queryBuilder.where(CurrentWeatherDbModelDao.Properties.Key.eq(key));
+//            if (queryBuilder.list().size() == 0 || queryBuilder.list() == null) {
+//                aVoid.onNext(new CurrentWeatherDbModel());
+//            } else {
+//                aVoid.onNext(queryBuilder.list().get(0));
+//            }
+//            aVoid.onComplete();
         });
     }
 
@@ -95,7 +106,7 @@ public class RxDbManager {
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
             CurrentWeatherDbModelDao currentWeatherDbModelDao = daoSession.getCurrentWeatherDbModelDao();
             promptCityDbModelDao.deleteAll();
-            currentWeatherDbModelDao.deleteAll();
+            //currentWeatherDbModelDao.deleteAll();
             promptCityDbModelDao.insertInTx(promptCityDbModelList);
             e.onNext(e);
             e.onComplete();
@@ -111,6 +122,7 @@ public class RxDbManager {
             emitter.onComplete();
         });
     }
+
 
     @Provides
     @NonNull

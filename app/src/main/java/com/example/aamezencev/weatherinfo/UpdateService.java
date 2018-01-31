@@ -4,21 +4,16 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.example.aamezencev.weatherinfo.data.CurrentWeatherDbModel;
-import com.example.aamezencev.weatherinfo.data.PromptCityDbModel;
 import com.example.aamezencev.weatherinfo.domain.RxDbManager;
 import com.example.aamezencev.weatherinfo.domain.RxGoogleApiManager;
 import com.example.aamezencev.weatherinfo.domain.RxOWMApiManager;
+import com.example.aamezencev.weatherinfo.domain.mappers.CreateRealation;
 import com.example.aamezencev.weatherinfo.domain.mappers.JsonWeatherModelToDb;
 import com.example.aamezencev.weatherinfo.events.UpdatedCurrentWeather;
-import com.example.aamezencev.weatherinfo.view.mappers.CurrentWeatherDbModelToView;
-import com.example.aamezencev.weatherinfo.view.viewModels.ViewCurrentWeatherModel;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
@@ -28,7 +23,6 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.PublishSubject;
 
 /**
  * Created by aa.mezencev on 19.01.2018.
@@ -75,13 +69,17 @@ public class UpdateService extends Service {
                         .flatMap(city -> googleApiManager.geoRequest(city.getPlaceId()))
                         .flatMap(geo -> owmApiManager.currentWeatherRequest(geo.getJsonLocationModel().getLat(), geo.getJsonLocationModel().getLng()))
                         .toList()
-                        .map(weatherModels -> new JsonWeatherModelToDb(weatherModels, cities).map())
+                        .map(weatherModels -> new JsonWeatherModelToDb(weatherModels).map())
                         .toObservable()
                         .flatMap(aVoid -> dbManager.addListToDbQuery(aVoid))
+                        .map(currentWeatherDbModels -> new CreateRealation(cities, currentWeatherDbModels).map())
+                        .flatMap(promptCityDbModels -> dbManager.addPromptListToDb(promptCityDbModels))
                 )
                 .repeatWhen(completed -> completed.delay(60_000, TimeUnit.MILLISECONDS))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(dbModelList -> EventBus.getDefault().post(new UpdatedCurrentWeather<CurrentWeatherDbModel>(dbModelList))));
+                .subscribe(
+                        dbModelList -> EventBus.getDefault().post(new UpdatedCurrentWeather())
+                ));
 
         return super.onStartCommand(intent, flags, startId);
     }

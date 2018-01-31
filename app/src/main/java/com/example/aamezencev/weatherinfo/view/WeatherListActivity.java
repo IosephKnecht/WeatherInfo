@@ -62,7 +62,9 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
 
         EventBus.getDefault().register(this);
 
-        Intent intent = new Intent(this, UpdateService.class);
+        baseRouter.startUpdateService();
+
+        //Intent intent = new Intent(this, UpdateService.class);
 
 //        boolean state = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("serviceSwitch", true);
 //        if (state) {
@@ -71,7 +73,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
 //            this.stopService(intent);
 //        }
 
-        baseRouter.startUpdateService();
+//        baseRouter.startUpdateService();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.weatherRecycler);
         mRecyclerView.setHasFixedSize(true);
@@ -174,17 +176,20 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     }
 
     @Subscribe
-    public void updatedCurrentWeather(UpdatedCurrentWeather<CurrentWeatherDbModel> updatedCurrentWeather){
+    public void updatedCurrentWeather(UpdatedCurrentWeather updatedCurrentWeather) {
+        getLoaderManager().restartLoader(123, null, this);
 //        int i = -1;
-//        for (CurrentWeatherDbModel dbModel : updatedCurrentWeather.getViewModelList()) {
-//            i++;
-//            String briefInformation = new String();
-//            briefInformation += "weather: " + dbModel.getMain() + " " + dbModel.getDescription();
-//            viewPromptCityModelList.get(i).setBriefInformation(briefInformation);
+//        if (viewPromptCityModelList != null && viewPromptCityModelList.size() > 0) {
+//            for (CurrentWeatherDbModel dbModel : updatedCurrentWeather.getViewModelList()) {
+//                i++;
+//                String briefInformation = new String();
+//                briefInformation += "weather: " + dbModel.getMain() + " " + dbModel.getDescription();
+//                viewPromptCityModelList.get(i).setBriefInformation(briefInformation);
+//            }
 //        }
-//        mainPresenter.addPromptListViewToDb(viewPromptCityModelList);
+//        //mainPresenter.addPromptListViewToDb(viewPromptCityModelList);
+//        updateRecyclerView(viewPromptCityModelList);
 //        getLoaderManager().getLoader(123).deliverResult(viewPromptCityModelList);
-//        paintList(viewPromptCityModelList);
     }
 
 
@@ -220,6 +225,12 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         protected void onReset() {
             super.onReset();
             viewPromptCityModelList = null;
+        }
+
+        @Override
+        public void deliverResult(List<ViewPromptCityModel> data) {
+            super.deliverResult(data);
+            viewPromptCityModelList = data;
         }
     }
 }

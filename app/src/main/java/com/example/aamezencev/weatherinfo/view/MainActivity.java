@@ -151,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             mainPresenter.addPromptListViewToDb(selectIsCheckedItem());
             baseRouter.openWeatherListActivity();
+            baseRouter.startUpdateService();
         });
 
         mRecyclerView.setAdapter(mAdapter);

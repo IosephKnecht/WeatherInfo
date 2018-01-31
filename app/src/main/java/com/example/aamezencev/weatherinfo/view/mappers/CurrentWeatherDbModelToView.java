@@ -14,6 +14,7 @@ public class CurrentWeatherDbModelToView {
         this.currentWeatherDbModel = currentWeatherDbModel;
     }
 
+
     public ViewCurrentWeatherModel map() {
         ViewCurrentWeatherModel viewCurrentWeatherModel = new ViewCurrentWeatherModel();
         if (currentWeatherDbModel != null) {

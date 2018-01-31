@@ -79,21 +79,12 @@ public class RxDbManager {
         return Observable.<CurrentWeatherDbModel>create(aVoid -> {
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
             PromptCityDbModel promptCityDbModel = promptCityDbModelDao.load(key);
-            if (promptCityDbModel != null) {
+            if (promptCityDbModel != null && promptCityDbModel.getWeatherDbModel() != null) {
                 aVoid.onNext(promptCityDbModel.getWeatherDbModel());
             } else {
                 aVoid.onNext(new CurrentWeatherDbModel());
             }
             aVoid.onComplete();
-//            CurrentWeatherDbModelDao currentWeatherDbModelDao = daoSession.getCurrentWeatherDbModelDao();
-//            QueryBuilder<CurrentWeatherDbModel> queryBuilder = currentWeatherDbModelDao.queryBuilder();
-//            queryBuilder.where(CurrentWeatherDbModelDao.Properties.Key.eq(key));
-//            if (queryBuilder.list().size() == 0 || queryBuilder.list() == null) {
-//                aVoid.onNext(new CurrentWeatherDbModel());
-//            } else {
-//                aVoid.onNext(queryBuilder.list().get(0));
-//            }
-//            aVoid.onComplete();
         });
     }
 
@@ -104,9 +95,7 @@ public class RxDbManager {
             ViewPromptCityModelToPromptCityDbModel mapper = new ViewPromptCityModelToPromptCityDbModel(viewPromptCityModelList);
             promptCityDbModelList = mapper.map();
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
-            CurrentWeatherDbModelDao currentWeatherDbModelDao = daoSession.getCurrentWeatherDbModelDao();
             promptCityDbModelDao.deleteAll();
-            //currentWeatherDbModelDao.deleteAll();
             promptCityDbModelDao.insertInTx(promptCityDbModelList);
             e.onNext(e);
             e.onComplete();
@@ -117,6 +106,7 @@ public class RxDbManager {
         App.getAppComponent().inject(this);
         return Observable.<List<PromptCityDbModel>>create(emitter -> {
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
+            promptCityDbModelDao.deleteAll();
             promptCityDbModelDao.insertInTx(promptCityDbModelList);
             emitter.onNext(promptCityDbModelDao.queryBuilder().list());
             emitter.onComplete();

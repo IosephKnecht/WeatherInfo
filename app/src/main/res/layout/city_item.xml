@@ -1,13 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<CheckBox xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cbCity"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <CheckBox
-        android:id="@+id/cbCity"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:checked="false"
-        android:layout_marginTop="10dp"/>
-
-</FrameLayout>
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    android:checked="false" />

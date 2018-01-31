@@ -22,11 +22,6 @@
         android:id="@+id/mainRecyclerView">
     </android.support.v7.widget.RecyclerView>
 
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/mainRetainFragment"/>
-
     <ProgressBar
         android:id="@+id/spinner_view"
         android:layout_width="117dp"

@@ -61,7 +61,6 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         compositeDisposable = new CompositeDisposable();
 
         EventBus.getDefault().register(this);
-
         baseRouter.startUpdateService();
 
         //Intent intent = new Intent(this, UpdateService.class);
@@ -110,7 +109,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
                 startActivity(settIntent);
                 break;
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @Override

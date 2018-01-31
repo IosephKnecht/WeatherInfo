@@ -57,6 +57,7 @@ public class UpdateService extends Service {
         super.onDestroy();
         timer.cancel();
         compositeDisposable.dispose();
+        compositeDisposable = null;
     }
 
     @Override

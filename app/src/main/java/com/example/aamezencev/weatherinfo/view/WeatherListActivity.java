@@ -134,7 +134,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         DiffUtilWeatherListAdapter diffUtilWeatherListAdapter = new DiffUtilWeatherListAdapter(mAdapter.getViewPromptCityModelList(), newList);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilWeatherListAdapter);
         mAdapter.setViewPromptCityModelList(newList);
-        mAdapter.notifyDataSetChanged();
+        //mAdapter.notifyDataSetChanged();
         diffResult.dispatchUpdatesTo(mAdapter);
     }
 
@@ -150,7 +150,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     @Override
     public void onLoadFinished(Loader<List<ViewPromptCityModel>> loader, List<ViewPromptCityModel> viewPromptCityModelList) {
         this.viewPromptCityModelList = viewPromptCityModelList;
-        updateRecyclerView(viewPromptCityModelList);
+        paintList(viewPromptCityModelList);
     }
 
     @Override
@@ -164,31 +164,19 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     }
 
     @Override
-    public void deleteBtnClick(View view, Long key, int position) {
+    public void deleteBtnClick(View view, Long key) {
         mainPresenter.deleteItemAsDb(key);
     }
 
     @Override
     public void paintList(List viewModelList) {
-        getLoaderManager().getLoader(123).deliverResult(viewModelList);
         updateRecyclerView(viewModelList);
+        getLoaderManager().getLoader(123).deliverResult(viewModelList);
     }
 
     @Subscribe
     public void updatedCurrentWeather(UpdatedCurrentWeather updatedCurrentWeather) {
         getLoaderManager().restartLoader(123, null, this);
-//        int i = -1;
-//        if (viewPromptCityModelList != null && viewPromptCityModelList.size() > 0) {
-//            for (CurrentWeatherDbModel dbModel : updatedCurrentWeather.getViewModelList()) {
-//                i++;
-//                String briefInformation = new String();
-//                briefInformation += "weather: " + dbModel.getMain() + " " + dbModel.getDescription();
-//                viewPromptCityModelList.get(i).setBriefInformation(briefInformation);
-//            }
-//        }
-//        //mainPresenter.addPromptListViewToDb(viewPromptCityModelList);
-//        updateRecyclerView(viewPromptCityModelList);
-//        getLoaderManager().getLoader(123).deliverResult(viewPromptCityModelList);
     }
 
 

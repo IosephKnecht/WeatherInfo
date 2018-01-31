@@ -9,5 +9,5 @@ import com.example.aamezencev.weatherinfo.data.PromptCityDbModel;
  */
 
 public interface DeleteBtnClick {
-    void deleteBtnClick(View view, Long key,int position);
+    void deleteBtnClick(View view, Long key);
 }

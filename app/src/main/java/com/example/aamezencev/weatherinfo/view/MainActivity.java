@@ -179,7 +179,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         public MainLoader(Context context, IMainPresenter mainPresenter, String city) {
             super(context);
-            this.viewPromptCityModelList = viewPromptCityModelList;
             this.mainPresenter = mainPresenter;
             this.city = city;
         }

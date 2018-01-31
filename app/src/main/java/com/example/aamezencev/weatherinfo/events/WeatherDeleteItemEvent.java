@@ -10,20 +10,14 @@ import java.util.List;
  */
 
 public class WeatherDeleteItemEvent {
-    private List<ViewPromptCityModel> viewCityModelList;
-    private List<PromptCityDbModel> promptCityDbModelList;
+    private List<ViewPromptCityModel> viewPromptCityModelList;
 
-    public WeatherDeleteItemEvent(List<ViewPromptCityModel> viewCityModelList,
-                                  List<PromptCityDbModel> promptCityDbModelList) {
-        this.viewCityModelList = viewCityModelList;
-        this.promptCityDbModelList = promptCityDbModelList;
+    public WeatherDeleteItemEvent(List<ViewPromptCityModel> viewPromptCityModelList) {
+        this.viewPromptCityModelList = viewPromptCityModelList;
     }
 
     public List<ViewPromptCityModel> getViewCityModelList() {
-        return viewCityModelList;
+        return viewPromptCityModelList;
     }
 
-    public List<PromptCityDbModel> getPromptCityDbModelList() {
-        return promptCityDbModelList;
-    }
 }

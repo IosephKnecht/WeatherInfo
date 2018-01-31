@@ -36,4 +36,9 @@ public class Router implements IBaseRouter {
         intent.putExtra("actionTitle", actionTitle);
         context.startActivity(intent);
     }
+
+    @Override
+    public void closeWeatherInfoActivity() {
+        ((WeatherInfoActivity)context).finish();
+    }
 }

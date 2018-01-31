@@ -3,8 +3,12 @@ package com.example.aamezencev.weatherinfo.domain.interactors;
 import com.example.aamezencev.weatherinfo.App;
 import com.example.aamezencev.weatherinfo.domain.RxDbManager;
 import com.example.aamezencev.weatherinfo.domain.interactors.interfaces.IWeatherInfoInteractor;
+import com.example.aamezencev.weatherinfo.events.WeatherDeleteItemEvent;
+import com.example.aamezencev.weatherinfo.view.mappers.PromptCityDbModelToViewPromptCityModel;
 import com.example.aamezencev.weatherinfo.view.presenters.IWeatherInfoInteractorOutput;
 import com.example.aamezencev.weatherinfo.view.mappers.CurrentWeatherDbModelToView;
+
+import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Inject;
 
@@ -45,7 +49,11 @@ public class WeatherInfoInteractor implements IWeatherInfoInteractor {
     public void executeDeleteCurrentWeather(Long key) {
         App.getAppComponent().inject(this);
         compositeDisposable.add(dbManager.deleteItemOdDbQuery(key)
-                .subscribe());
+                .map(promptCityDbModels -> new PromptCityDbModelToViewPromptCityModel(promptCityDbModels).map())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(viewPromptCityModels -> {
+                    interactorOutput.onSuccesDeleteItem(viewPromptCityModels);
+                }));
     }
 
     @Override

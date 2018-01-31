@@ -2,8 +2,13 @@ package com.example.aamezencev.weatherinfo.view.presenters;
 
 import com.example.aamezencev.weatherinfo.domain.interactors.WeatherInfoInteractor;
 import com.example.aamezencev.weatherinfo.domain.interactors.interfaces.IWeatherInfoInteractor;
+import com.example.aamezencev.weatherinfo.events.WeatherDeleteItemEvent;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
 import com.example.aamezencev.weatherinfo.view.interfaces.IWeatherInfoActivity;
+
+import org.greenrobot.eventbus.EventBus;
+
+import java.util.List;
 
 /**
  * Created by aa.mezencev on 30.01.2018.
@@ -46,5 +51,11 @@ public class WeatherInfoPresenter implements IWeatherInfoPresenter, IWeatherInfo
     @Override
     public void onError(Exception ex) {
 
+    }
+
+    @Override
+    public void onSuccesDeleteItem(List viewModelList) {
+        EventBus.getDefault().post(new WeatherDeleteItemEvent(viewModelList));
+        baseRouter.closeWeatherInfoActivity();
     }
 }

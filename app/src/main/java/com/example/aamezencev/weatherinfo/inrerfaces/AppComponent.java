@@ -1,6 +1,7 @@
 package com.example.aamezencev.weatherinfo.inrerfaces;
 
 import com.example.aamezencev.weatherinfo.InitDb;
+import com.example.aamezencev.weatherinfo.UpdateService;
 import com.example.aamezencev.weatherinfo.domain.RxDbManager;
 import com.example.aamezencev.weatherinfo.domain.RxGoogleApiManager;
 import com.example.aamezencev.weatherinfo.domain.RxOWMApiManager;
@@ -22,4 +23,6 @@ public interface AppComponent {
     void inject(MainActivityInteractor mainInteractor);
 
     void inject(WeatherInfoInteractor weatherInfoInteractor);
+
+    void inject(UpdateService updateService);
 }

@@ -1,17 +1,10 @@
 package com.example.aamezencev.weatherinfo.domain.interactors;
 
 import com.example.aamezencev.weatherinfo.App;
-import com.example.aamezencev.weatherinfo.data.PromptCityDbModel;
 import com.example.aamezencev.weatherinfo.domain.RxDbManager;
-import com.example.aamezencev.weatherinfo.events.WeatherDeleteItemEvent;
-import com.example.aamezencev.weatherinfo.inrerfaces.contracts.IWeatherInfoInteractorOutput;
-import com.example.aamezencev.weatherinfo.inrerfaces.interactors.IWeatherInfoInteractor;
+import com.example.aamezencev.weatherinfo.domain.interactors.interfaces.IWeatherInfoInteractor;
+import com.example.aamezencev.weatherinfo.view.presenters.IWeatherInfoInteractorOutput;
 import com.example.aamezencev.weatherinfo.view.mappers.CurrentWeatherDbModelToView;
-import com.example.aamezencev.weatherinfo.view.mappers.PromptCityDbModelToViewPromptCityModel;
-
-import org.greenrobot.eventbus.EventBus;
-
-import java.util.List;
 
 import javax.inject.Inject;
 

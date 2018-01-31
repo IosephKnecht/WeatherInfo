@@ -8,10 +8,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.aamezencev.weatherinfo.inrerfaces.DeleteBtnClick;
-import com.example.aamezencev.weatherinfo.inrerfaces.WeatherItemClick;
+import com.example.aamezencev.weatherinfo.view.interfaces.DeleteBtnClick;
+import com.example.aamezencev.weatherinfo.view.interfaces.WeatherItemClick;
 import com.example.aamezencev.weatherinfo.R;
-import com.example.aamezencev.weatherinfo.data.PromptCityDbModel;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel;
 
 import java.util.List;

@@ -10,30 +10,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.ImageButton;
 
-import com.example.aamezencev.weatherinfo.Router;
-import com.example.aamezencev.weatherinfo.data.PromptCityDbModel;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IBaseActivity;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IBaseRouter;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IWeatherInfoActivity;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IWeatherInfoPresenter;
+import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
+import com.example.aamezencev.weatherinfo.view.interfaces.IWeatherInfoActivity;
+import com.example.aamezencev.weatherinfo.view.presenters.IWeatherInfoPresenter;
 import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilWeatherInfoAdapter;
 import com.example.aamezencev.weatherinfo.view.adapters.WeatherInfoAdapter;
-import com.example.aamezencev.weatherinfo.App;
-import com.example.aamezencev.weatherinfo.events.WeatherDeleteItemEvent;
-import com.example.aamezencev.weatherinfo.view.mappers.CurrentWeatherDbModelToView;
-import com.example.aamezencev.weatherinfo.view.mappers.PromptCityDbModelToViewPromptCityModel;
-import com.example.aamezencev.weatherinfo.domain.RxDbManager;
 import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.view.presenters.WeatherInfoPresenter;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewCurrentWeatherModel;
 
-import org.greenrobot.eventbus.EventBus;
-
-import java.util.List;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.schedulers.Schedulers;
 
 public class WeatherInfoActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ViewCurrentWeatherModel>,
         IWeatherInfoActivity {

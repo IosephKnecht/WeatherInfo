@@ -15,12 +15,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.example.aamezencev.weatherinfo.Router;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IBaseActivity;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IBaseRouter;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IMainPresenter;
+import com.example.aamezencev.weatherinfo.view.interfaces.CheckBoxClick;
+import com.example.aamezencev.weatherinfo.view.interfaces.IBaseActivity;
+import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
+import com.example.aamezencev.weatherinfo.view.presenters.IMainPresenter;
 import com.example.aamezencev.weatherinfo.view.adapters.MainAdapter;
-import com.example.aamezencev.weatherinfo.inrerfaces.CheckBoxClick;
 import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.view.presenters.MainActivityPresenter;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel;

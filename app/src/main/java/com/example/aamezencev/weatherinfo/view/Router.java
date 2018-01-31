@@ -1,11 +1,10 @@
-package com.example.aamezencev.weatherinfo;
+package com.example.aamezencev.weatherinfo.view;
 
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IBaseRouter;
-import com.example.aamezencev.weatherinfo.view.WeatherInfoActivity;
-import com.example.aamezencev.weatherinfo.view.WeatherListActivity;
+import com.example.aamezencev.weatherinfo.UpdateService;
+import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
 
 /**
  * Created by aa.mezencev on 30.01.2018.
@@ -23,8 +22,6 @@ public class Router implements IBaseRouter {
         Intent intent = new Intent(context, WeatherListActivity.class);
         context.startActivity(intent);
     }
-
-
 
     @Override
     public void startUpdateService() {

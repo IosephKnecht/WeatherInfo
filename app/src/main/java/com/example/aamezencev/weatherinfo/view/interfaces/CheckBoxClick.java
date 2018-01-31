@@ -1,4 +1,4 @@
-package com.example.aamezencev.weatherinfo.inrerfaces;
+package com.example.aamezencev.weatherinfo.view.interfaces;
 
 import android.view.View;
 

@@ -1,12 +1,9 @@
 package com.example.aamezencev.weatherinfo.view.presenters;
 
 import com.example.aamezencev.weatherinfo.domain.interactors.WeatherInfoInteractor;
-import com.example.aamezencev.weatherinfo.inrerfaces.contracts.IWeatherInfoInteractorOutput;
-import com.example.aamezencev.weatherinfo.inrerfaces.interactors.IWeatherInfoInteractor;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IBaseActivity;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IBaseRouter;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IWeatherInfoActivity;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IWeatherInfoPresenter;
+import com.example.aamezencev.weatherinfo.domain.interactors.interfaces.IWeatherInfoInteractor;
+import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
+import com.example.aamezencev.weatherinfo.view.interfaces.IWeatherInfoActivity;
 
 /**
  * Created by aa.mezencev on 30.01.2018.

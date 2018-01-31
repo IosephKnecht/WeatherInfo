@@ -1,4 +1,4 @@
-package com.example.aamezencev.weatherinfo.inrerfaces.view;
+package com.example.aamezencev.weatherinfo.view.interfaces;
 
 import java.util.List;
 

@@ -1,11 +1,9 @@
 package com.example.aamezencev.weatherinfo.view.presenters;
 
 import com.example.aamezencev.weatherinfo.domain.interactors.MainActivityInteractor;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IBaseActivity;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IBaseRouter;
-import com.example.aamezencev.weatherinfo.inrerfaces.interactors.IMainInteractor;
-import com.example.aamezencev.weatherinfo.inrerfaces.contracts.IMainInteractorOutput;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IMainPresenter;
+import com.example.aamezencev.weatherinfo.view.interfaces.IBaseActivity;
+import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
+import com.example.aamezencev.weatherinfo.domain.interactors.interfaces.IMainInteractor;
 
 import java.util.List;
 

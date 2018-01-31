@@ -1,4 +1,4 @@
-package com.example.aamezencev.weatherinfo.inrerfaces.contracts;
+package com.example.aamezencev.weatherinfo.view.presenters;
 
 import java.util.List;
 

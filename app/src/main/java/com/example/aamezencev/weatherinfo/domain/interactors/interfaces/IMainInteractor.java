@@ -1,4 +1,4 @@
-package com.example.aamezencev.weatherinfo.inrerfaces.interactors;
+package com.example.aamezencev.weatherinfo.domain.interactors.interfaces;
 
 import java.util.List;
 

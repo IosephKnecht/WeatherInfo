@@ -16,14 +16,15 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.aamezencev.weatherinfo.R;
-import com.example.aamezencev.weatherinfo.Router;
 import com.example.aamezencev.weatherinfo.UpdateService;
+import com.example.aamezencev.weatherinfo.data.CurrentWeatherDbModel;
+import com.example.aamezencev.weatherinfo.events.UpdatedCurrentWeather;
 import com.example.aamezencev.weatherinfo.events.WeatherDeleteItemEvent;
-import com.example.aamezencev.weatherinfo.inrerfaces.DeleteBtnClick;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IBaseActivity;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IBaseRouter;
-import com.example.aamezencev.weatherinfo.inrerfaces.view.IMainPresenter;
-import com.example.aamezencev.weatherinfo.inrerfaces.WeatherItemClick;
+import com.example.aamezencev.weatherinfo.view.interfaces.DeleteBtnClick;
+import com.example.aamezencev.weatherinfo.view.interfaces.IBaseActivity;
+import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
+import com.example.aamezencev.weatherinfo.view.interfaces.WeatherItemClick;
+import com.example.aamezencev.weatherinfo.view.presenters.IMainPresenter;
 import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilWeatherListAdapter;
 import com.example.aamezencev.weatherinfo.view.adapters.WeatherListAdapter;
 import com.example.aamezencev.weatherinfo.view.presenters.MainActivityPresenter;
@@ -63,12 +64,14 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
 
         Intent intent = new Intent(this, UpdateService.class);
 
-        boolean state = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("serviceSwitch", true);
-        if (state) {
-            this.startService(intent);
-        } else {
-            this.stopService(intent);
-        }
+//        boolean state = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("serviceSwitch", true);
+//        if (state) {
+//            this.startService(intent);
+//        } else {
+//            this.stopService(intent);
+//        }
+
+        baseRouter.startUpdateService();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.weatherRecycler);
         mRecyclerView.setHasFixedSize(true);
@@ -168,6 +171,20 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     public void paintList(List viewModelList) {
         getLoaderManager().getLoader(123).deliverResult(viewModelList);
         updateRecyclerView(viewModelList);
+    }
+
+    @Subscribe
+    public void updatedCurrentWeather(UpdatedCurrentWeather<CurrentWeatherDbModel> updatedCurrentWeather){
+//        int i = -1;
+//        for (CurrentWeatherDbModel dbModel : updatedCurrentWeather.getViewModelList()) {
+//            i++;
+//            String briefInformation = new String();
+//            briefInformation += "weather: " + dbModel.getMain() + " " + dbModel.getDescription();
+//            viewPromptCityModelList.get(i).setBriefInformation(briefInformation);
+//        }
+//        mainPresenter.addPromptListViewToDb(viewPromptCityModelList);
+//        getLoaderManager().getLoader(123).deliverResult(viewPromptCityModelList);
+//        paintList(viewPromptCityModelList);
     }
 
 

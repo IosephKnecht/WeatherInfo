@@ -18,7 +18,7 @@ public class SettingsActivity extends AppCompatActivity {
         Fragment fragment = getFragmentManager().findFragmentByTag(prefTag);
         if (fragment == null) {
             fragment = new SettingsFragment();
-            getFragmentManager().beginTransaction().addToBackStack(null).replace(R.id.settingsFragment, fragment, prefTag).commit();
+            getFragmentManager().beginTransaction().replace(R.id.settingsFragment, fragment, prefTag).commit();
         }
     }
 }

@@ -27,7 +27,9 @@ public class PromptCityDbModelToViewPromptCityModel {
             viewPromptCityModel.setStructuredFormatting(mapStructureFormatting(promptCityDbModel));
             viewPromptCityModel.setPlaceId(promptCityDbModel.getPlaceId());
             viewPromptCityModel.setKey(promptCityDbModel.getKey().toString());
-            viewPromptCityModel.setBriefInformation(promptCityDbModel.getWeatherDbModel().getDescription()+promptCityDbModel.getWeatherDbModel().getMain());
+
+            if (promptCityDbModel.getWeatherDbModel() != null)
+                viewPromptCityModel.setBriefInformation(promptCityDbModel.getWeatherDbModel().getDescription() + promptCityDbModel.getWeatherDbModel().getMain());
             viewPromptCityModelList.add(viewPromptCityModel);
         }
         return viewPromptCityModelList;

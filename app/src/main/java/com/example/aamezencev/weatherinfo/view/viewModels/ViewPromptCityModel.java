@@ -1,5 +1,7 @@
 package com.example.aamezencev.weatherinfo.view.viewModels;
 
+import java.util.Objects;
+
 /**
  * Created by aa.mezencev on 11.01.2018.
  */
@@ -93,6 +95,7 @@ public class ViewPromptCityModel {
                 this.id.equals(viewModel.getId()) &&
                 this.isChecked == viewModel.isChecked() &&
                 this.placeId.equals(viewModel.getPlaceId()) &&
-                this.key.equals(viewModel.getKey());
+                this.key.equals(viewModel.getKey()) &&
+                Objects.equals(this.getBriefInformation(), viewModel.getBriefInformation());
     }
 }

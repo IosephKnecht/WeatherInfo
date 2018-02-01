@@ -48,7 +48,7 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
                 viewPromptCityModelList.get(position).getBriefInformation());
 
         holder.textView.setOnClickListener(view -> weatherItemClick.weatherItemClick(view,
-                Long.valueOf(viewPromptCityModelList.get(position).getKey()),
+                Long.valueOf(viewPromptCityModelList.get(holder.getAdapterPosition()).getKey()),
                 holder.textView.getText().toString()));
 
 

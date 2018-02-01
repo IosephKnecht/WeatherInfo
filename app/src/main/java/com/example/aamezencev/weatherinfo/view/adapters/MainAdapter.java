@@ -41,7 +41,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
         holder.cbCity.setText(stringConcatenation(viewPromptCityModelList.get(position)));
         holder.cbCity.setChecked(viewPromptCityModel.isChecked());
         holder.cbCity.setOnClickListener(view -> {
-            checkBoxClick.checkBoxClick(view, viewPromptCityModelList.get(position));
+            checkBoxClick.checkBoxClick(view, viewPromptCityModelList.get(holder.getAdapterPosition()));
         });
     }
 

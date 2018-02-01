@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -15,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilMainAdapter;
 import com.example.aamezencev.weatherinfo.view.interfaces.CheckBoxClick;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseActivity;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
@@ -95,11 +97,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void updateRecyclerView(List<ViewPromptCityModel> newList) {
-//        DiffUtilMainAdapter diffUtilMainAdapter = new DiffUtilMainAdapter(mAdapter.getViewPromptCityModelList(), newList);
-//        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilMainAdapter);
+        DiffUtilMainAdapter diffUtilMainAdapter = new DiffUtilMainAdapter(mAdapter.getViewPromptCityModelList(), newList);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilMainAdapter);
         mAdapter.setViewPromptCityModelList(newList);
-        mAdapter.notifyDataSetChanged();
-//        diffResult.dispatchUpdatesTo(mAdapter);
+        diffResult.dispatchUpdatesTo(mAdapter);
         floatingActionButton.setVisibility(isVisibleFloatingButton());
     }
 

@@ -5,6 +5,7 @@ import android.support.v7.util.DiffUtil;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by aa.mezencev on 26.01.2018.
@@ -35,7 +36,7 @@ public class DiffUtilMainAdapter extends DiffUtil.Callback {
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
         ViewPromptCityModel oldView = oldViewPromptCityModelList.get(oldItemPosition);
         ViewPromptCityModel newView = newViewPromptCityModelList.get(newItemPosition);
-        return oldView.getId().equals(newView.getId());
+        return true;
     }
 
     @Override

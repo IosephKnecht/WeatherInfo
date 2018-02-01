@@ -1,5 +1,8 @@
 package com.example.aamezencev.weatherinfo.view.presenters;
 
+import com.example.aamezencev.weatherinfo.view.interfaces.IBaseActivity;
+import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
+
 import java.util.List;
 
 /**
@@ -16,6 +19,10 @@ public interface IMainPresenter<T> {
     void deleteItemAsDb(Long key);
 
     void onDestroy();
+
+    void getHashList();
+
+    void updateLink(IBaseActivity baseActivity, IBaseRouter baseRouter);
 
     int isVisibleFloatingButton();
 

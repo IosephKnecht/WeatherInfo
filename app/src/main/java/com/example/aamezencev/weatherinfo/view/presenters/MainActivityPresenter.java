@@ -1,8 +1,11 @@
 package com.example.aamezencev.weatherinfo.view.presenters;
 
+import android.content.Context;
+import android.content.Loader;
 import android.view.View;
 
 import com.example.aamezencev.weatherinfo.domain.interactors.MainActivityInteractor;
+import com.example.aamezencev.weatherinfo.view.Router;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseActivity;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
 import com.example.aamezencev.weatherinfo.domain.interactors.interfaces.IMainInteractor;
@@ -32,22 +35,22 @@ public class MainActivityPresenter implements IMainInteractorOutput, IMainPresen
 
     @Override
     public void getViewPromptCityModelList(String city) {
-        mainInteractor.execute(city);
+        mainInteractor.onGetViewPromptCityModelList(city);
     }
 
     @Override
     public void addPromptListViewToDb(List viewModelList) {
-        mainInteractor.executeList(viewModelList);
+        mainInteractor.onAddPromptListViewToDb(viewModelList);
     }
 
     @Override
     public void getPromptCityDbModelList() {
-        mainInteractor.executeDbList();
+        mainInteractor.onGetPromptCityDbModelList();
     }
 
     @Override
     public void deleteItemAsDb(Long key) {
-        mainInteractor.executeDelete(key);
+        mainInteractor.onDeleteItemAsDb(key);
     }
 
     @Override
@@ -56,6 +59,17 @@ public class MainActivityPresenter implements IMainInteractorOutput, IMainPresen
         mainInteractor.unRegister();
         mainInteractor = null;
         baseRouter = null;
+    }
+
+    @Override
+    public void getHashList() {
+        baseActivity.paintList(viewPromptCityModelList);
+    }
+
+    @Override
+    public void updateLink(IBaseActivity baseActivity, IBaseRouter baseRouter) {
+        this.baseActivity = baseActivity;
+        this.baseRouter = baseRouter;
     }
 
     @Override

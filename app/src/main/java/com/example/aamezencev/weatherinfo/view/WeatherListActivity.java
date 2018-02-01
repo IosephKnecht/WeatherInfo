@@ -180,7 +180,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     }
 
 
-    private static class MyLoader extends android.content.Loader<List<ViewPromptCityModel>> {
+    public static class MyLoader extends android.content.Loader<List<ViewPromptCityModel>> {
 
         private Context context;
         private List<ViewPromptCityModel> viewPromptCityModelList;

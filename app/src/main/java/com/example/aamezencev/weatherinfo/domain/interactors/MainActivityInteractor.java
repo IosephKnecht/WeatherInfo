@@ -41,7 +41,7 @@ public class MainActivityInteractor implements IMainInteractor {
     }
 
     @Override
-    public void execute(String city) {
+    public void onGetViewPromptCityModelList(String city) {
         compositeDisposable.add(googleApiManager.promptRequest(city)
                 .subscribeOn(Schedulers.io())
                 .map(response -> {
@@ -64,7 +64,7 @@ public class MainActivityInteractor implements IMainInteractor {
     }
 
     @Override
-    public void executeList(List viewModelList) {
+    public void onAddPromptListViewToDb(List viewModelList) {
         compositeDisposable.add(dbManager.addPromptListViewToDb(viewModelList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -72,7 +72,7 @@ public class MainActivityInteractor implements IMainInteractor {
     }
 
     @Override
-    public void executeDbList() {
+    public void onGetPromptCityDbModelList() {
         compositeDisposable.add(
                 dbManager.allItemQuery()
                         .subscribeOn(Schedulers.io())
@@ -89,7 +89,7 @@ public class MainActivityInteractor implements IMainInteractor {
     }
 
     @Override
-    public void executeDelete(Long key) {
+    public void onDeleteItemAsDb(Long key) {
         compositeDisposable.add(dbManager.deleteItemOdDbQuery(key)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private RecyclerView mRecyclerView;
     private SearchView searchView;
     private CompositeDisposable disposables;
-    private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
     private MainAdapter mAdapter;
     private FloatingActionButton floatingActionButton;
 
@@ -54,8 +53,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        baseRouter = new Router(this);
-
         disposables = new CompositeDisposable();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.mainRecyclerView);
@@ -63,17 +60,35 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
+
         floatingActionButton = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         spinner = findViewById(R.id.spinner_view);
+
+        mAdapter = new MainAdapter(new ArrayList<>(), this);
+        mRecyclerView.setAdapter(mAdapter);
+
+        baseRouter = new Router(this);
+
+        floatingActionButton.setOnClickListener(fabView -> {
+            SharedPreferences sharedPreferences = getSharedPreferences("isFirstRun", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("state", getIntent().getBooleanExtra("isFirstRun", true));
+            editor.commit();
+
+            mainPresenter.addPromptListViewToDb(mainPresenter.selectIsCheckedItem());
+            baseRouter.openWeatherListActivity();
+            baseRouter.startUpdateService();
+        });
 
         getLoaderManager().initLoader(1, null, this);
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-
+        baseRouter = null;
         disposables.dispose();
+        disposables = null;
+        super.onDestroy();
     }
 
     @Override
@@ -117,30 +132,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         updateRecyclerView(viewModelList);
     }
 
-    private void paint(List<ViewPromptCityModel> viewPromptCityModels) {
-        mAdapter = new MainAdapter(viewPromptCityModels, this);
-
-        floatingActionButton.setVisibility(mainPresenter.isVisibleFloatingButton());
-
-        floatingActionButton.setOnClickListener(fabView -> {
-            SharedPreferences sharedPreferences = getSharedPreferences("isFirstRun", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("state", getIntent().getBooleanExtra("isFirstRun", true));
-            editor.commit();
-
-            mainPresenter.addPromptListViewToDb(mainPresenter.selectIsCheckedItem());
-            baseRouter.openWeatherListActivity();
-            baseRouter.startUpdateService();
-        });
-
-        mRecyclerView.setAdapter(mAdapter);
-    }
-
     @Override
     public Loader<IMainPresenter> onCreateLoader(int i, Bundle bundle) {
         android.content.Loader loader = null;
         if (i == 1) {
-            //loader = new SaveMainPresenter(this, baseRouter, this, mainPresenter);
             loader = new SaveMainPresenterLoader(this, this, mainPresenter);
         }
         return loader;
@@ -148,8 +143,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<IMainPresenter> loader, IMainPresenter mainPresenter) {
+        baseRouter = new Router(this);
+        mainPresenter.updateLink(this, baseRouter);
         this.mainPresenter = mainPresenter;
-        paint(viewPromptCityModelList);
+        mainPresenter.getHashList();
     }
 
     @Override
@@ -163,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         private IBaseRouter baseRouter;
         private IBaseActivity baseActivity;
 
-        public SaveMainPresenterLoader(Context context, IBaseActivity baseActivity, IMainPresenter mainPresenter) {
+        private SaveMainPresenterLoader(Context context, IBaseActivity baseActivity, IMainPresenter mainPresenter) {
             super(context);
             this.mainPresenter = mainPresenter;
             this.baseActivity = baseActivity;
@@ -184,6 +181,15 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         protected void onForceLoad() {
             super.onForceLoad();
             deliverResult(new MainActivityPresenter(baseActivity, baseRouter));
+        }
+
+        @Override
+        protected void onReset() {
+            mainPresenter.onDestroy();
+            baseRouter = null;
+            baseActivity = null;
+            mainPresenter = null;
+            super.onReset();
         }
     }
 }

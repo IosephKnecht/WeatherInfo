@@ -7,13 +7,13 @@ import java.util.List;
  */
 
 public interface IMainInteractor<T> {
-    void execute(String city);
+    void onGetViewPromptCityModelList(String city);
 
-    void executeList(List<T> viewModelList);
+    void onAddPromptListViewToDb(List<T> viewModelList);
 
-    void executeDbList();
+    void onGetPromptCityDbModelList();
 
-    void executeDelete(Long key);
+    void onDeleteItemAsDb(Long key);
 
     void unRegister();
 }

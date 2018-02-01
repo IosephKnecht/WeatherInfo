@@ -91,11 +91,11 @@ public class ViewPromptCityModel {
     @Override
     public boolean equals(Object obj) {
         ViewPromptCityModel viewModel = (ViewPromptCityModel) obj;
-        return this.description.equals(viewModel.getDescription()) &&
-                this.id.equals(viewModel.getId()) &&
-                this.isChecked == viewModel.isChecked() &&
-                this.placeId.equals(viewModel.getPlaceId()) &&
-                this.key.equals(viewModel.getKey()) &&
+        return Objects.equals(this.description, viewModel.getDescription()) &&
+                Objects.equals(this.id, viewModel.getId()) &&
+                Objects.equals(this.isChecked, viewModel.isChecked()) &&
+                Objects.equals(this.placeId, viewModel.getPlaceId()) &&
+                Objects.equals(this.key, viewModel.getKey()) &&
                 Objects.equals(this.getBriefInformation(), viewModel.getBriefInformation());
     }
 }

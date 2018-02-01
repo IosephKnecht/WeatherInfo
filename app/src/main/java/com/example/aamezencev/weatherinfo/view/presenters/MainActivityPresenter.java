@@ -1,10 +1,14 @@
 package com.example.aamezencev.weatherinfo.view.presenters;
 
+import android.view.View;
+
 import com.example.aamezencev.weatherinfo.domain.interactors.MainActivityInteractor;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseActivity;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
 import com.example.aamezencev.weatherinfo.domain.interactors.interfaces.IMainInteractor;
+import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,12 +21,16 @@ public class MainActivityPresenter implements IMainInteractorOutput, IMainPresen
     private IMainInteractor mainInteractor;
     private IBaseRouter baseRouter;
 
+    private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
+
     public MainActivityPresenter(IBaseActivity baseActivity, IBaseRouter baseRouter) {
         this.baseActivity = baseActivity;
         this.baseRouter = baseRouter;
         this.mainInteractor = new MainActivityInteractor(this);
     }
 
+
+    @Override
     public void getViewPromptCityModelList(String city) {
         mainInteractor.execute(city);
     }
@@ -51,7 +59,16 @@ public class MainActivityPresenter implements IMainInteractorOutput, IMainPresen
     }
 
     @Override
+    public int isVisibleFloatingButton() {
+        for (ViewPromptCityModel viewPromptCityModel : viewPromptCityModelList) {
+            if (viewPromptCityModel.isChecked()) return View.VISIBLE;
+        }
+        return View.INVISIBLE;
+    }
+
+    @Override
     public void OnSucces(List viewModelList) {
+        this.viewPromptCityModelList = viewModelList;
         baseActivity.paintList(viewModelList);
     }
 
@@ -59,4 +76,15 @@ public class MainActivityPresenter implements IMainInteractorOutput, IMainPresen
     public void onError(Exception ex) {
 
     }
+
+
+    @Override
+    public List selectIsCheckedItem() {
+        List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
+        for (ViewPromptCityModel viewPromptCityModel : this.viewPromptCityModelList) {
+            if (viewPromptCityModel.isChecked()) viewPromptCityModelList.add(viewPromptCityModel);
+        }
+        return viewPromptCityModelList;
+    }
+
 }

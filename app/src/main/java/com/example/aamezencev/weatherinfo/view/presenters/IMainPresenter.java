@@ -16,4 +16,8 @@ public interface IMainPresenter<T> {
     void deleteItemAsDb(Long key);
 
     void onDestroy();
+
+    int isVisibleFloatingButton();
+
+    List<T> selectIsCheckedItem();
 }

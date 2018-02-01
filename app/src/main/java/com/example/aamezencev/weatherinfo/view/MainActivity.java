@@ -15,6 +15,7 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilMainAdapter;
 import com.example.aamezencev.weatherinfo.view.interfaces.CheckBoxClick;
@@ -34,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<ViewPromptCityModel>>, CheckBoxClick,
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<IMainPresenter>, CheckBoxClick,
         IBaseActivity {
 
     private View spinner;
@@ -54,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         setContentView(R.layout.activity_main);
 
         baseRouter = new Router(this);
-        mainPresenter = new MainActivityPresenter(this, baseRouter);
 
         disposables = new CompositeDisposable();
 
@@ -65,8 +65,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mRecyclerView.setLayoutManager(layoutManager);
         floatingActionButton = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         spinner = findViewById(R.id.spinner_view);
-
-        paint(viewPromptCityModelList);
 
         getLoaderManager().initLoader(1, null, this);
     }
@@ -90,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 .filter(str -> str.length() >= 4)
                 .subscribe(aVoid -> {
                     spinner.setVisibility(View.VISIBLE);
-                    getLoaderManager().restartLoader(1, null, this);
+                    mainPresenter.getViewPromptCityModelList(aVoid.toString());
                 }));
 
         return true;
@@ -101,48 +99,28 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilMainAdapter);
         mAdapter.setViewPromptCityModelList(newList);
         diffResult.dispatchUpdatesTo(mAdapter);
-        floatingActionButton.setVisibility(isVisibleFloatingButton());
+        floatingActionButton.setVisibility(mainPresenter.isVisibleFloatingButton());
     }
 
-    @Override
-    public Loader<List<ViewPromptCityModel>> onCreateLoader(int i, Bundle bundle) {
-        Loader<List<ViewPromptCityModel>> loader = null;
-        if (i == 1) {
-            String city = null;
-            if (searchView != null) city = searchView.getQuery().toString();
-            loader = new MainLoader(this, mainPresenter, city);
-        }
-        return loader;
-    }
-
-    @Override
-    public void onLoadFinished(Loader<List<ViewPromptCityModel>> loader, List<ViewPromptCityModel> viewPromptCityModels) {
-        this.viewPromptCityModelList = viewPromptCityModels;
-        spinner.setVisibility(View.INVISIBLE);
-        updateRecyclerView(viewPromptCityModels);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<List<ViewPromptCityModel>> loader) {
-    }
 
     @Override
     public void checkBoxClick(View view, ViewPromptCityModel viewPromptCityModel) {
         boolean state = viewPromptCityModel.isChecked();
         viewPromptCityModel.setChecked(!state);
 
-        floatingActionButton.setVisibility(isVisibleFloatingButton());
+        floatingActionButton.setVisibility(mainPresenter.isVisibleFloatingButton());
     }
 
     @Override
     public void paintList(List viewModelList) {
-        getLoaderManager().getLoader(1).deliverResult(viewModelList);
+        spinner.setVisibility(View.INVISIBLE);
+        updateRecyclerView(viewModelList);
     }
 
     private void paint(List<ViewPromptCityModel> viewPromptCityModels) {
         mAdapter = new MainAdapter(viewPromptCityModels, this);
 
-        floatingActionButton.setVisibility(isVisibleFloatingButton());
+        floatingActionButton.setVisibility(mainPresenter.isVisibleFloatingButton());
 
         floatingActionButton.setOnClickListener(fabView -> {
             SharedPreferences sharedPreferences = getSharedPreferences("isFirstRun", Context.MODE_PRIVATE);
@@ -150,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             editor.putBoolean("state", getIntent().getBooleanExtra("isFirstRun", true));
             editor.commit();
 
-            mainPresenter.addPromptListViewToDb(selectIsCheckedItem());
+            mainPresenter.addPromptListViewToDb(mainPresenter.selectIsCheckedItem());
             baseRouter.openWeatherListActivity();
             baseRouter.startUpdateService();
         });
@@ -158,52 +136,54 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    private int isVisibleFloatingButton() {
-        for (ViewPromptCityModel viewPromptCityModel : viewPromptCityModelList) {
-            if (viewPromptCityModel.isChecked()) return View.VISIBLE;
+    @Override
+    public Loader<IMainPresenter> onCreateLoader(int i, Bundle bundle) {
+        android.content.Loader loader = null;
+        if (i == 1) {
+            //loader = new SaveMainPresenter(this, baseRouter, this, mainPresenter);
+            loader = new SaveMainPresenterLoader(this, this, mainPresenter);
         }
-        return View.INVISIBLE;
+        return loader;
     }
 
-    private List<ViewPromptCityModel> selectIsCheckedItem() {
-        List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
-        for (ViewPromptCityModel viewPromptCityModel : this.viewPromptCityModelList) {
-            if (viewPromptCityModel.isChecked()) viewPromptCityModelList.add(viewPromptCityModel);
-        }
-        return viewPromptCityModelList;
+    @Override
+    public void onLoadFinished(Loader<IMainPresenter> loader, IMainPresenter mainPresenter) {
+        this.mainPresenter = mainPresenter;
+        paint(viewPromptCityModelList);
     }
 
-    private static class MainLoader extends Loader<List<ViewPromptCityModel>> {
-        private List<ViewPromptCityModel> viewPromptCityModelList;
+    @Override
+    public void onLoaderReset(Loader<IMainPresenter> loader) {
+        String s = null;
+    }
+
+    private static class SaveMainPresenterLoader extends Loader<IMainPresenter> {
+
         private IMainPresenter mainPresenter;
-        private String city;
+        private IBaseRouter baseRouter;
+        private IBaseActivity baseActivity;
 
-        public MainLoader(Context context, IMainPresenter mainPresenter, String city) {
+        public SaveMainPresenterLoader(Context context, IBaseActivity baseActivity, IMainPresenter mainPresenter) {
             super(context);
             this.mainPresenter = mainPresenter;
-            this.city = city;
+            this.baseActivity = baseActivity;
+            this.baseRouter = new Router(context);
         }
 
         @Override
         protected void onStartLoading() {
             super.onStartLoading();
-            if (viewPromptCityModelList == null) {
+            if (mainPresenter == null) {
                 forceLoad();
             } else {
-                deliverResult(viewPromptCityModelList);
+                deliverResult(mainPresenter);
             }
         }
 
         @Override
-        public void forceLoad() {
-            super.forceLoad();
-            mainPresenter.getViewPromptCityModelList(city);
-        }
-
-        @Override
-        protected void onReset() {
-            super.onReset();
-            viewPromptCityModelList = null;
+        protected void onForceLoad() {
+            super.onForceLoad();
+            deliverResult(new MainActivityPresenter(baseActivity, baseRouter));
         }
     }
 }

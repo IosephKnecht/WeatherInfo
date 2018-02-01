@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
@@ -23,11 +24,14 @@ import com.example.aamezencev.weatherinfo.events.WeatherDeleteItemEvent;
 import com.example.aamezencev.weatherinfo.view.interfaces.DeleteBtnClick;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseActivity;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
+import com.example.aamezencev.weatherinfo.view.interfaces.IWeatherListActivity;
 import com.example.aamezencev.weatherinfo.view.interfaces.WeatherItemClick;
 import com.example.aamezencev.weatherinfo.view.presenters.IMainPresenter;
 import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilWeatherListAdapter;
 import com.example.aamezencev.weatherinfo.view.adapters.WeatherListAdapter;
+import com.example.aamezencev.weatherinfo.view.presenters.IWeatherListPresenter;
 import com.example.aamezencev.weatherinfo.view.presenters.MainActivityPresenter;
+import com.example.aamezencev.weatherinfo.view.presenters.WeatherListPresenter;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel;
 
 import org.greenrobot.eventbus.EventBus;
@@ -39,8 +43,8 @@ import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
 
-public class WeatherListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<ViewPromptCityModel>>,
-        WeatherItemClick, DeleteBtnClick, IBaseActivity {
+public class WeatherListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<IWeatherListPresenter>,
+        WeatherItemClick, DeleteBtnClick, IWeatherListActivity {
     private RecyclerView mRecyclerView;
     private WeatherListAdapter mAdapter;
 
@@ -48,7 +52,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
 
     private CompositeDisposable compositeDisposable;
 
-    private IMainPresenter mainPresenter;
+    private IWeatherListPresenter weatherListPresenter;
     private IBaseRouter baseRouter;
 
     @Override
@@ -56,7 +60,6 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_list);
         baseRouter = new Router(this);
-        mainPresenter = new MainActivityPresenter(this, baseRouter);
 
         compositeDisposable = new CompositeDisposable();
 
@@ -80,10 +83,16 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        paint();
+        mAdapter=new WeatherListAdapter(new ArrayList<>(),this,this);
+        mRecyclerView.setAdapter(mAdapter);
 
         getLoaderManager().initLoader(123, null, this);
+    }
 
+    @Override
+    protected void onStop() {
+        weatherListPresenter.onDetachView();
+        super.onStop();
     }
 
     @Override
@@ -91,8 +100,6 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         stopService(new Intent(this, UpdateService.class));
         EventBus.getDefault().unregister(this);
         compositeDisposable.dispose();
-        mainPresenter.onDestroy();
-        mainPresenter = null;
         baseRouter = null;
         super.onDestroy();
     }
@@ -121,13 +128,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void paint(WeatherDeleteItemEvent weatherDeleteItemEvent) {
-        getLoaderManager().restartLoader(123, null, this);
-    }
-
-    public void paint() {
-        mAdapter = new WeatherListAdapter(viewPromptCityModelList, this, this);
-
-        mRecyclerView.setAdapter(mAdapter);
+        weatherListPresenter.getPromptCityDbModelList();
     }
 
     public void updateRecyclerView(List<ViewPromptCityModel> newList) {
@@ -139,22 +140,23 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     }
 
     @Override
-    public Loader<List<ViewPromptCityModel>> onCreateLoader(int i, Bundle bundle) {
+    public Loader<IWeatherListPresenter> onCreateLoader(int i, Bundle bundle) {
         android.content.Loader loader = null;
         if (i == 123) {
-            loader = new MyLoader(this, mainPresenter);
+            loader = new SaveWeatherListPresenter(this, weatherListPresenter, this);
         }
         return loader;
     }
 
     @Override
-    public void onLoadFinished(Loader<List<ViewPromptCityModel>> loader, List<ViewPromptCityModel> viewPromptCityModelList) {
-        this.viewPromptCityModelList = viewPromptCityModelList;
-        paintList(viewPromptCityModelList);
+    public void onLoadFinished(Loader<IWeatherListPresenter> loader, IWeatherListPresenter weatherListPresenter) {
+        weatherListPresenter.onAttachView(this);
+        weatherListPresenter.getHashList();
+        this.weatherListPresenter = weatherListPresenter;
     }
 
     @Override
-    public void onLoaderReset(Loader<List<ViewPromptCityModel>> loader) {
+    public void onLoaderReset(Loader<IWeatherListPresenter> loader) {
 
     }
 
@@ -165,59 +167,53 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
 
     @Override
     public void deleteBtnClick(View view, Long key) {
-        mainPresenter.deleteItemAsDb(key);
+        weatherListPresenter.deleteItemAsDb(key);
     }
 
     @Override
     public void paintList(List viewModelList) {
         updateRecyclerView(viewModelList);
-        getLoaderManager().getLoader(123).deliverResult(viewModelList);
     }
 
     @Subscribe
     public void updatedCurrentWeather(UpdatedCurrentWeather updatedCurrentWeather) {
-        getLoaderManager().restartLoader(123, null, this);
+        weatherListPresenter.getPromptCityDbModelList();
     }
 
+    private static class SaveWeatherListPresenter extends Loader<IWeatherListPresenter> {
 
-    public static class MyLoader extends android.content.Loader<List<ViewPromptCityModel>> {
+        private IWeatherListPresenter weatherListPresenter;
+        private IWeatherListActivity weatherListActivity;
+        private IBaseRouter baseRouter;
 
-        private Context context;
-        private List<ViewPromptCityModel> viewPromptCityModelList;
-        private IMainPresenter mainPresenter;
-
-        public MyLoader(Context context, IMainPresenter mainPresenter) {
+        public SaveWeatherListPresenter(Context context, IWeatherListPresenter weatherListPresenter,
+                                        IWeatherListActivity weatherListActivity) {
             super(context);
-            this.context = context;
-            this.mainPresenter = mainPresenter;
+            this.weatherListActivity = weatherListActivity;
+            this.weatherListPresenter = weatherListPresenter;
+            this.baseRouter = new Router(context);
         }
 
         @Override
         protected void onStartLoading() {
             super.onStartLoading();
-            if (viewPromptCityModelList == null) forceLoad();
+            if (weatherListPresenter == null) forceLoad();
+            deliverResult(weatherListPresenter);
+            return;
         }
 
         @Override
-        public void forceLoad() {
-            super.forceLoad();
-            if (viewPromptCityModelList == null) {
-                mainPresenter.getPromptCityDbModelList();
-            } else {
-                deliverResult(viewPromptCityModelList);
-            }
+        protected void onForceLoad() {
+            super.onForceLoad();
+            weatherListPresenter = new WeatherListPresenter(weatherListActivity, baseRouter);
+            weatherListPresenter.getPromptCityDbModelList();
+            deliverResult(weatherListPresenter);
         }
 
         @Override
         protected void onReset() {
             super.onReset();
-            viewPromptCityModelList = null;
-        }
-
-        @Override
-        public void deliverResult(List<ViewPromptCityModel> data) {
-            super.deliverResult(data);
-            viewPromptCityModelList = data;
+            weatherListPresenter.onDestroy();
         }
     }
 }

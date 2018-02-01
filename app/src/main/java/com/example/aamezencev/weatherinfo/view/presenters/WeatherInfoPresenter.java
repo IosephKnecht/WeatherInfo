@@ -5,6 +5,7 @@ import com.example.aamezencev.weatherinfo.domain.interactors.interfaces.IWeather
 import com.example.aamezencev.weatherinfo.events.WeatherDeleteItemEvent;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
 import com.example.aamezencev.weatherinfo.view.interfaces.IWeatherInfoActivity;
+import com.example.aamezencev.weatherinfo.view.viewModels.ViewCurrentWeatherModel;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -19,6 +20,8 @@ public class WeatherInfoPresenter implements IWeatherInfoPresenter, IWeatherInfo
     private IBaseRouter baseRouter;
     private IWeatherInfoInteractor weatherInfoInteractor;
     private IWeatherInfoActivity weatherInfoActivity;
+
+    private ViewCurrentWeatherModel viewCurrentWeatherModel = new ViewCurrentWeatherModel();
 
     public WeatherInfoPresenter(IWeatherInfoActivity weatherInfoActivity, IBaseRouter baseRouter) {
         this.baseRouter = baseRouter;
@@ -37,6 +40,17 @@ public class WeatherInfoPresenter implements IWeatherInfoPresenter, IWeatherInfo
     }
 
     @Override
+    public void updateLink(IWeatherInfoActivity weatherInfoActivity, IBaseRouter baseRouter) {
+        this.weatherInfoActivity = weatherInfoActivity;
+        this.baseRouter = baseRouter;
+    }
+
+    @Override
+    public void getHashModel() {
+        weatherInfoActivity.paintWeather(viewCurrentWeatherModel);
+    }
+
+    @Override
     public void onDestroy() {
         baseRouter = null;
         weatherInfoInteractor.unRegister();
@@ -45,6 +59,7 @@ public class WeatherInfoPresenter implements IWeatherInfoPresenter, IWeatherInfo
 
     @Override
     public void onSucces(Object viewModel) {
+        viewCurrentWeatherModel = (ViewCurrentWeatherModel) viewModel;
         weatherInfoActivity.paintWeather(viewModel);
     }
 

@@ -21,7 +21,7 @@ import com.example.aamezencev.weatherinfo.view.viewModels.ViewCurrentWeatherMode
 
 import io.reactivex.disposables.CompositeDisposable;
 
-public class WeatherInfoActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ViewCurrentWeatherModel>,
+public class WeatherInfoActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<IWeatherInfoPresenter>,
         IWeatherInfoActivity {
 
     private ImageButton btnDeleteWeather;
@@ -65,9 +65,8 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
     @Override
     protected void onDestroy() {
         compositeDisposable.dispose();
-        weatherInfoPresenter.onDestroy();
-        weatherInfoPresenter = null;
         baseRouter = null;
+        weatherInfoPresenter = null;
         super.onDestroy();
     }
 
@@ -85,61 +84,104 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
     }
 
     @Override
-    public Loader<ViewCurrentWeatherModel> onCreateLoader(int i, Bundle bundle) {
-        Loader<ViewCurrentWeatherModel> loader = null;
+    public Loader<IWeatherInfoPresenter> onCreateLoader(int i, Bundle bundle) {
+        Loader loader = null;
         if (i == 1234) {
-            loader = new InfoLoader(this, getIntent().getLongExtra("promptKey", 0), weatherInfoPresenter);
+            //loader = new InfoLoader(this, getIntent().getLongExtra("promptKey", 0), weatherInfoPresenter);
+            Long key = getIntent().getLongExtra("promptKey", 0);
+            loader = new SaveInfoPresenter(this, this, weatherInfoPresenter);
         }
         return loader;
     }
 
     @Override
-    public void onLoadFinished(Loader<ViewCurrentWeatherModel> loader, ViewCurrentWeatherModel viewCurrentWeatherModel) {
-        updateRecyclerView(viewCurrentWeatherModel);
+    public void onLoadFinished(Loader<IWeatherInfoPresenter> loader, IWeatherInfoPresenter weatherInfoPresenter) {
+        baseRouter = new Router(this);
+        weatherInfoPresenter.updateLink(this, baseRouter);
+        weatherInfoPresenter.getCurrentWeather(getIntent().getLongExtra("promptKey",0));
+        this.weatherInfoPresenter = weatherInfoPresenter;
     }
 
     @Override
-    public void onLoaderReset(Loader<ViewCurrentWeatherModel> loader) {
+    public void onLoaderReset(Loader<IWeatherInfoPresenter> loader) {
 
     }
 
     @Override
     public void paintWeather(Object viewModel) {
-        getLoaderManager().getLoader(1234).deliverResult(viewModel);
+        updateRecyclerView((ViewCurrentWeatherModel) viewModel);
     }
 
-    private static class InfoLoader extends Loader<ViewCurrentWeatherModel> {
+    private static class SaveInfoPresenter extends Loader<IWeatherInfoPresenter> {
 
-        private ViewCurrentWeatherModel viewCurrentWeatherModel;
-        private Long key;
         private IWeatherInfoPresenter weatherInfoPresenter;
-        private CompositeDisposable compositeDisposable;
+        private IWeatherInfoActivity weatherInfoActivity;
+        private IBaseRouter baseRouter;
 
-        public InfoLoader(Context context, Long key,
-                          IWeatherInfoPresenter weatherInfoPresenter) {
+        public SaveInfoPresenter(Context context, IWeatherInfoActivity weatherInfoActivity,
+                                 IWeatherInfoPresenter weatherInfoPresenter) {
             super(context);
-            this.key = key;
             this.weatherInfoPresenter = weatherInfoPresenter;
-            compositeDisposable = new CompositeDisposable();
+            this.weatherInfoActivity = weatherInfoActivity;
+            baseRouter = new Router(context);
         }
 
         @Override
         protected void onStartLoading() {
             super.onStartLoading();
-            if (viewCurrentWeatherModel == null) forceLoad();
+            if (weatherInfoPresenter == null) forceLoad();
+            deliverResult(weatherInfoPresenter);
         }
 
         @Override
-        public void forceLoad() {
-            super.forceLoad();
-            weatherInfoPresenter.getCurrentWeather(key);
+        protected void onForceLoad() {
+            super.onForceLoad();
+            weatherInfoPresenter = new WeatherInfoPresenter(weatherInfoActivity, baseRouter);
+            deliverResult(weatherInfoPresenter);
         }
 
         @Override
         protected void onReset() {
             super.onReset();
-            compositeDisposable.dispose();
-            viewCurrentWeatherModel = null;
+            weatherInfoPresenter.onDestroy();
+            weatherInfoActivity = null;
+            baseRouter = null;
+            weatherInfoPresenter = null;
         }
     }
+
+//    private static class InfoLoader extends Loader<ViewCurrentWeatherModel> {
+//
+//        private ViewCurrentWeatherModel viewCurrentWeatherModel;
+//        private Long key;
+//        private IWeatherInfoPresenter weatherInfoPresenter;
+//        private CompositeDisposable compositeDisposable;
+//
+//        public InfoLoader(Context context, Long key,
+//                          IWeatherInfoPresenter weatherInfoPresenter) {
+//            super(context);
+//            this.key = key;
+//            this.weatherInfoPresenter = weatherInfoPresenter;
+//            compositeDisposable = new CompositeDisposable();
+//        }
+//
+//        @Override
+//        protected void onStartLoading() {
+//            super.onStartLoading();
+//            if (viewCurrentWeatherModel == null) forceLoad();
+//        }
+//
+//        @Override
+//        public void forceLoad() {
+//            super.forceLoad();
+//            weatherInfoPresenter.getCurrentWeather(key);
+//        }
+//
+//        @Override
+//        protected void onReset() {
+//            super.onReset();
+//            compositeDisposable.dispose();
+//            viewCurrentWeatherModel = null;
+//        }
+//    }
 }

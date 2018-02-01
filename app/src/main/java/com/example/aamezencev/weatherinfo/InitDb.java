@@ -19,7 +19,6 @@ import dagger.Provides;
 /**
  * Created by aa.mezencev on 30.01.2018.
  */
-@Module
 public class InitDb {
     private DaoSession daoSession;
 
@@ -29,9 +28,6 @@ public class InitDb {
         daoSession = new DaoMaster(db).newSession();
     }
 
-    @Provides
-    @NonNull
-    @Singleton
     public DaoSession getDaoSession() {
         return daoSession;
     }

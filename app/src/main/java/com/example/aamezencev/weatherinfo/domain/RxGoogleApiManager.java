@@ -17,7 +17,6 @@ import okhttp3.Response;
 /**
  * Created by aa.mezencev on 24.01.2018.
  */
-@Module
 public class RxGoogleApiManager {
     private OkHttpClient okHttpClient = new OkHttpClient();
 
@@ -55,12 +54,5 @@ public class RxGoogleApiManager {
                     JsonResultsGeo jsonResultsGeo = gson.fromJson(jsonString, JsonResultsGeo.class);
                     return jsonResultsGeo;
                 });
-    }
-
-    @Provides
-    @NonNull
-    @Singleton
-    public RxGoogleApiManager getGoogleApiManager(){
-        return new RxGoogleApiManager();
     }
 }

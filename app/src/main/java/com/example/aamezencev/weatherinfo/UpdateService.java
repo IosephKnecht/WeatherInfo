@@ -32,12 +32,9 @@ public class UpdateService extends Service {
 
     private Timer timer;
     private CompositeDisposable compositeDisposable;
-    @Inject
-    RxDbManager dbManager;
-    @Inject
-    RxGoogleApiManager googleApiManager;
-    @Inject
-    RxOWMApiManager owmApiManager;
+    @Inject RxDbManager dbManager;
+    @Inject RxGoogleApiManager googleApiManager;
+    @Inject RxOWMApiManager owmApiManager;
 
     @Override
     public void onCreate() {

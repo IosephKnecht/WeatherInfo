@@ -30,19 +30,18 @@ public class MainActivityInteractor implements IMainInteractor {
 
     private IMainInteractorOutput mainInteractorOutput;
     private CompositeDisposable compositeDisposable;
-    @Inject
-    RxDbManager dbManager;
-    @Inject
-    RxGoogleApiManager googleApiManager;
+    @Inject RxDbManager dbManager;
+    @Inject RxGoogleApiManager googleApiManager;
 
     public MainActivityInteractor(IMainInteractorOutput mainInteractorOutput) {
         this.mainInteractorOutput = mainInteractorOutput;
         this.compositeDisposable = new CompositeDisposable();
+        App.getAppComponent().inject(this);
+
     }
 
     @Override
     public void execute(String city) {
-        App.getAppComponent().inject(this);
         compositeDisposable.add(googleApiManager.promptRequest(city)
                 .subscribeOn(Schedulers.io())
                 .map(response -> {
@@ -66,7 +65,6 @@ public class MainActivityInteractor implements IMainInteractor {
 
     @Override
     public void executeList(List viewModelList) {
-        App.getAppComponent().inject(this);
         compositeDisposable.add(dbManager.addPromptListViewToDb(viewModelList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -75,7 +73,6 @@ public class MainActivityInteractor implements IMainInteractor {
 
     @Override
     public void executeDbList() {
-        App.getAppComponent().inject(this);
         compositeDisposable.add(
                 dbManager.allItemQuery()
                         .subscribeOn(Schedulers.io())
@@ -93,7 +90,6 @@ public class MainActivityInteractor implements IMainInteractor {
 
     @Override
     public void executeDelete(Long key) {
-        App.getAppComponent().inject(this);
         compositeDisposable.add(dbManager.deleteItemOdDbQuery(key)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

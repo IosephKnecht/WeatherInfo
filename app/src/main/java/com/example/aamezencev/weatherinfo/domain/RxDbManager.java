@@ -26,18 +26,16 @@ import io.reactivex.Observable;
 /**
  * Created by aa.mezencev on 24.01.2018.
  */
-@Module
 public class RxDbManager {
 
-    @Inject
     DaoSession daoSession;
 
-    public RxDbManager() {
-
+    @Inject
+    public RxDbManager(DaoSession daoSession) {
+        this.daoSession = daoSession;
     }
 
     public Observable<List<PromptCityDbModel>> allItemQuery() {
-        App.getAppComponent().inject(this);
         return Observable.<List<PromptCityDbModel>>create(aVoid -> {
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
             List<PromptCityDbModel> promptCityDbModelList = new ArrayList<>();
@@ -49,7 +47,6 @@ public class RxDbManager {
     }
 
     public Observable<List<PromptCityDbModel>> deleteItemOdDbQuery(Long key) {
-        App.getAppComponent().inject(this);
         return Observable.create(aVoid -> {
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
             CurrentWeatherDbModelDao currentWeatherDbModelDao = daoSession.getCurrentWeatherDbModelDao();
@@ -62,7 +59,6 @@ public class RxDbManager {
     }
 
     public Observable<List<CurrentWeatherDbModel>> addListToDbQuery(List<CurrentWeatherDbModel> currentWeatherDbModelList) {
-        App.getAppComponent().inject(this);
         return Observable.<List<CurrentWeatherDbModel>>create(e -> {
             CurrentWeatherDbModelDao currentWeatherDbModelDao = daoSession.getCurrentWeatherDbModelDao();
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
@@ -75,7 +71,6 @@ public class RxDbManager {
     }
 
     public Observable<CurrentWeatherDbModel> findWeatherByKey(Long key) {
-        App.getAppComponent().inject(this);
         return Observable.<CurrentWeatherDbModel>create(aVoid -> {
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
             PromptCityDbModel promptCityDbModel = promptCityDbModelDao.load(key);
@@ -89,7 +84,6 @@ public class RxDbManager {
     }
 
     public Observable addPromptListViewToDb(List<ViewPromptCityModel> viewPromptCityModelList) {
-        App.getAppComponent().inject(this);
         return Observable.create(e -> {
             List<PromptCityDbModel> promptCityDbModelList = new ArrayList<>();
             ViewPromptCityModelToPromptCityDbModel mapper = new ViewPromptCityModelToPromptCityDbModel(viewPromptCityModelList);
@@ -103,7 +97,6 @@ public class RxDbManager {
     }
 
     public Observable<List<PromptCityDbModel>> addPromptListToDb(List<PromptCityDbModel> promptCityDbModelList) {
-        App.getAppComponent().inject(this);
         return Observable.<List<PromptCityDbModel>>create(emitter -> {
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
             promptCityDbModelDao.deleteAll();
@@ -111,14 +104,6 @@ public class RxDbManager {
             emitter.onNext(promptCityDbModelDao.queryBuilder().list());
             emitter.onComplete();
         });
-    }
-
-
-    @Provides
-    @NonNull
-    @Singleton
-    public RxDbManager getDbManager() {
-        return new RxDbManager();
     }
 
 }

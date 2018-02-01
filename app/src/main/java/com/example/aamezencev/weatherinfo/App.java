@@ -34,10 +34,7 @@ public class App extends Application {
     protected AppComponent buildComponent() {
         return DaggerAppComponent
                 .builder()
-                .initDb(new InitDb(this))
-                .rxDbManager(new RxDbManager())
-                .rxGoogleApiManager(new RxGoogleApiManager())
-                .rxOWMApiManager(new RxOWMApiManager())
+                .appModule(new AppModule(this))
                 .build();
     }
 }

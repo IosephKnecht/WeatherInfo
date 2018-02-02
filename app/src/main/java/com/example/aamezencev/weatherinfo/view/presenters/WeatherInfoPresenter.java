@@ -23,10 +23,8 @@ public class WeatherInfoPresenter implements IWeatherInfoPresenter, IWeatherInfo
 
     private ViewCurrentWeatherModel viewCurrentWeatherModel = new ViewCurrentWeatherModel();
 
-    public WeatherInfoPresenter(IWeatherInfoActivity weatherInfoActivity, IBaseRouter baseRouter) {
-        this.baseRouter = baseRouter;
-        this.weatherInfoActivity = weatherInfoActivity;
-        this.weatherInfoInteractor = new WeatherInfoInteractor(this);
+    public WeatherInfoPresenter() {
+        weatherInfoInteractor = new WeatherInfoInteractor(this);
     }
 
     @Override
@@ -40,9 +38,16 @@ public class WeatherInfoPresenter implements IWeatherInfoPresenter, IWeatherInfo
     }
 
     @Override
-    public void updateLink(IWeatherInfoActivity weatherInfoActivity, IBaseRouter baseRouter) {
+    public void onAttachView(IWeatherInfoActivity weatherInfoActivity, IBaseRouter baseRouter) {
         this.weatherInfoActivity = weatherInfoActivity;
         this.baseRouter = baseRouter;
+    }
+
+    @Override
+    public void onDetachView() {
+        weatherInfoActivity = null;
+        baseRouter = null;
+
     }
 
     @Override
@@ -54,6 +59,7 @@ public class WeatherInfoPresenter implements IWeatherInfoPresenter, IWeatherInfo
     public void onDestroy() {
         baseRouter = null;
         weatherInfoInteractor.unRegister();
+        weatherInfoInteractor = null;
         weatherInfoActivity = null;
     }
 

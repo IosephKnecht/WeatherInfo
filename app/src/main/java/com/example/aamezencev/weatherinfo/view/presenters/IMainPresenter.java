@@ -22,7 +22,9 @@ public interface IMainPresenter<T> {
 
     void getHashList();
 
-    void updateLink(IBaseActivity baseActivity, IBaseRouter baseRouter);
+    void onViewAttach(IBaseActivity baseActivity, IBaseRouter baseRouter);
+
+    void onViewDetach();
 
     int isVisibleFloatingButton();
 

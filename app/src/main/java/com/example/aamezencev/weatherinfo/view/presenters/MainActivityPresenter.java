@@ -24,14 +24,11 @@ public class MainActivityPresenter implements IMainInteractorOutput, IMainPresen
     private IMainInteractor mainInteractor;
     private IBaseRouter baseRouter;
 
-    private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
-
-    public MainActivityPresenter(IBaseActivity baseActivity, IBaseRouter baseRouter) {
-        this.baseActivity = baseActivity;
-        this.baseRouter = baseRouter;
-        this.mainInteractor = new MainActivityInteractor(this);
+    public MainActivityPresenter() {
+        mainInteractor = new MainActivityInteractor(this);
     }
 
+    private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
 
     @Override
     public void getViewPromptCityModelList(String city) {
@@ -67,9 +64,15 @@ public class MainActivityPresenter implements IMainInteractorOutput, IMainPresen
     }
 
     @Override
-    public void updateLink(IBaseActivity baseActivity, IBaseRouter baseRouter) {
+    public void onViewAttach(IBaseActivity baseActivity, IBaseRouter baseRouter) {
         this.baseActivity = baseActivity;
         this.baseRouter = baseRouter;
+    }
+
+    @Override
+    public void onViewDetach() {
+        this.baseActivity = null;
+        this.baseRouter = null;
     }
 
     @Override

@@ -12,7 +12,9 @@ public interface IWeatherInfoPresenter {
 
     void deleteCurrentWeather(Long key);
 
-    void updateLink(IWeatherInfoActivity weatherInfoActivity, IBaseRouter baseRouter);
+    void onAttachView(IWeatherInfoActivity weatherInfoActivity, IBaseRouter baseRouter);
+
+    void onDetachView();
 
     void getHashModel();
 

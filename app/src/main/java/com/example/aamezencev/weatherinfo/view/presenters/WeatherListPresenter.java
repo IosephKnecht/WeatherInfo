@@ -21,9 +21,7 @@ public class WeatherListPresenter implements IWeatherListPresenter, IMainInterac
 
     private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
 
-    public WeatherListPresenter(IWeatherListActivity weatherListActivity, IBaseRouter baseRouter) {
-        this.weatherListActivity = weatherListActivity;
-        this.baseRouter = baseRouter;
+    public WeatherListPresenter() {
         mainInteractor = new MainActivityInteractor(this);
     }
 
@@ -43,15 +41,15 @@ public class WeatherListPresenter implements IWeatherListPresenter, IMainInterac
     }
 
     @Override
-    public void onAttachView(IWeatherListActivity weatherListActivity) {
+    public void onAttachView(IWeatherListActivity weatherListActivity, IBaseRouter baseRouter) {
         this.weatherListActivity = weatherListActivity;
-        this.mainInteractor = new MainActivityInteractor(this);
+        this.baseRouter = baseRouter;
     }
 
     @Override
     public void onDetachView() {
         this.weatherListActivity = null;
-        this.mainInteractor = null;
+        baseRouter = null;
     }
 
     @Override

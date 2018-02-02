@@ -14,7 +14,7 @@ public interface IWeatherListPresenter {
 
     void getHashList();
 
-    void onAttachView(IWeatherListActivity weatherListActivity);
+    void onAttachView(IWeatherListActivity weatherListActivity, IBaseRouter baseRouter);
 
     void onDetachView();
 

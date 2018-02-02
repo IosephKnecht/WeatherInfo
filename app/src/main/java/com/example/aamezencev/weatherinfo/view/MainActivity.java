@@ -80,11 +80,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             baseRouter.startUpdateService();
         });
 
-        getLoaderManager().initLoader(1, null, this);
+        mainPresenter = ((SaveMainPresenterLoader) getLoaderManager().initLoader(1, null, this)).getMainPresenter();
+        mainPresenter.onViewAttach(this, baseRouter);
     }
 
     @Override
     protected void onDestroy() {
+        mainPresenter.onViewDetach();
+        mainPresenter = null;
         baseRouter = null;
         disposables.dispose();
         disposables = null;
@@ -136,17 +139,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public Loader<IMainPresenter> onCreateLoader(int i, Bundle bundle) {
         android.content.Loader loader = null;
         if (i == 1) {
-            loader = new SaveMainPresenterLoader(this, this, mainPresenter);
+            mainPresenter = new MainActivityPresenter();
+            loader = new SaveMainPresenterLoader(this, mainPresenter);
         }
         return loader;
     }
 
     @Override
     public void onLoadFinished(Loader<IMainPresenter> loader, IMainPresenter mainPresenter) {
-        baseRouter = new Router(this);
-        mainPresenter.updateLink(this, baseRouter);
         this.mainPresenter = mainPresenter;
-        mainPresenter.getHashList();
+        this.mainPresenter.getHashList();
     }
 
     @Override
@@ -157,39 +159,27 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private static class SaveMainPresenterLoader extends Loader<IMainPresenter> {
 
         private IMainPresenter mainPresenter;
-        private IBaseRouter baseRouter;
-        private IBaseActivity baseActivity;
 
-        private SaveMainPresenterLoader(Context context, IBaseActivity baseActivity, IMainPresenter mainPresenter) {
+        private SaveMainPresenterLoader(Context context, IMainPresenter mainPresenter) {
             super(context);
             this.mainPresenter = mainPresenter;
-            this.baseActivity = baseActivity;
-            this.baseRouter = new Router(context);
         }
 
         @Override
         protected void onStartLoading() {
             super.onStartLoading();
-            if (mainPresenter == null) {
-                forceLoad();
-            } else {
-                deliverResult(mainPresenter);
-            }
-        }
-
-        @Override
-        protected void onForceLoad() {
-            super.onForceLoad();
-            deliverResult(new MainActivityPresenter(baseActivity, baseRouter));
+            deliverResult(mainPresenter);
         }
 
         @Override
         protected void onReset() {
-            mainPresenter.onDestroy();
-            baseRouter = null;
-            baseActivity = null;
-            mainPresenter = null;
             super.onReset();
+            mainPresenter.onDestroy();
+            mainPresenter = null;
+        }
+
+        private IMainPresenter getMainPresenter() {
+            return mainPresenter;
         }
     }
 }

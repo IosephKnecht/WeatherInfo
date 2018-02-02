@@ -48,8 +48,6 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     private RecyclerView mRecyclerView;
     private WeatherListAdapter mAdapter;
 
-    private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
-
     private CompositeDisposable compositeDisposable;
 
     private IWeatherListPresenter weatherListPresenter;
@@ -59,11 +57,13 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_list);
+
         baseRouter = new Router(this);
+        weatherListPresenter = ((SaveWeatherListPresenter) getLoaderManager().initLoader(123, null, this)).getPresenter();
+        weatherListPresenter.onAttachView(this, baseRouter);
 
         compositeDisposable = new CompositeDisposable();
 
-        EventBus.getDefault().register(this);
         baseRouter.startUpdateService();
 
         //Intent intent = new Intent(this, UpdateService.class);
@@ -83,22 +83,17 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        mAdapter=new WeatherListAdapter(new ArrayList<>(),this,this);
+        mAdapter = new WeatherListAdapter(new ArrayList<>(), this, this);
         mRecyclerView.setAdapter(mAdapter);
 
-        getLoaderManager().initLoader(123, null, this);
-    }
-
-    @Override
-    protected void onStop() {
-        weatherListPresenter.onDetachView();
-        super.onStop();
+        EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onDestroy() {
-        stopService(new Intent(this, UpdateService.class));
+        weatherListPresenter.onDetachView();
         EventBus.getDefault().unregister(this);
+        stopService(new Intent(this, UpdateService.class));
         compositeDisposable.dispose();
         baseRouter = null;
         super.onDestroy();
@@ -143,14 +138,14 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     public Loader<IWeatherListPresenter> onCreateLoader(int i, Bundle bundle) {
         android.content.Loader loader = null;
         if (i == 123) {
-            loader = new SaveWeatherListPresenter(this, weatherListPresenter, this);
+            IWeatherListPresenter presenter = new WeatherListPresenter();
+            loader = new SaveWeatherListPresenter(this, presenter);
         }
         return loader;
     }
 
     @Override
     public void onLoadFinished(Loader<IWeatherListPresenter> loader, IWeatherListPresenter weatherListPresenter) {
-        weatherListPresenter.onAttachView(this);
         weatherListPresenter.getHashList();
         this.weatherListPresenter = weatherListPresenter;
     }
@@ -177,36 +172,27 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
 
     @Subscribe
     public void updatedCurrentWeather(UpdatedCurrentWeather updatedCurrentWeather) {
-        weatherListPresenter.getPromptCityDbModelList();
+        if (weatherListPresenter != null) weatherListPresenter.getPromptCityDbModelList();
     }
 
     private static class SaveWeatherListPresenter extends Loader<IWeatherListPresenter> {
 
         private IWeatherListPresenter weatherListPresenter;
-        private IWeatherListActivity weatherListActivity;
-        private IBaseRouter baseRouter;
+        private boolean isNewLoader;
 
-        public SaveWeatherListPresenter(Context context, IWeatherListPresenter weatherListPresenter,
-                                        IWeatherListActivity weatherListActivity) {
+        public SaveWeatherListPresenter(Context context, IWeatherListPresenter weatherListPresenter) {
             super(context);
-            this.weatherListActivity = weatherListActivity;
             this.weatherListPresenter = weatherListPresenter;
-            this.baseRouter = new Router(context);
+            isNewLoader = true;
         }
 
         @Override
         protected void onStartLoading() {
             super.onStartLoading();
-            if (weatherListPresenter == null) forceLoad();
-            deliverResult(weatherListPresenter);
-            return;
-        }
-
-        @Override
-        protected void onForceLoad() {
-            super.onForceLoad();
-            weatherListPresenter = new WeatherListPresenter(weatherListActivity, baseRouter);
-            weatherListPresenter.getPromptCityDbModelList();
+            if (isNewLoader) {
+                weatherListPresenter.getPromptCityDbModelList();
+                isNewLoader = false;
+            }
             deliverResult(weatherListPresenter);
         }
 
@@ -214,6 +200,11 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         protected void onReset() {
             super.onReset();
             weatherListPresenter.onDestroy();
+            weatherListPresenter = null;
+        }
+
+        private IWeatherListPresenter getPresenter() {
+            return weatherListPresenter;
         }
     }
 }

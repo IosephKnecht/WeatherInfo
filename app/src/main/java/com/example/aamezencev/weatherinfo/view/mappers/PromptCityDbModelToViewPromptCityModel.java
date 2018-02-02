@@ -29,7 +29,7 @@ public class PromptCityDbModelToViewPromptCityModel {
             viewPromptCityModel.setKey(promptCityDbModel.getKey().toString());
 
             if (promptCityDbModel.getWeatherDbModel() != null)
-                viewPromptCityModel.setBriefInformation(promptCityDbModel.getWeatherDbModel().getDescription() + promptCityDbModel.getWeatherDbModel().getMain());
+                viewPromptCityModel.setBriefInformation(promptCityDbModel.getWeatherDbModel().getDescription() + " " + promptCityDbModel.getWeatherDbModel().getMain());
             viewPromptCityModelList.add(viewPromptCityModel);
         }
         return viewPromptCityModelList;

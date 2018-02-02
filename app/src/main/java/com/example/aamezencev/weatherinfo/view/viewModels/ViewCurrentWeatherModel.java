@@ -76,12 +76,12 @@ public class ViewCurrentWeatherModel {
     }
 
     public String getBriefInformation() {
-        String lineSep = System.lineSeparator();
+        String lineSep = String.format("%n");
         return "weather: " + main + " " + description + lineSep;
     }
 
     public String getFullInfotmation() {
-        String lineSep = System.lineSeparator();
+        String lineSep = String.format("%n");
         return "coordinates: " + lat + " " + lon + lineSep +
                 "weather: " + main + " " + description + lineSep +
                 "temp: " + temp + lineSep +
@@ -89,9 +89,9 @@ public class ViewCurrentWeatherModel {
                 "humidity: " + humidity + lineSep +
                 "temp_min: " + tempMin + lineSep +
                 "temp_max: " + tempMax + lineSep +
-                "wind_speed" + speed + lineSep +
-                "wind_deg" + deg + lineSep +
-                "clouds" + all + lineSep;
+                "wind_speed: " + speed + lineSep +
+                "wind_deg: " + deg + lineSep +
+                "clouds: " + all + lineSep;
     }
 
     public String getLon() {

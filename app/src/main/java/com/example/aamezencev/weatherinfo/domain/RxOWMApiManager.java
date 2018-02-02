@@ -24,6 +24,8 @@ public class RxOWMApiManager {
 
     private final String appId = "1929d22867616c7ad0d33873b6d1f32d";
 
+    private final String tempMode = "&units=metric";
+
     public RxOWMApiManager() {
 
     }
@@ -31,7 +33,7 @@ public class RxOWMApiManager {
     public Observable<JsonWeatherModel> currentWeatherRequest(String lat, String lon) {
         return Observable.<Response>create(aVoid -> {
             Request.Builder builder = new Request.Builder();
-            builder.url(String.format("http://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&APPID=%s", lat, lon, appId));
+            builder.url(String.format("http://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s%s&APPID=%s", lat, lon,tempMode, appId));
             Request request = builder.build();
             try {
                 Response response = okHttpClient.newCall(request).execute();

@@ -29,12 +29,12 @@ public class WeatherInfoPresenter implements IWeatherInfoPresenter, IWeatherInfo
 
     @Override
     public void getCurrentWeather(Long key) {
-        weatherInfoInteractor.executeCurrentWeather(key);
+        weatherInfoInteractor.onGetCurrentWeather(key);
     }
 
     @Override
     public void deleteCurrentWeather(Long key) {
-        weatherInfoInteractor.executeDeleteCurrentWeather(key);
+        weatherInfoInteractor.onDeleteCurrentWeather(key);
     }
 
     @Override
@@ -70,8 +70,8 @@ public class WeatherInfoPresenter implements IWeatherInfoPresenter, IWeatherInfo
     }
 
     @Override
-    public void onError(Exception ex) {
-
+    public void onError(Throwable ex) {
+        baseRouter.showError(ex);
     }
 
     @Override

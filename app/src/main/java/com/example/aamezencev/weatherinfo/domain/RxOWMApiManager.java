@@ -36,13 +36,10 @@ public class RxOWMApiManager {
             try {
                 Response response = okHttpClient.newCall(request).execute();
                 aVoid.onNext(response);
-            }
-            catch (Exception ex){
+            } catch (Exception ex) {
                 aVoid.onError(new Throwable("error in getting weather"));
             }
-            finally {
-                aVoid.onComplete();
-            }
+            aVoid.onComplete();
         })
                 .map(response -> {
                     Gson gson = new Gson();

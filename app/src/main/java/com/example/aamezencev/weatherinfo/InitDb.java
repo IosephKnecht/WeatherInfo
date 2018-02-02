@@ -22,7 +22,7 @@ import dagger.Provides;
 public class InitDb {
     private DaoSession daoSession;
 
-    public InitDb(Context context){
+    public InitDb(Context context) {
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, "weatherInfoDb-db");
         Database db = helper.getWritableDb();
         daoSession = new DaoMaster(db).newSession();

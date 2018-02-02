@@ -42,9 +42,8 @@ public class RxDbManager {
                 aVoid.onNext(promptCityDbModelDao.queryBuilder().list());
             } catch (Exception ex) {
                 aVoid.onError(new Exception("could not get data from DB"));
-            } finally {
-                aVoid.onComplete();
             }
+            aVoid.onComplete();
         });
     }
 
@@ -54,8 +53,11 @@ public class RxDbManager {
             CurrentWeatherDbModelDao currentWeatherDbModelDao = daoSession.getCurrentWeatherDbModelDao();
             currentWeatherDbModelDao.deleteByKey(key);
             promptCityDbModelDao.deleteByKey(key);
-            aVoid.onNext(promptCityDbModelDao);
-            //aVoid.onError(new Exception("could not delete record from DB"));
+            try {
+                aVoid.onNext(promptCityDbModelDao);
+            } catch (Exception ex) {
+                aVoid.onError(new Exception("could not delete record from DB"));
+            }
             aVoid.onComplete();
         })
                 .flatMap(aVoid -> allItemQuery());
@@ -72,9 +74,8 @@ public class RxDbManager {
                 e.onNext(currentWeatherDbModelList);
             } catch (Exception ex) {
                 e.onError(new Exception("do not write an array in DB"));
-            } finally {
-                e.onComplete();
             }
+            e.onComplete();
         });
     }
 
@@ -103,9 +104,8 @@ public class RxDbManager {
                 e.onNext(e);
             } catch (Exception ex) {
                 e.onError(new Exception("do not write an array in DB"));
-            } finally {
-                e.onComplete();
             }
+            e.onComplete();
         });
     }
 
@@ -118,9 +118,8 @@ public class RxDbManager {
                 emitter.onNext(promptCityDbModelDao.queryBuilder().list());
             } catch (Exception ex) {
                 emitter.onError(new Exception("do not write an array in DB"));
-            } finally {
-                emitter.onComplete();
             }
+            emitter.onComplete();
         });
     }
 

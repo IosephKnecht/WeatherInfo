@@ -67,6 +67,6 @@ public class WeatherListPresenter implements IWeatherListPresenter, IMainInterac
 
     @Override
     public void onError(Throwable ex) {
-
+        baseRouter.showError(ex);
     }
 }

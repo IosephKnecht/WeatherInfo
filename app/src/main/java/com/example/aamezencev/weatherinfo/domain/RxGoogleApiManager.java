@@ -38,9 +38,8 @@ public class RxGoogleApiManager {
                 aVoid.onNext(response);
             } catch (Exception ex) {
                 aVoid.onError(new Throwable("error prompt request"));
-            } finally {
-                aVoid.onComplete();
             }
+            aVoid.onComplete();
         });
     }
 
@@ -54,9 +53,8 @@ public class RxGoogleApiManager {
                 aVoid.onNext(response);
             } catch (Exception ex) {
                 aVoid.onError(new Throwable("error geo request"));
-            } finally {
-                aVoid.onComplete();
             }
+            aVoid.onComplete();
         })
                 .map(response -> {
                     Gson gson = new Gson();

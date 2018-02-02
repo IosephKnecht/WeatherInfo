@@ -7,9 +7,9 @@ import com.example.aamezencev.weatherinfo.view.viewModels.ViewCurrentWeatherMode
  */
 
 public interface IWeatherInfoInteractor<T> {
-    void executeCurrentWeather(Long key);
+    void onGetCurrentWeather(Long key);
 
-    void executeDeleteCurrentWeather(Long key);
+    void onDeleteCurrentWeather(Long key);
 
     void unRegister();
 }

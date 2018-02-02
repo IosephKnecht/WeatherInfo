@@ -22,7 +22,8 @@ import io.reactivex.schedulers.Schedulers;
 
 public class WeatherInfoInteractor implements IWeatherInfoInteractor {
 
-    @Inject RxDbManager dbManager;
+    @Inject
+    RxDbManager dbManager;
     private CompositeDisposable compositeDisposable;
     private IWeatherInfoInteractorOutput interactorOutput;
 
@@ -34,24 +35,24 @@ public class WeatherInfoInteractor implements IWeatherInfoInteractor {
     }
 
     @Override
-    public void executeCurrentWeather(Long key) {
+    public void onGetCurrentWeather(Long key) {
         compositeDisposable.add(dbManager.findWeatherByKey(key)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber -> {
                     CurrentWeatherDbModelToView mapper = new CurrentWeatherDbModelToView(subscriber);
                     interactorOutput.onSucces(mapper.map());
-                }));
+                }, error -> interactorOutput.onError(error)));
     }
 
     @Override
-    public void executeDeleteCurrentWeather(Long key) {
+    public void onDeleteCurrentWeather(Long key) {
         compositeDisposable.add(dbManager.deleteItemOdDbQuery(key)
                 .map(promptCityDbModels -> new PromptCityDbModelToViewPromptCityModel(promptCityDbModels).map())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(viewPromptCityModels -> {
                     interactorOutput.onSuccesDeleteItem(viewPromptCityModels);
-                }));
+                }, error -> interactorOutput.onError(error)));
     }
 
     @Override

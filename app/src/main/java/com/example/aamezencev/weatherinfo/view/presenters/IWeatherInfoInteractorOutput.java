@@ -9,7 +9,7 @@ import java.util.List;
 public interface IWeatherInfoInteractorOutput<T> {
     void onSucces(T viewModel);
 
-    void onError(Exception ex);
+    void onError(Throwable ex);
 
     void onSuccesDeleteItem(List<T> viewModelList);
 }

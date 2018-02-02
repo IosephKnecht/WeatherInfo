@@ -14,10 +14,6 @@ public interface IMainPresenter<T> {
 
     void addPromptListViewToDb(List<T> viewModelList);
 
-    void getPromptCityDbModelList();
-
-    void deleteItemAsDb(Long key);
-
     void onDestroy();
 
     void getHashList();

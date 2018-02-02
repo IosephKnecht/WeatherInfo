@@ -63,9 +63,6 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         weatherListPresenter.onAttachView(this, baseRouter);
 
         compositeDisposable = new CompositeDisposable();
-
-        baseRouter.startUpdateService();
-
         //Intent intent = new Intent(this, UpdateService.class);
 
 //        boolean state = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("serviceSwitch", true);
@@ -87,6 +84,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         mRecyclerView.setAdapter(mAdapter);
 
         EventBus.getDefault().register(this);
+        baseRouter.startUpdateService();
     }
 
     @Override
@@ -130,7 +128,6 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         DiffUtilWeatherListAdapter diffUtilWeatherListAdapter = new DiffUtilWeatherListAdapter(mAdapter.getViewPromptCityModelList(), newList);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilWeatherListAdapter);
         mAdapter.setViewPromptCityModelList(newList);
-        //mAdapter.notifyDataSetChanged();
         diffResult.dispatchUpdatesTo(mAdapter);
     }
 

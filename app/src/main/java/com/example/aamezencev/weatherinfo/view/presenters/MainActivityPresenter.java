@@ -41,16 +41,6 @@ public class MainActivityPresenter implements IMainInteractorOutput, IMainPresen
     }
 
     @Override
-    public void getPromptCityDbModelList() {
-        mainInteractor.onGetPromptCityDbModelList();
-    }
-
-    @Override
-    public void deleteItemAsDb(Long key) {
-        mainInteractor.onDeleteItemAsDb(key);
-    }
-
-    @Override
     public void onDestroy() {
         baseActivity = null;
         mainInteractor.unRegister();

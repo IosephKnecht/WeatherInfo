@@ -31,12 +31,10 @@ public class ActivityController extends AppCompatActivity {
             intent = new Intent(this, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             isFirstRun = !isFirstRun;
-            intent.putExtra("isFirstRun", isFirstRun);
             startActivity(intent);
         } else {
             intent = new Intent(this, WeatherListActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.putExtra("isFirstRun", isFirstRun);
             startActivity(intent);
         }
     }

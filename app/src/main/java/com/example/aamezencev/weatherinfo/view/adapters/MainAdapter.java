@@ -60,12 +60,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     protected class ViewHolder extends RecyclerView.ViewHolder {
 
         private CheckBox cbCity;
-        private Context context;
 
         public ViewHolder(View itemView) {
             super(itemView);
             cbCity = itemView.findViewById(R.id.cbCity);
-            context = cbCity.getContext();
         }
     }
 

@@ -24,9 +24,6 @@ public class ViewCurrentWeatherModel {
     private String deg = new String();
     private Long all = (long) 0;
 
-    public ViewCurrentWeatherModel() {
-    }
-
     public Long getKey() {
         return key;
     }

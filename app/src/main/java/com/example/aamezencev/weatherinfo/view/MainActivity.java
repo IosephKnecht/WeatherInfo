@@ -58,14 +58,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
-
-        floatingActionButton = (FloatingActionButton) findViewById(R.id.floatingActionButton);
-        spinner = findViewById(R.id.spinner_view);
-
         mAdapter = new MainAdapter(new ArrayList<>(), this);
         mRecyclerView.setAdapter(mAdapter);
 
-        baseRouter = new Router(this);
+        floatingActionButton = (FloatingActionButton) findViewById(R.id.floatingActionButton);
+        spinner = findViewById(R.id.spinner_view);
 
         floatingActionButton.setOnClickListener(fabView -> {
             SharedPreferences sharedPreferences = getSharedPreferences("isFirstRun", Context.MODE_PRIVATE);
@@ -73,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             editor.putBoolean("state", getIntent().getBooleanExtra("isFirstRun", true));
             editor.commit();
 
+            baseRouter = new Router(this);
             mainPresenter.addPromptListViewToDb(mainPresenter.selectIsCheckedItem());
             baseRouter.openWeatherListActivity();
             baseRouter.startUpdateService();

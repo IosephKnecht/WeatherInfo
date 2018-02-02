@@ -17,21 +17,6 @@ public class ViewPromptCityModel {
 
     private String briefInformation;
 
-    public ViewPromptCityModel() {
-
-    }
-
-    public ViewPromptCityModel(String description, String id,
-                               ViewPromptCityStructureFormatting structuredFormatting,
-                               String placeId, boolean isChecked) {
-        this.description = description;
-        this.id = id;
-        this.structuredFormatting = structuredFormatting;
-        this.placeId = placeId;
-        this.isChecked = isChecked;
-
-    }
-
     public String getDescription() {
         return description;
     }

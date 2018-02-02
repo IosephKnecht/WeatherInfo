@@ -8,15 +8,6 @@ public class ViewPromptCityStructureFormatting {
     private String mainText;
     private String secondaryText;
 
-    public ViewPromptCityStructureFormatting() {
-
-    }
-
-    public ViewPromptCityStructureFormatting(String mainText, String secondaryText) {
-        this.mainText = mainText;
-        this.secondaryText = secondaryText;
-    }
-
     public String getMainText() {
         return mainText;
     }

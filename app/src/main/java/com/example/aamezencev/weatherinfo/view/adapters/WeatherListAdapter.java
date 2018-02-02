@@ -73,13 +73,11 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
     protected class ViewHolder extends RecyclerView.ViewHolder {
         private TextView textView;
         private Button button;
-        private Context context;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.textView = itemView.findViewById(R.id.weatherItem);
             this.button = itemView.findViewById(R.id.deleteItemButton);
-            context = textView.getContext();
         }
     }
 }

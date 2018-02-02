@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,19 +17,15 @@ import android.view.View;
 
 import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.UpdateService;
-import com.example.aamezencev.weatherinfo.data.CurrentWeatherDbModel;
 import com.example.aamezencev.weatherinfo.events.UpdatedCurrentWeather;
 import com.example.aamezencev.weatherinfo.events.WeatherDeleteItemEvent;
+import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilWeatherListAdapter;
+import com.example.aamezencev.weatherinfo.view.adapters.WeatherListAdapter;
 import com.example.aamezencev.weatherinfo.view.interfaces.DeleteBtnClick;
-import com.example.aamezencev.weatherinfo.view.interfaces.IBaseActivity;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
 import com.example.aamezencev.weatherinfo.view.interfaces.IWeatherListActivity;
 import com.example.aamezencev.weatherinfo.view.interfaces.WeatherItemClick;
-import com.example.aamezencev.weatherinfo.view.presenters.IMainPresenter;
-import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilWeatherListAdapter;
-import com.example.aamezencev.weatherinfo.view.adapters.WeatherListAdapter;
 import com.example.aamezencev.weatherinfo.view.presenters.IWeatherListPresenter;
-import com.example.aamezencev.weatherinfo.view.presenters.MainActivityPresenter;
 import com.example.aamezencev.weatherinfo.view.presenters.WeatherListPresenter;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel;
 
@@ -64,16 +59,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
 
         compositeDisposable = new CompositeDisposable();
 
-        boolean state = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("serviceSwitch", true);
-        if (state) {
-            baseRouter.startUpdateService();
-        } else {
-            baseRouter.stopUpdateService();
-        }
-
-        baseRouter.startUpdateService();
-
-        mRecyclerView = (RecyclerView) findViewById(R.id.weatherRecycler);
+        mRecyclerView = findViewById(R.id.weatherRecycler);
         mRecyclerView.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -82,14 +68,19 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         mAdapter = new WeatherListAdapter(new ArrayList<>(), this, this);
         mRecyclerView.setAdapter(mAdapter);
 
+        boolean state = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("serviceSwitch", true);
+        if (state) {
+            baseRouter.startUpdateService();
+        } else {
+            baseRouter.stopUpdateService();
+        }
         EventBus.getDefault().register(this);
-        baseRouter.startUpdateService();
     }
 
     @Override
     protected void onDestroy() {
-        weatherListPresenter.onDetachView();
         EventBus.getDefault().unregister(this);
+        weatherListPresenter.onDetachView();
         stopService(new Intent(this, UpdateService.class));
         compositeDisposable.dispose();
         baseRouter = null;
@@ -98,16 +89,16 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent = null;
         switch (item.getItemId()) {
             case R.id.returnHomeItem:
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
+                intent = new Intent(this, MainActivity.class);
                 break;
             case R.id.settingsItem:
-                Intent settIntent = new Intent(this, SettingsActivity.class);
-                startActivity(settIntent);
+                intent = new Intent(this, SettingsActivity.class);
                 break;
         }
+        startActivity(intent);
         return true;
     }
 

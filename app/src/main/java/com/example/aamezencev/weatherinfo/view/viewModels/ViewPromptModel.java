@@ -10,15 +10,6 @@ public class ViewPromptModel {
     private List<ViewPromptCityModel> viewPromptCityModelList;
     private String status;
 
-    public ViewPromptModel() {
-
-    }
-
-    public ViewPromptModel(List<ViewPromptCityModel> viewPromptCityModelList, String status) {
-        this.viewPromptCityModelList = viewPromptCityModelList;
-        this.status = status;
-    }
-
     public List<ViewPromptCityModel> getViewPromptCityModelList() {
         return viewPromptCityModelList;
     }

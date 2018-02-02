@@ -30,16 +30,17 @@ import io.reactivex.schedulers.Schedulers;
 
 public class UpdateService extends Service {
 
-    private Timer timer;
     private CompositeDisposable compositeDisposable;
-    @Inject RxDbManager dbManager;
-    @Inject RxGoogleApiManager googleApiManager;
-    @Inject RxOWMApiManager owmApiManager;
+    @Inject
+    RxDbManager dbManager;
+    @Inject
+    RxGoogleApiManager googleApiManager;
+    @Inject
+    RxOWMApiManager owmApiManager;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        timer = new Timer();
         compositeDisposable = new CompositeDisposable();
     }
 
@@ -52,7 +53,6 @@ public class UpdateService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        timer.cancel();
         compositeDisposable.dispose();
         compositeDisposable = null;
     }
@@ -61,7 +61,6 @@ public class UpdateService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         App.getAppComponent().inject(this);
         compositeDisposable.add(dbManager.allItemQuery()
-                //.flatMap(list->RxDbManager.instance().addPromptListToDb(list))
                 .subscribeOn(Schedulers.io())
                 .flatMap(cities -> Observable.fromIterable(cities)
                         .flatMap(city -> googleApiManager.geoRequest(city.getPlaceId()))

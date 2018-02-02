@@ -40,10 +40,4 @@ public class ActivityController extends AppCompatActivity {
             startActivity(intent);
         }
     }
-
-//    public void writePreferences() {
-//        SharedPreferences.Editor editor = sharedPreferences.edit();
-//        editor.putBoolean("state", isFirstRun);
-//        editor.commit();
-//    }
 }

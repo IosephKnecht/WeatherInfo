@@ -46,7 +46,6 @@ public class SettingsFragment extends PreferenceFragment {
 
     @Override
     public void onDestroy() {
-        //getActivity().finish();
         super.onDestroy();
     }
 }

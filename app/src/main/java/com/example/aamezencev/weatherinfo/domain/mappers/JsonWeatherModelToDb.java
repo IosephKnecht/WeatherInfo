@@ -21,11 +21,9 @@ public class JsonWeatherModelToDb {
 
     public List<CurrentWeatherDbModel> map() {
         List<CurrentWeatherDbModel> currentWeatherDbModelList = new ArrayList<>();
-        int i = 0;
         for (JsonWeatherModel jsonModel : jsonWeatherModelList) {
             CurrentWeatherDbModel currentWeatherDbModel = new CurrentWeatherDbModel();
             JsonWeatherInfo jsonWeatherInfo = jsonModel.getJsonWeatherInfoList().get(0);
-            //currentWeatherDbModel.setKey(promptCityDbModelList.get(i).getKey());
             currentWeatherDbModel.setCod(jsonModel.getCod());
             currentWeatherDbModel.setId(jsonModel.getId());
             currentWeatherDbModel.setDescription(jsonWeatherInfo.getDescription());
@@ -42,7 +40,6 @@ public class JsonWeatherModelToDb {
             currentWeatherDbModel.setDeg(jsonModel.getJsonWindInfo().getDeg());
             currentWeatherDbModel.setAll(jsonModel.getJsonCloudsInfo().getAll());
             currentWeatherDbModelList.add(currentWeatherDbModel);
-            i++;
         }
 
         return currentWeatherDbModelList;

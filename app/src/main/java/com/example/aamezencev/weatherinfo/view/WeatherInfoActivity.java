@@ -19,6 +19,8 @@ import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.view.presenters.WeatherInfoPresenter;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewCurrentWeatherModel;
 
+import java.util.ArrayList;
+
 import io.reactivex.disposables.CompositeDisposable;
 
 public class WeatherInfoActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<IWeatherInfoPresenter>,
@@ -38,8 +40,9 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_info);
 
-        baseRouter = new Router(this);
+        setTitle(getIntent().getStringExtra("actionTitle"));
 
+        baseRouter = new Router(this);
         compositeDisposable = new CompositeDisposable();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.weatherInfoRecycler);
@@ -47,15 +50,13 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
-
-        setTitle(getIntent().getStringExtra("actionTitle"));
-
+        mAdapter = new WeatherInfoAdapter(new ViewCurrentWeatherModel());
+        mRecyclerView.setAdapter(mAdapter);
 
         btnDeleteWeather = (ImageButton) findViewById(R.id.btnDeleteWeather);
         btnDeleteWeather.setOnClickListener(btn -> {
             weatherInfoPresenter.deleteCurrentWeather(getIntent().getLongExtra("promptKey", 0));
         });
-        paint(new ViewCurrentWeatherModel());
 
         weatherInfoPresenter = ((SaveInfoPresenter) getLoaderManager().initLoader(1234, null, this)).getWeatherInfoPresenter();
         weatherInfoPresenter.onAttachView(this, baseRouter);
@@ -69,12 +70,6 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         baseRouter = null;
         weatherInfoPresenter = null;
         super.onDestroy();
-    }
-
-    public void paint(ViewCurrentWeatherModel viewCurrentWeatherModel) {
-        mAdapter = new WeatherInfoAdapter(viewCurrentWeatherModel);
-
-        mRecyclerView.setAdapter(mAdapter);
     }
 
     public void updateRecyclerView(ViewCurrentWeatherModel currentWeatherModel) {
@@ -97,6 +92,7 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
     @Override
     public void onLoadFinished(Loader<IWeatherInfoPresenter> loader, IWeatherInfoPresenter weatherInfoPresenter) {
         this.weatherInfoPresenter = weatherInfoPresenter;
+        //Спамим в БД каждый раз, но получаем "свежую погоду" погоду...
         this.weatherInfoPresenter.getCurrentWeather(getIntent().getLongExtra("promptKey", 0));
     }
 

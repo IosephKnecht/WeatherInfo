@@ -7,14 +7,5 @@ import java.util.List;
  */
 
 public class UpdatedCurrentWeather {
-//    private List<T> viewModelList;
-//
-//    public UpdatedCurrentWeather(List<T> viewModelList) {
-//        this.viewModelList = viewModelList;
-//    }
-//
-//
-//    public List<T> getViewModelList() {
-//        return viewModelList;
-//    }
+
 }

@@ -17,31 +17,21 @@ public class CurrentWeatherDbModelToView {
 
     public ViewCurrentWeatherModel map() {
         ViewCurrentWeatherModel viewCurrentWeatherModel = new ViewCurrentWeatherModel();
-        if (currentWeatherDbModel != null) {
-            viewCurrentWeatherModel.setCod(currentWeatherDbModel.getCod());
-            viewCurrentWeatherModel.setDescription(currentWeatherDbModel.getDescription());
-            viewCurrentWeatherModel.setIcon(currentWeatherDbModel.getIcon());
-            viewCurrentWeatherModel.setId(currentWeatherDbModel.getId());
-            viewCurrentWeatherModel.setMain(currentWeatherDbModel.getMain());
-            viewCurrentWeatherModel.setLon(currentWeatherDbModel.getLon());
-            viewCurrentWeatherModel.setLat(currentWeatherDbModel.getLat());
-            viewCurrentWeatherModel.setPressure(currentWeatherDbModel.getPressure());
-            viewCurrentWeatherModel.setTemp(currentWeatherDbModel.getTemp());
-            viewCurrentWeatherModel.setHumidity(currentWeatherDbModel.getHumidity());
-            viewCurrentWeatherModel.setTempMin(currentWeatherDbModel.getTempMin());
-            viewCurrentWeatherModel.setTempMax(currentWeatherDbModel.getTempMax());
-            viewCurrentWeatherModel.setSpeed(currentWeatherDbModel.getSpeed());
-            viewCurrentWeatherModel.setDeg(currentWeatherDbModel.getDeg());
-            viewCurrentWeatherModel.setAll(currentWeatherDbModel.getAll());
-
-        }
-        else {
-            viewCurrentWeatherModel.setCod("1");
-            viewCurrentWeatherModel.setDescription("1");
-            viewCurrentWeatherModel.setIcon("02d");
-            viewCurrentWeatherModel.setId((long)1);
-            viewCurrentWeatherModel.setMain("1");
-        }
+        viewCurrentWeatherModel.setCod(currentWeatherDbModel.getCod());
+        viewCurrentWeatherModel.setDescription(currentWeatherDbModel.getDescription());
+        viewCurrentWeatherModel.setIcon(currentWeatherDbModel.getIcon());
+        viewCurrentWeatherModel.setId(currentWeatherDbModel.getId());
+        viewCurrentWeatherModel.setMain(currentWeatherDbModel.getMain());
+        viewCurrentWeatherModel.setLon(currentWeatherDbModel.getLon());
+        viewCurrentWeatherModel.setLat(currentWeatherDbModel.getLat());
+        viewCurrentWeatherModel.setPressure(currentWeatherDbModel.getPressure());
+        viewCurrentWeatherModel.setTemp(currentWeatherDbModel.getTemp());
+        viewCurrentWeatherModel.setHumidity(currentWeatherDbModel.getHumidity());
+        viewCurrentWeatherModel.setTempMin(currentWeatherDbModel.getTempMin());
+        viewCurrentWeatherModel.setTempMax(currentWeatherDbModel.getTempMax());
+        viewCurrentWeatherModel.setSpeed(currentWeatherDbModel.getSpeed());
+        viewCurrentWeatherModel.setDeg(currentWeatherDbModel.getDeg());
+        viewCurrentWeatherModel.setAll(currentWeatherDbModel.getAll());
         return viewCurrentWeatherModel;
     }
 }

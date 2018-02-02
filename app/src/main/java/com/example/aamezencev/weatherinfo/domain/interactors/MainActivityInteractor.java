@@ -94,7 +94,6 @@ public class MainActivityInteractor implements IMainInteractor {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aVoid -> {
                     PromptCityDbModelToViewPromptCityModel mapper = new PromptCityDbModelToViewPromptCityModel(aVoid);
-                    //WeatherDeleteItemEvent weatherDeleteItemEvent = new WeatherDeleteItemEvent(mapper.map(), aVoid);
                     mainInteractorOutput.OnSucces(mapper.map());
                 }));
     }

@@ -33,9 +33,14 @@ public class RxGoogleApiManager {
             Request.Builder builder = new Request.Builder();
             builder.url(String.format("https://maps.googleapis.com/maps/api/place/autocomplete/json?input=%s&types=(regions)&language=en&key=%s", city, promptApiKey));
             Request request = builder.build();
-            Response response = okHttpClient.newCall(request).execute();
-            aVoid.onNext(response);
-            aVoid.onComplete();
+            try {
+                Response response = okHttpClient.newCall(request).execute();
+                aVoid.onNext(response);
+            } catch (Exception ex) {
+                aVoid.onError(new Throwable("error prompt request"));
+            } finally {
+                aVoid.onComplete();
+            }
         });
     }
 
@@ -44,9 +49,14 @@ public class RxGoogleApiManager {
             Request.Builder builder = new Request.Builder();
             builder.url(String.format("https://maps.googleapis.com/maps/api/geocode/json?place_id=%s&key=%s", placeId, geoApiKey));
             Request request = builder.build();
-            Response response = okHttpClient.newCall(request).execute();
-            aVoid.onNext(response);
-            aVoid.onComplete();
+            try {
+                Response response = okHttpClient.newCall(request).execute();
+                aVoid.onNext(response);
+            } catch (Exception ex) {
+                aVoid.onError(new Throwable("error geo request"));
+            } finally {
+                aVoid.onComplete();
+            }
         })
                 .map(response -> {
                     Gson gson = new Gson();

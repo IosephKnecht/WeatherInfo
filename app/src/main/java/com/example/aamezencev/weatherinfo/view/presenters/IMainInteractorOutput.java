@@ -9,5 +9,5 @@ import java.util.List;
 public interface IMainInteractorOutput<T> {
     void OnSucces(List<T> viewModelList);
 
-    void onError(Exception ex);
+    void onError(Throwable ex);
 }

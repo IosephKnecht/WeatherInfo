@@ -30,8 +30,10 @@ public class MainActivityInteractor implements IMainInteractor {
 
     private IMainInteractorOutput mainInteractorOutput;
     private CompositeDisposable compositeDisposable;
-    @Inject RxDbManager dbManager;
-    @Inject RxGoogleApiManager googleApiManager;
+    @Inject
+    RxDbManager dbManager;
+    @Inject
+    RxGoogleApiManager googleApiManager;
 
     public MainActivityInteractor(IMainInteractorOutput mainInteractorOutput) {
         this.mainInteractorOutput = mainInteractorOutput;
@@ -58,9 +60,8 @@ public class MainActivityInteractor implements IMainInteractor {
                     return viewPromptModel.getViewPromptCityModelList();
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(viewPromptCityModelList -> {
-                    mainInteractorOutput.OnSucces(viewPromptCityModelList);
-                }));
+                .subscribe(viewPromptCityModelList -> mainInteractorOutput.OnSucces(viewPromptCityModelList),
+                        error -> mainInteractorOutput.onError(error)));
     }
 
     @Override
@@ -82,9 +83,7 @@ public class MainActivityInteractor implements IMainInteractor {
                             return viewPromptCityModelList;
                         })
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(viewPromptCityModels -> {
-                            mainInteractorOutput.OnSucces(viewPromptCityModels);
-                        })
+                        .subscribe(viewPromptCityModels -> mainInteractorOutput.OnSucces(viewPromptCityModels))
         );
     }
 

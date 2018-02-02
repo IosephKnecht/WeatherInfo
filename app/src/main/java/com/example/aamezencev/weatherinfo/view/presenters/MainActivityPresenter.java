@@ -90,8 +90,8 @@ public class MainActivityPresenter implements IMainInteractorOutput, IMainPresen
     }
 
     @Override
-    public void onError(Exception ex) {
-
+    public void onError(Throwable ex) {
+        baseRouter.showError(ex);
     }
 
 

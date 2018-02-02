@@ -66,7 +66,7 @@ public class WeatherListPresenter implements IWeatherListPresenter, IMainInterac
     }
 
     @Override
-    public void onError(Exception ex) {
+    public void onError(Throwable ex) {
 
     }
 }

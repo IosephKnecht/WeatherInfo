@@ -33,9 +33,16 @@ public class RxOWMApiManager {
             Request.Builder builder = new Request.Builder();
             builder.url(String.format("http://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&APPID=%s", lat, lon, appId));
             Request request = builder.build();
-            Response response = okHttpClient.newCall(request).execute();
-            aVoid.onNext(response);
-            aVoid.onComplete();
+            try {
+                Response response = okHttpClient.newCall(request).execute();
+                aVoid.onNext(response);
+            }
+            catch (Exception ex){
+                aVoid.onError(new Throwable("error in getting weather"));
+            }
+            finally {
+                aVoid.onComplete();
+            }
         })
                 .map(response -> {
                     Gson gson = new Gson();

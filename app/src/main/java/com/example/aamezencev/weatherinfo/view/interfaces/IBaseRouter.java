@@ -12,4 +12,6 @@ public interface IBaseRouter {
     void openWeatherInfoActivity(Long key, String actionTitle);
 
     void closeWeatherInfoActivity();
+
+    void showError(Throwable ex);
 }

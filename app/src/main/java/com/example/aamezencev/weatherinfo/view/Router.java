@@ -2,6 +2,7 @@ package com.example.aamezencev.weatherinfo.view;
 
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 
 import com.example.aamezencev.weatherinfo.UpdateService;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
@@ -39,6 +40,11 @@ public class Router implements IBaseRouter {
 
     @Override
     public void closeWeatherInfoActivity() {
-        ((WeatherInfoActivity)context).finish();
+        ((WeatherInfoActivity) context).finish();
+    }
+
+    @Override
+    public void showError(Throwable ex) {
+        Toast.makeText(context, ex.toString(), Toast.LENGTH_LONG).show();
     }
 }

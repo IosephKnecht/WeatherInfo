@@ -38,11 +38,13 @@ public class RxDbManager {
     public Observable<List<PromptCityDbModel>> allItemQuery() {
         return Observable.<List<PromptCityDbModel>>create(aVoid -> {
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
-            List<PromptCityDbModel> promptCityDbModelList = new ArrayList<>();
-            QueryBuilder<PromptCityDbModel> queryBuilder = promptCityDbModelDao.queryBuilder();
-            promptCityDbModelList = queryBuilder.list();
-            aVoid.onNext(promptCityDbModelList);
-            aVoid.onComplete();
+            try {
+                aVoid.onNext(promptCityDbModelDao.queryBuilder().list());
+            } catch (Exception ex) {
+                aVoid.onError(new Exception("could not get data from DB"));
+            } finally {
+                aVoid.onComplete();
+            }
         });
     }
 
@@ -53,6 +55,7 @@ public class RxDbManager {
             currentWeatherDbModelDao.deleteByKey(key);
             promptCityDbModelDao.deleteByKey(key);
             aVoid.onNext(promptCityDbModelDao);
+            //aVoid.onError(new Exception("could not delete record from DB"));
             aVoid.onComplete();
         })
                 .flatMap(aVoid -> allItemQuery());
@@ -64,9 +67,14 @@ public class RxDbManager {
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
             currentWeatherDbModelDao.deleteAll();
             promptCityDbModelDao.deleteAll();
-            currentWeatherDbModelDao.insertInTx(currentWeatherDbModelList);
-            e.onNext(currentWeatherDbModelList);
-            e.onComplete();
+            try {
+                currentWeatherDbModelDao.insertInTx(currentWeatherDbModelList);
+                e.onNext(currentWeatherDbModelList);
+            } catch (Exception ex) {
+                e.onError(new Exception("do not write an array in DB"));
+            } finally {
+                e.onComplete();
+            }
         });
     }
 
@@ -90,9 +98,14 @@ public class RxDbManager {
             promptCityDbModelList = mapper.map();
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
             promptCityDbModelDao.deleteAll();
-            promptCityDbModelDao.insertInTx(promptCityDbModelList);
-            e.onNext(e);
-            e.onComplete();
+            try {
+                promptCityDbModelDao.insertInTx(promptCityDbModelList);
+                e.onNext(e);
+            } catch (Exception ex) {
+                e.onError(new Exception("do not write an array in DB"));
+            } finally {
+                e.onComplete();
+            }
         });
     }
 
@@ -100,9 +113,14 @@ public class RxDbManager {
         return Observable.<List<PromptCityDbModel>>create(emitter -> {
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
             promptCityDbModelDao.deleteAll();
-            promptCityDbModelDao.insertInTx(promptCityDbModelList);
-            emitter.onNext(promptCityDbModelDao.queryBuilder().list());
-            emitter.onComplete();
+            try {
+                promptCityDbModelDao.insertInTx(promptCityDbModelList);
+                emitter.onNext(promptCityDbModelDao.queryBuilder().list());
+            } catch (Exception ex) {
+                emitter.onError(new Exception("do not write an array in DB"));
+            } finally {
+                emitter.onComplete();
+            }
         });
     }
 

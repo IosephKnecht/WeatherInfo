@@ -31,6 +31,12 @@ public class Router implements IBaseRouter {
     }
 
     @Override
+    public void stopUpdateService() {
+        Intent intent = new Intent(context, UpdateService.class);
+        context.stopService(intent);
+    }
+
+    @Override
     public void openWeatherInfoActivity(Long key, String actionTitle) {
         Intent intent = new Intent(context, WeatherInfoActivity.class);
         intent.putExtra("promptKey", key);

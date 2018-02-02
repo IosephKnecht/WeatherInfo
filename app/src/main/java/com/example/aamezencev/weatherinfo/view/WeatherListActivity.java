@@ -63,16 +63,15 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         weatherListPresenter.onAttachView(this, baseRouter);
 
         compositeDisposable = new CompositeDisposable();
-        //Intent intent = new Intent(this, UpdateService.class);
 
-//        boolean state = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("serviceSwitch", true);
-//        if (state) {
-//            this.startService(intent);
-//        } else {
-//            this.stopService(intent);
-//        }
+        boolean state = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("serviceSwitch", true);
+        if (state) {
+            baseRouter.startUpdateService();
+        } else {
+            baseRouter.stopUpdateService();
+        }
 
-//        baseRouter.startUpdateService();
+        baseRouter.startUpdateService();
 
         mRecyclerView = (RecyclerView) findViewById(R.id.weatherRecycler);
         mRecyclerView.setHasFixedSize(true);

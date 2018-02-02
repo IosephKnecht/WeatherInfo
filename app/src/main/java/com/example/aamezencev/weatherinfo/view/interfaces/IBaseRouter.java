@@ -9,6 +9,8 @@ public interface IBaseRouter {
 
     void startUpdateService();
 
+    void stopUpdateService();
+
     void openWeatherInfoActivity(Long key, String actionTitle);
 
     void closeWeatherInfoActivity();

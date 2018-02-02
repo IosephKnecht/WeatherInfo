@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <SwitchPreference
-        android:title="@string/switchPrefTitle"
-        android:defaultValue="true"
-        android:persistent="true"
         android:id="@+id/serviceSwitch"
-        android:key="@string/switchPrefKey">
-    </SwitchPreference>
-    <EditTextPreference
-        android:title="@string/etPrefTitle"
+        android:defaultValue="true"
+        android:key="@string/switchPrefKey"
         android:persistent="true"
-        android:defaultValue="60000"
-        android:inputType="number"
+        android:title="@string/switchPrefTitle"></SwitchPreference>
+    <EditTextPreference
         android:id="@+id/etDelayService"
+        android:defaultValue="60000"
+        android:dependency="@string/switchPrefKey"
+        android:inputType="number"
         android:key="@string/etPrefKey"
-        android:dependency="@string/switchPrefKey">
-    </EditTextPreference>
+        android:persistent="true"
+        android:title="@string/etPrefTitle"></EditTextPreference>
 </PreferenceScreen>

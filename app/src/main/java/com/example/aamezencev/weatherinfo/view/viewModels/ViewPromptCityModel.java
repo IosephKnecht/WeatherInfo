@@ -1,6 +1,6 @@
 package com.example.aamezencev.weatherinfo.view.viewModels;
 
-import java.util.Objects;
+import android.support.v4.util.ObjectsCompat;
 
 /**
  * Created by aa.mezencev on 11.01.2018.
@@ -91,11 +91,11 @@ public class ViewPromptCityModel {
     @Override
     public boolean equals(Object obj) {
         ViewPromptCityModel viewModel = (ViewPromptCityModel) obj;
-        return Objects.equals(this.description, viewModel.getDescription()) &&
-                Objects.equals(this.id, viewModel.getId()) &&
-                Objects.equals(this.isChecked, viewModel.isChecked()) &&
-                Objects.equals(this.placeId, viewModel.getPlaceId()) &&
-                Objects.equals(this.key, viewModel.getKey()) &&
-                Objects.equals(this.getBriefInformation(), viewModel.getBriefInformation());
+        return ObjectsCompat.equals(this.description, viewModel.getDescription()) &&
+                ObjectsCompat.equals(this.id, viewModel.getId()) &&
+                ObjectsCompat.equals(this.isChecked, viewModel.isChecked()) &&
+                ObjectsCompat.equals(this.placeId, viewModel.getPlaceId()) &&
+                ObjectsCompat.equals(this.key, viewModel.getKey()) &&
+                ObjectsCompat.equals(this.getBriefInformation(), viewModel.getBriefInformation());
     }
 }

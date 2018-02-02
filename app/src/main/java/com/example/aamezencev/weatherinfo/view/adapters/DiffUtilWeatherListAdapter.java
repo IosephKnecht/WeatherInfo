@@ -1,6 +1,6 @@
 package com.example.aamezencev.weatherinfo.view.adapters;
 
-import android.support.annotation.Nullable;
+import android.support.v4.util.ObjectsCompat;
 import android.support.v7.util.DiffUtil;
 
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel;
@@ -34,7 +34,7 @@ public class DiffUtilWeatherListAdapter extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return newViewPromptCityModelList.get(newItemPosition).getKey().equals(oldViewPromptCityModelList.get(oldItemPosition).getKey());
+        return ObjectsCompat.equals(newViewPromptCityModelList.get(newItemPosition).getKey(), oldViewPromptCityModelList.get(oldItemPosition).getKey());
     }
 
     @Override

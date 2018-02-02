@@ -1,5 +1,6 @@
 package com.example.aamezencev.weatherinfo.view.adapters;
 
+import android.support.v4.util.ObjectsCompat;
 import android.support.v7.util.DiffUtil;
 
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewCurrentWeatherModel;
@@ -31,7 +32,7 @@ public class DiffUtilWeatherInfoAdapter extends DiffUtil.Callback {
 
     @Override
     public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return oldViewCurrentWeatherModel.getId().equals(newViewCurrentWeatherModel.getId());
+        return ObjectsCompat.equals(oldViewCurrentWeatherModel.getId(), newViewCurrentWeatherModel.getId());
     }
 
     @Override

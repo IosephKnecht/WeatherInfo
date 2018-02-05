@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.aamezencev.weatherinfo.domain.RxDbManager;
@@ -25,6 +26,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.PublishSubject;
 
 /**
  * Created by aa.mezencev on 19.01.2018.
@@ -40,10 +42,13 @@ public class UpdateService extends Service {
     @Inject
     RxOWMApiManager owmApiManager;
 
+    private final PublishSubject<Void> retrySubject = PublishSubject.create();
+
     @Override
     public void onCreate() {
         super.onCreate();
         compositeDisposable = new CompositeDisposable();
+        App.getAppComponent().inject(this);
     }
 
     @Nullable
@@ -61,7 +66,6 @@ public class UpdateService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        App.getAppComponent().inject(this);
         compositeDisposable.add(dbManager.allItemQuery()
                 .subscribeOn(Schedulers.io())
                 .flatMap(cities -> Observable.fromIterable(cities)
@@ -73,12 +77,20 @@ public class UpdateService extends Service {
                         .flatMap(aVoid -> dbManager.addListToDbQuery(aVoid))
                         .map(currentWeatherDbModels -> new CreateRealation(cities, currentWeatherDbModels).map())
                         .flatMap(promptCityDbModels -> dbManager.addPromptListToDb(promptCityDbModels))
+                        .retryWhen(throwableObservable -> throwableObservable.flatMap(error -> {
+                            Log.d("myLog", "retry");
+                            return Observable.just(cities).delay(10_000, TimeUnit.MILLISECONDS);
+                        }))
                 )
                 .repeatWhen(completed -> completed.delay(60_000, TimeUnit.MILLISECONDS))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        dbModelList -> EventBus.getDefault().post(new UpdatedCurrentWeather()),
-                        error -> {}
+                        dbModelList -> {
+                            EventBus.getDefault().post(new UpdatedCurrentWeather());
+                            Log.d("myLog", "connect");
+                        },
+                        error -> {
+                        }
                 ));
 
         return super.onStartCommand(intent, flags, startId);

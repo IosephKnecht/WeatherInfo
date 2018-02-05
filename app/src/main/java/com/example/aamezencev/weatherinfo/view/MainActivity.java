@@ -1,6 +1,7 @@
 package com.example.aamezencev.weatherinfo.view;
 
 import android.app.LoaderManager;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Loader;
 import android.content.SharedPreferences;
@@ -11,6 +12,7 @@ import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.view.View;
 import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilMainAdapter;
 import com.example.aamezencev.weatherinfo.view.adapters.MainAdapter;
+import com.example.aamezencev.weatherinfo.view.adapters.RecyclerItemTouchHelper;
 import com.example.aamezencev.weatherinfo.view.interfaces.CheckBoxClick;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseActivity;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
@@ -45,6 +48,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private IMainPresenter mainPresenter;
     private IBaseRouter baseRouter;
+
+    private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +80,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             mainPresenter.addPromptListViewToDb(mainPresenter.selectIsCheckedItem());
             baseRouter.openWeatherListActivity();
         });
-
         mainPresenter = ((SaveMainPresenterLoader) getLoaderManager().initLoader(1, null, this)).getMainPresenter();
         mainPresenter.onViewAttach(this, baseRouter);
     }
@@ -127,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void paintList(List viewModelList) {
+        this.viewPromptCityModelList = viewModelList;
         spinner.setVisibility(View.INVISIBLE);
         updateRecyclerView(viewModelList);
     }

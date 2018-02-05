@@ -8,8 +8,12 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.util.DiffUtil;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,6 +24,7 @@ import com.example.aamezencev.weatherinfo.UpdateService;
 import com.example.aamezencev.weatherinfo.events.UpdatedCurrentWeather;
 import com.example.aamezencev.weatherinfo.events.WeatherDeleteItemEvent;
 import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilWeatherListAdapter;
+import com.example.aamezencev.weatherinfo.view.adapters.RecyclerItemTouchHelper;
 import com.example.aamezencev.weatherinfo.view.adapters.WeatherListAdapter;
 import com.example.aamezencev.weatherinfo.view.interfaces.DeleteBtnClick;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
@@ -39,7 +44,7 @@ import java.util.List;
 import io.reactivex.disposables.CompositeDisposable;
 
 public class WeatherListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<IWeatherListPresenter>,
-        WeatherItemClick, DeleteBtnClick, IWeatherListActivity {
+        WeatherItemClick, DeleteBtnClick, IWeatherListActivity, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
     private RecyclerView mRecyclerView;
     private WeatherListAdapter mAdapter;
 
@@ -64,9 +69,14 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
         mAdapter = new WeatherListAdapter(new ArrayList<>(), this, this);
         mRecyclerView.setAdapter(mAdapter);
+
+        ItemTouchHelper.SimpleCallback simpleCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        new ItemTouchHelper(simpleCallback).attachToRecyclerView(mRecyclerView);
 
         boolean state = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("serviceSwitch", true);
         if (state) {
@@ -160,6 +170,14 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     @Subscribe
     public void updatedCurrentWeather(UpdatedCurrentWeather updatedCurrentWeather) {
         if (weatherListPresenter != null) weatherListPresenter.getPromptCityDbModelList();
+    }
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        int adapterPosition = viewHolder.getAdapterPosition();
+        Long key = Long.valueOf(mAdapter.getViewPromptCityModelList().get(adapterPosition).getKey());
+        mAdapter.removeItem(adapterPosition);
+        weatherListPresenter.deleteItemAsDb(key);
     }
 
     private static class SaveWeatherListPresenter extends Loader<IWeatherListPresenter> {

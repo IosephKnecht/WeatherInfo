@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.aamezencev.weatherinfo.view.interfaces.DeleteBtnClick;
@@ -70,14 +71,25 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
         this.viewPromptCityModelList = viewPromptCityModelList;
     }
 
+    public void removeItem(int position) {
+        viewPromptCityModelList.remove(position);
+        notifyItemRemoved(position);
+    }
+
     protected class ViewHolder extends RecyclerView.ViewHolder {
         private TextView textView;
         private Button button;
+        private LinearLayout viewForeground;
 
         public ViewHolder(View itemView) {
             super(itemView);
             this.textView = itemView.findViewById(R.id.weatherItem);
             this.button = itemView.findViewById(R.id.deleteItemButton);
+            this.viewForeground = itemView.findViewById(R.id.viewForeground);
+        }
+
+        public LinearLayout getViewForeground() {
+            return viewForeground;
         }
     }
 }

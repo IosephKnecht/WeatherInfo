@@ -59,9 +59,9 @@ public class UpdateService extends Service {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         compositeDisposable.dispose();
         compositeDisposable = null;
+        super.onDestroy();
     }
 
     @Override
@@ -79,7 +79,7 @@ public class UpdateService extends Service {
                         .flatMap(promptCityDbModels -> dbManager.addPromptListToDb(promptCityDbModels))
                         .retryWhen(throwableObservable -> throwableObservable.flatMap(error -> {
                             Log.d("myLog", "retry");
-                            return Observable.just(cities).delay(10_000, TimeUnit.MILLISECONDS);
+                            return Observable.just(cities).delay(120_000, TimeUnit.MILLISECONDS);
                         }))
                 )
                 .repeatWhen(completed -> completed.delay(60_000, TimeUnit.MILLISECONDS))

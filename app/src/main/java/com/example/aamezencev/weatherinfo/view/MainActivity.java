@@ -64,13 +64,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         floatingActionButton = (FloatingActionButton) findViewById(R.id.floatingActionButton);
         spinner = findViewById(R.id.spinner_view);
 
+        baseRouter = new Router(this);
+
         floatingActionButton.setOnClickListener(fabView -> {
             SharedPreferences sharedPreferences = getSharedPreferences("isFirstRun", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putBoolean("state", getIntent().getBooleanExtra("isFirstRun", true));
             editor.commit();
 
-            baseRouter = new Router(this);
             mainPresenter.addPromptListViewToDb(mainPresenter.selectIsCheckedItem());
             baseRouter.openWeatherListActivity();
             baseRouter.startUpdateService();

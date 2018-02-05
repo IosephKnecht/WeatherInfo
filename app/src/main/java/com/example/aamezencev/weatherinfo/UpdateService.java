@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
 import com.example.aamezencev.weatherinfo.domain.RxDbManager;
 import com.example.aamezencev.weatherinfo.domain.RxGoogleApiManager;
@@ -11,6 +12,7 @@ import com.example.aamezencev.weatherinfo.domain.RxOWMApiManager;
 import com.example.aamezencev.weatherinfo.domain.mappers.CreateRealation;
 import com.example.aamezencev.weatherinfo.domain.mappers.JsonWeatherModelToDb;
 import com.example.aamezencev.weatherinfo.events.UpdatedCurrentWeather;
+import com.example.aamezencev.weatherinfo.view.WeatherListActivity;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -75,7 +77,8 @@ public class UpdateService extends Service {
                 .repeatWhen(completed -> completed.delay(60_000, TimeUnit.MILLISECONDS))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        dbModelList -> EventBus.getDefault().post(new UpdatedCurrentWeather())
+                        dbModelList -> EventBus.getDefault().post(new UpdatedCurrentWeather()),
+                        error -> {}
                 ));
 
         return super.onStartCommand(intent, flags, startId);

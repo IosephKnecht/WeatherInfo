@@ -13,7 +13,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,7 +25,6 @@ import com.example.aamezencev.weatherinfo.events.WeatherDeleteItemEvent;
 import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilWeatherListAdapter;
 import com.example.aamezencev.weatherinfo.view.adapters.RecyclerItemTouchHelper;
 import com.example.aamezencev.weatherinfo.view.adapters.WeatherListAdapter;
-import com.example.aamezencev.weatherinfo.view.interfaces.DeleteBtnClick;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
 import com.example.aamezencev.weatherinfo.view.interfaces.IWeatherListActivity;
 import com.example.aamezencev.weatherinfo.view.interfaces.WeatherItemClick;
@@ -44,7 +42,7 @@ import java.util.List;
 import io.reactivex.disposables.CompositeDisposable;
 
 public class WeatherListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<IWeatherListPresenter>,
-        WeatherItemClick, DeleteBtnClick, IWeatherListActivity, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+        WeatherItemClick, IWeatherListActivity, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
     private RecyclerView mRecyclerView;
     private WeatherListAdapter mAdapter;
 
@@ -72,10 +70,10 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
-        mAdapter = new WeatherListAdapter(new ArrayList<>(), this, this);
+        mAdapter = new WeatherListAdapter(new ArrayList<>(), this);
         mRecyclerView.setAdapter(mAdapter);
 
-        ItemTouchHelper.SimpleCallback simpleCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, this);
+        ItemTouchHelper.SimpleCallback simpleCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, this);
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(mRecyclerView);
 
         boolean state = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("serviceSwitch", true);
@@ -155,11 +153,6 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     @Override
     public void weatherItemClick(View view, Long key, String actionTitle) {
         baseRouter.openWeatherInfoActivity(key, actionTitle);
-    }
-
-    @Override
-    public void deleteBtnClick(View view, Long key) {
-        weatherListPresenter.deleteItemAsDb(key);
     }
 
     @Override

@@ -50,11 +50,4 @@ public class RxOWMApiManager {
                     return jsonWeatherModel;
                 });
     }
-
-    @Provides
-    @NonNull
-    @Singleton
-    public RxOWMApiManager getOWMApiManager() {
-        return new RxOWMApiManager();
-    }
 }

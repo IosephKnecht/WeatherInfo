@@ -4,9 +4,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.example.aamezencev.weatherinfo.data.DaoSession;
+import com.example.aamezencev.weatherinfo.domain.FacadeManager;
 import com.example.aamezencev.weatherinfo.domain.RxDbManager;
 import com.example.aamezencev.weatherinfo.domain.RxGoogleApiManager;
 import com.example.aamezencev.weatherinfo.domain.RxOWMApiManager;
+
+import org.greenrobot.greendao.annotation.NotNull;
 
 import javax.inject.Singleton;
 
@@ -58,5 +61,12 @@ public class AppModule {
     @Singleton
     public Context getContext() {
         return context;
+    }
+
+    @Provides
+    @NotNull
+    @Singleton
+    public FacadeManager getFacadeManager() {
+        return new FacadeManager();
     }
 }

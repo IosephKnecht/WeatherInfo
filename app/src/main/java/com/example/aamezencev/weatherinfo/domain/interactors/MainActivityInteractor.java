@@ -2,6 +2,7 @@ package com.example.aamezencev.weatherinfo.domain.interactors;
 
 import com.example.aamezencev.weatherinfo.App;
 import com.example.aamezencev.weatherinfo.data.googleApi.JsonPromptModel;
+import com.example.aamezencev.weatherinfo.domain.FacadeManager;
 import com.example.aamezencev.weatherinfo.domain.RxDbManager;
 import com.example.aamezencev.weatherinfo.domain.RxGoogleApiManager;
 import com.example.aamezencev.weatherinfo.domain.interactors.interfaces.IMainInteractor;
@@ -30,35 +31,21 @@ public class MainActivityInteractor implements IMainInteractor {
 
     private IMainInteractorOutput mainInteractorOutput;
     private CompositeDisposable compositeDisposable;
-    @Inject
-    RxDbManager dbManager;
-    @Inject
-    RxGoogleApiManager googleApiManager;
+    @Inject FacadeManager facadeManager;
+    @Inject RxDbManager dbManager;
 
     public MainActivityInteractor(IMainInteractorOutput mainInteractorOutput) {
         this.mainInteractorOutput = mainInteractorOutput;
         this.compositeDisposable = new CompositeDisposable();
+        facadeManager = new FacadeManager();
         App.getAppComponent().inject(this);
 
     }
 
     @Override
     public void onGetViewPromptCityModelList(String city) {
-        compositeDisposable.add(googleApiManager.promptRequest(city)
+        compositeDisposable.add(facadeManager.getWeatherAroundCity(city)
                 .subscribeOn(Schedulers.io())
-                .map(response -> {
-                    String jsonString = response.body().string();
-                    Gson gson = new Gson();
-                    Type type = new TypeToken<JsonPromptModel>() {
-                    }.getType();
-                    JsonPromptModel jsonPromptModel = gson.fromJson(jsonString, type);
-                    return jsonPromptModel;
-                })
-                .map(jsonPromptModel -> {
-                    JsonPromptModelToViewPromptModel mapper = new JsonPromptModelToViewPromptModel(jsonPromptModel);
-                    ViewPromptModel viewPromptModel = mapper.map();
-                    return viewPromptModel.getViewPromptCityModelList();
-                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(viewPromptCityModelList -> mainInteractorOutput.OnSucces(viewPromptCityModelList),
                         error -> mainInteractorOutput.onError(error)));
@@ -75,13 +62,8 @@ public class MainActivityInteractor implements IMainInteractor {
     @Override
     public void onGetPromptCityDbModelList() {
         compositeDisposable.add(
-                dbManager.allItemQuery()
+                facadeManager.getViewModelList()
                         .subscribeOn(Schedulers.io())
-                        .map(promptCityDbModels -> {
-                            PromptCityDbModelToViewPromptCityModel mapper = new PromptCityDbModelToViewPromptCityModel(promptCityDbModels);
-                            List<ViewPromptCityModel> viewPromptCityModelList = mapper.map();
-                            return viewPromptCityModelList;
-                        })
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(viewPromptCityModels -> mainInteractorOutput.OnSucces(viewPromptCityModels))
         );
@@ -104,7 +86,7 @@ public class MainActivityInteractor implements IMainInteractor {
         compositeDisposable.dispose();
         compositeDisposable = null;
         dbManager = null;
-        googleApiManager = null;
+        facadeManager = null;
     }
 
 }

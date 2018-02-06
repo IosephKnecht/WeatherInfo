@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.aamezencev.weatherinfo.domain.FacadeManager;
 import com.example.aamezencev.weatherinfo.domain.RxDbManager;
 import com.example.aamezencev.weatherinfo.domain.RxGoogleApiManager;
 import com.example.aamezencev.weatherinfo.domain.RxOWMApiManager;
@@ -35,14 +36,10 @@ import io.reactivex.subjects.PublishSubject;
 public class UpdateService extends Service {
 
     private CompositeDisposable compositeDisposable;
-    @Inject
-    RxDbManager dbManager;
-    @Inject
-    RxGoogleApiManager googleApiManager;
-    @Inject
-    RxOWMApiManager owmApiManager;
 
     private final PublishSubject<Void> retrySubject = PublishSubject.create();
+
+    @Inject FacadeManager facadeManager;
 
     @Override
     public void onCreate() {
@@ -61,28 +58,14 @@ public class UpdateService extends Service {
     public void onDestroy() {
         compositeDisposable.dispose();
         compositeDisposable = null;
+        facadeManager = null;
         super.onDestroy();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        compositeDisposable.add(dbManager.allItemQuery()
+        compositeDisposable.add(facadeManager.getUpdateObservable()
                 .subscribeOn(Schedulers.io())
-                .flatMap(cities -> Observable.fromIterable(cities)
-                        .flatMap(city -> googleApiManager.geoRequest(city.getPlaceId()))
-                        .flatMap(geo -> owmApiManager.currentWeatherRequest(geo.getJsonLocationModel().getLat(), geo.getJsonLocationModel().getLng()))
-                        .toList()
-                        .map(weatherModels -> new JsonWeatherModelToDb(weatherModels).map())
-                        .toObservable()
-                        .flatMap(aVoid -> dbManager.addListToDbQuery(aVoid))
-                        .map(currentWeatherDbModels -> new CreateRealation(cities, currentWeatherDbModels).map())
-                        .flatMap(promptCityDbModels -> dbManager.addPromptListToDb(promptCityDbModels))
-                        .retryWhen(throwableObservable -> throwableObservable.flatMap(error -> {
-                            Log.d("myLog", "retry");
-                            return Observable.just(cities).delay(120_000, TimeUnit.MILLISECONDS);
-                        }))
-                )
-                .repeatWhen(completed -> completed.delay(60_000, TimeUnit.MILLISECONDS))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         dbModelList -> {

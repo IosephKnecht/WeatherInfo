@@ -79,14 +79,14 @@ public class RxDbManager {
         });
     }
 
-    public Observable<CurrentWeatherDbModel> findWeatherByKey(Long key) {
-        return Observable.<CurrentWeatherDbModel>create(aVoid -> {
+    public Observable<List<CurrentWeatherDbModel>> findWeatherByKey(Long key) {
+        return Observable.<List<CurrentWeatherDbModel>>create(aVoid -> {
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
             PromptCityDbModel promptCityDbModel = promptCityDbModelDao.load(key);
-            if (promptCityDbModel != null && promptCityDbModel.getWeatherDbModel() != null) {
-                aVoid.onNext(promptCityDbModel.getWeatherDbModel());
+            if (promptCityDbModel != null && promptCityDbModel.getWeatherDbModelList() != null) {
+                aVoid.onNext(promptCityDbModel.getWeatherDbModelList());
             } else {
-                aVoid.onNext(new CurrentWeatherDbModel());
+                aVoid.onNext(new ArrayList<>());
             }
             aVoid.onComplete();
         });

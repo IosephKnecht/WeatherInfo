@@ -5,6 +5,10 @@ import android.support.annotation.NonNull;
 
 import com.example.aamezencev.weatherinfo.data.owmApi.JsonWeatherModel;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 import javax.inject.Singleton;
 
@@ -30,10 +34,10 @@ public class RxOWMApiManager {
 
     }
 
-    public Observable<JsonWeatherModel> currentWeatherRequest(String lat, String lon) {
+    public Observable<List<JsonWeatherModel>> currentWeatherRequest(String lat, String lon) {
         return Observable.<Response>create(aVoid -> {
             Request.Builder builder = new Request.Builder();
-            builder.url(String.format("http://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s%s&APPID=%s", lat, lon,tempMode, appId));
+            builder.url(String.format("http://api.openweathermap.org/data/2.5/forecast?lat=%s&lon=%s%s&APPID=%s&cnt=7", lat, lon, tempMode, appId));
             Request request = builder.build();
             try {
                 Response response = okHttpClient.newCall(request).execute();
@@ -46,8 +50,10 @@ public class RxOWMApiManager {
                 .map(response -> {
                     Gson gson = new Gson();
                     String jsonString = response.body().string();
-                    JsonWeatherModel jsonWeatherModel = gson.fromJson(jsonString, JsonWeatherModel.class);
-                    return jsonWeatherModel;
+                    Type type = new TypeToken<List<JsonWeatherModel>>() {
+                    }.getType();
+                    List<JsonWeatherModel> jsonWeatherModelList = gson.fromJson(jsonString, type);
+                    return jsonWeatherModelList;
                 });
     }
 

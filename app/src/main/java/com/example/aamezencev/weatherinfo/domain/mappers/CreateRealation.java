@@ -10,20 +10,19 @@ import java.util.List;
  */
 
 public class CreateRealation {
-    private List<PromptCityDbModel> promptCityDbModelList;
+    private PromptCityDbModel promptCityDbModel;
     private List<CurrentWeatherDbModel> currentWeatherDbModelList;
 
-    public CreateRealation(List<PromptCityDbModel> promptCityDbModelList,
+    public CreateRealation(PromptCityDbModel promptCityDbModel,
                            List<CurrentWeatherDbModel> currentWeatherDbModelList) {
-        this.promptCityDbModelList = promptCityDbModelList;
+        this.promptCityDbModel = promptCityDbModel;
         this.currentWeatherDbModelList = currentWeatherDbModelList;
     }
 
-    public List<PromptCityDbModel> map() {
-        for (int i = 0; i < promptCityDbModelList.size(); i++) {
-            promptCityDbModelList.get(i).setWeatherDbModel(currentWeatherDbModelList.get(i));
-            promptCityDbModelList.get(i).setRelationKey(currentWeatherDbModelList.get(i).getKey());
+    public List<CurrentWeatherDbModel> map() {
+        for (CurrentWeatherDbModel weatherDbModel : currentWeatherDbModelList) {
+            weatherDbModel.setForeignKey(promptCityDbModel.getKey());
         }
-        return promptCityDbModelList;
+        return currentWeatherDbModelList;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.aamezencev.weatherinfo.view.mappers;
 
+import com.example.aamezencev.weatherinfo.data.CurrentWeatherDbModel;
 import com.example.aamezencev.weatherinfo.data.PromptCityDbModel;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityStructureFormatting;
@@ -12,7 +13,7 @@ import java.util.List;
  */
 
 public class PromptCityDbModelToViewPromptCityModel {
-    List<PromptCityDbModel> promptCityDbModelList;
+    private List<PromptCityDbModel> promptCityDbModelList;
 
     public PromptCityDbModelToViewPromptCityModel(List<PromptCityDbModel> promptCityDbModelList) {
         this.promptCityDbModelList = promptCityDbModelList;
@@ -28,8 +29,10 @@ public class PromptCityDbModelToViewPromptCityModel {
             viewPromptCityModel.setPlaceId(promptCityDbModel.getPlaceId());
             viewPromptCityModel.setKey(promptCityDbModel.getKey().toString());
 
-            if (promptCityDbModel.getWeatherDbModel() != null)
-                viewPromptCityModel.setBriefInformation(promptCityDbModel.getWeatherDbModel().getDescription() + " " + promptCityDbModel.getWeatherDbModel().getMain());
+            if (promptCityDbModel.getWeatherDbModelList() != null && promptCityDbModel.getWeatherDbModelList().size() != 0) {
+                CurrentWeatherDbModel weatherDbModel = promptCityDbModel.getWeatherDbModelList().get(0);
+                viewPromptCityModel.setBriefInformation(weatherDbModel.getDescription() + " " + weatherDbModel.getMain());
+            }
             viewPromptCityModelList.add(viewPromptCityModel);
         }
         return viewPromptCityModelList;

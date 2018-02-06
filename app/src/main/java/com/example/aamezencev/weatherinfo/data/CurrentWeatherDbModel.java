@@ -25,6 +25,7 @@ public class CurrentWeatherDbModel {
     private String cod;
     @NotNull
     private Long id;
+    private Long foreignKey;
     private String lon;
     private String lat;
     private String temp;
@@ -37,18 +38,19 @@ public class CurrentWeatherDbModel {
     private String speed;
     private String deg;
     private Long all;
-    @Generated(hash = 938086516)
+    @Generated(hash = 1960436699)
     public CurrentWeatherDbModel(Long key, @NotNull String main,
             @NotNull String description, @NotNull String icon, @NotNull String cod,
-            @NotNull Long id, String lon, String lat, String temp, String pressure,
-            String humidity, String tempMin, String tempMax, String seaLevel,
-            String grndLevel, String speed, String deg, Long all) {
+            @NotNull Long id, Long foreignKey, String lon, String lat, String temp,
+            String pressure, String humidity, String tempMin, String tempMax,
+            String seaLevel, String grndLevel, String speed, String deg, Long all) {
         this.key = key;
         this.main = main;
         this.description = description;
         this.icon = icon;
         this.cod = cod;
         this.id = id;
+        this.foreignKey = foreignKey;
         this.lon = lon;
         this.lat = lat;
         this.temp = temp;
@@ -100,6 +102,12 @@ public class CurrentWeatherDbModel {
     }
     public void setId(Long id) {
         this.id = id;
+    }
+    public Long getForeignKey() {
+        return this.foreignKey;
+    }
+    public void setForeignKey(Long foreignKey) {
+        this.foreignKey = foreignKey;
     }
     public String getLon() {
         return this.lon;

@@ -3,8 +3,11 @@ package com.example.aamezencev.weatherinfo.data;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
+import org.greenrobot.greendao.annotation.ToMany;
 import org.greenrobot.greendao.annotation.ToOne;
 import org.greenrobot.greendao.DaoException;
+
+import java.util.List;
 
 /**
  * Created by aa.mezencev on 30.01.2018.
@@ -21,8 +24,8 @@ public class PromptCityDbModel {
     private String secondaryText;
     private String briefInformation;
     private Long relationKey;
-    @ToOne(joinProperty = "relationKey")
-    private CurrentWeatherDbModel weatherDbModel;
+    @ToMany(referencedJoinProperty = "foreignKey")
+    private List<CurrentWeatherDbModel> weatherDbModelList;
     /** Used to resolve relations */
     @Generated(hash = 2040040024)
     private transient DaoSession daoSession;
@@ -93,36 +96,33 @@ public class PromptCityDbModel {
     public void setRelationKey(Long relationKey) {
         this.relationKey = relationKey;
     }
-    @Generated(hash = 1538632706)
-    private transient Long weatherDbModel__resolvedKey;
-    /** To-one relationship, resolved on first access. */
-    @Generated(hash = 1220332391)
-    public CurrentWeatherDbModel getWeatherDbModel() {
-        Long __key = this.relationKey;
-        if (weatherDbModel__resolvedKey == null
-                || !weatherDbModel__resolvedKey.equals(__key)) {
+    /**
+     * To-many relationship, resolved on first access (and after reset).
+     * Changes to to-many relations are not persisted, make changes to the target entity.
+     */
+    @Generated(hash = 1867573962)
+    public List<CurrentWeatherDbModel> getWeatherDbModelList() {
+        if (weatherDbModelList == null) {
             final DaoSession daoSession = this.daoSession;
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
             CurrentWeatherDbModelDao targetDao = daoSession
                     .getCurrentWeatherDbModelDao();
-            CurrentWeatherDbModel weatherDbModelNew = targetDao.load(__key);
+            List<CurrentWeatherDbModel> weatherDbModelListNew = targetDao
+                    ._queryPromptCityDbModel_WeatherDbModelList(key);
             synchronized (this) {
-                weatherDbModel = weatherDbModelNew;
-                weatherDbModel__resolvedKey = __key;
+                if (weatherDbModelList == null) {
+                    weatherDbModelList = weatherDbModelListNew;
+                }
             }
         }
-        return weatherDbModel;
+        return weatherDbModelList;
     }
-    /** called by internal mechanisms, do not call yourself. */
-    @Generated(hash = 229640694)
-    public void setWeatherDbModel(CurrentWeatherDbModel weatherDbModel) {
-        synchronized (this) {
-            this.weatherDbModel = weatherDbModel;
-            relationKey = weatherDbModel == null ? null : weatherDbModel.getKey();
-            weatherDbModel__resolvedKey = relationKey;
-        }
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    @Generated(hash = 1270415296)
+    public synchronized void resetWeatherDbModelList() {
+        weatherDbModelList = null;
     }
     /**
      * Convenient call for {@link org.greenrobot.greendao.AbstractDao#delete(Object)}.

@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.aamezencev.weatherinfo.data.CurrentWeatherDbModel;
 import com.example.aamezencev.weatherinfo.domain.RxDbManager;
 import com.example.aamezencev.weatherinfo.domain.RxGoogleApiManager;
 import com.example.aamezencev.weatherinfo.domain.RxOWMApiManager;
@@ -17,6 +18,8 @@ import com.example.aamezencev.weatherinfo.view.WeatherListActivity;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
 
@@ -66,32 +69,43 @@ public class UpdateService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        compositeDisposable.add(dbManager.allItemQuery()
+        dbManager.allItemQuery()
                 .subscribeOn(Schedulers.io())
                 .flatMap(cities -> Observable.fromIterable(cities)
-                        .flatMap(city -> googleApiManager.geoRequest(city.getPlaceId()))
-                        .flatMap(geo -> owmApiManager.currentWeatherRequest(geo.getJsonLocationModel().getLat(), geo.getJsonLocationModel().getLng()))
-                        .toList()
-                        .map(weatherModels -> new JsonWeatherModelToDb(weatherModels).map())
-                        .toObservable()
-                        .flatMap(aVoid -> dbManager.addListToDbQuery(aVoid))
-                        .map(currentWeatherDbModels -> new CreateRealation(cities, currentWeatherDbModels).map())
-                        .flatMap(promptCityDbModels -> dbManager.addPromptListToDb(promptCityDbModels))
-                        .retryWhen(throwableObservable -> throwableObservable.flatMap(error -> {
-                            Log.d("myLog", "retry");
-                            return Observable.just(cities).delay(120_000, TimeUnit.MILLISECONDS);
-                        }))
+                        .flatMap(city -> googleApiManager.geoRequest(city.getPlaceId()), (promptCityDbModel, jsonResultsGeo) ->
+                                owmApiManager.currentWeatherRequest(jsonResultsGeo.getJsonLocationModel().getLat(), jsonResultsGeo.getJsonLocationModel().getLng()))
                 )
-                .repeatWhen(completed -> completed.delay(60_000, TimeUnit.MILLISECONDS))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        dbModelList -> {
-                            EventBus.getDefault().post(new UpdatedCurrentWeather());
-                            Log.d("myLog", "connect");
-                        },
-                        error -> {
-                        }
-                ));
+                .
+                .subscribe(listObservable -> {
+                    listObservable
+                    return;
+                });
+//        compositeDisposable.add(dbManager.allItemQuery()
+//                .subscribeOn(Schedulers.io())
+//                .flatMap(cities -> Observable.fromIterable(cities)
+//                        .flatMap(city -> googleApiManager.geoRequest(city.getPlaceId()))
+//                        .flatMap(geo -> owmApiManager.currentWeatherRequest(geo.getJsonLocationModel().getLat(), geo.getJsonLocationModel().getLng()))
+//                        .toList()
+//                        .map(weatherModels -> new JsonWeatherModelToDb(weatherModels).map())
+//                        .toObservable()
+//                        .flatMap(aVoid -> dbManager.addListToDbQuery(aVoid))
+//                        .map(currentWeatherDbModels -> new CreateRealation(cities, currentWeatherDbModels).map())
+//                        .flatMap(promptCityDbModels -> dbManager.addPromptListToDb(promptCityDbModels))
+//                        .retryWhen(throwableObservable -> throwableObservable.flatMap(error -> {
+//                            Log.d("myLog", "retry");
+//                            return Observable.just(cities).delay(120_000, TimeUnit.MILLISECONDS);
+//                        }))
+//                )
+//                .repeatWhen(completed -> completed.delay(60_000, TimeUnit.MILLISECONDS))
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(
+//                        dbModelList -> {
+//                            EventBus.getDefault().post(new UpdatedCurrentWeather());
+//                            Log.d("myLog", "connect");
+//                        },
+//                        error -> {
+//                        }
+//                ));
 
         return super.onStartCommand(intent, flags, startId);
     }

@@ -72,13 +72,15 @@ public class UpdateService extends Service {
         dbManager.allItemQuery()
                 .subscribeOn(Schedulers.io())
                 .flatMap(cities -> Observable.fromIterable(cities)
-                        .flatMap(city -> googleApiManager.geoRequest(city.getPlaceId()), (promptCityDbModel, jsonResultsGeo) ->
-                                owmApiManager.currentWeatherRequest(jsonResultsGeo.getJsonLocationModel().getLat(), jsonResultsGeo.getJsonLocationModel().getLng()))
+                        .flatMap(city -> googleApiManager.geoRequest(city.getPlaceId())
+                                .flatMap(geo -> owmApiManager.currentWeatherRequest(geo.getJsonLocationModel().getLat(), geo.getJsonLocationModel().getLng()))
+                                .map(jsonWeatherModels -> new JsonWeatherModelToDb(jsonWeatherModels).map())
+                                .map(currentWeatherDbModels -> new CreateRealation(city, currentWeatherDbModels).map())
+                                .flatMap(currentWeatherDbModels -> dbManager.addListToDbQuery(currentWeatherDbModels))
+                        )
                 )
-                .
-                .subscribe(listObservable -> {
-                    listObservable
-                    return;
+                .subscribe(currentWeatherDbModels -> {
+                    String s = null;
                 });
 //        compositeDisposable.add(dbManager.allItemQuery()
 //                .subscribeOn(Schedulers.io())

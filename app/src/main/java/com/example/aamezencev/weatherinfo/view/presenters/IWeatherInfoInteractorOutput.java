@@ -7,7 +7,7 @@ import java.util.List;
  */
 
 public interface IWeatherInfoInteractorOutput<T> {
-    void onSucces(T viewModel);
+    void onSucces(List<T> weatherModels);
 
     void onError(Throwable ex);
 

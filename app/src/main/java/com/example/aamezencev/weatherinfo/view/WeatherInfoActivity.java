@@ -20,6 +20,7 @@ import com.example.aamezencev.weatherinfo.view.presenters.WeatherInfoPresenter;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewCurrentWeatherModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
 
@@ -102,8 +103,8 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
     }
 
     @Override
-    public void paintWeather(Object viewModel) {
-        updateRecyclerView((ViewCurrentWeatherModel) viewModel);
+    public void paintWeather(List weatherModels) {
+        updateRecyclerView((ViewCurrentWeatherModel) weatherModels.get(0));
     }
 
     private static class SaveInfoPresenter extends Loader<IWeatherInfoPresenter> {

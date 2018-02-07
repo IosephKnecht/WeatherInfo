@@ -9,6 +9,7 @@ import com.example.aamezencev.weatherinfo.view.viewModels.ViewCurrentWeatherMode
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public class WeatherInfoPresenter implements IWeatherInfoPresenter, IWeatherInfo
     private IWeatherInfoInteractor weatherInfoInteractor;
     private IWeatherInfoActivity weatherInfoActivity;
 
-    private ViewCurrentWeatherModel viewCurrentWeatherModel = new ViewCurrentWeatherModel();
+    private List<ViewCurrentWeatherModel> viewCurrentWeatherModel = new ArrayList<>();
 
     public WeatherInfoPresenter() {
         weatherInfoInteractor = new WeatherInfoInteractor(this);
@@ -64,9 +65,9 @@ public class WeatherInfoPresenter implements IWeatherInfoPresenter, IWeatherInfo
     }
 
     @Override
-    public void onSucces(Object viewModel) {
-        viewCurrentWeatherModel = (ViewCurrentWeatherModel) viewModel;
-        weatherInfoActivity.paintWeather(viewModel);
+    public void onSucces(List weatherModels) {
+        viewCurrentWeatherModel = weatherModels;
+        weatherInfoActivity.paintWeather(weatherModels);
     }
 
     @Override

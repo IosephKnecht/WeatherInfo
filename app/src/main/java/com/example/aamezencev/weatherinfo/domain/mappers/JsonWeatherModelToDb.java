@@ -24,13 +24,9 @@ public class JsonWeatherModelToDb {
         for (JsonWeatherModel jsonModel : jsonWeatherModelList) {
             CurrentWeatherDbModel currentWeatherDbModel = new CurrentWeatherDbModel();
             JsonWeatherInfo jsonWeatherInfo = jsonModel.getJsonWeatherInfoList().get(0);
-            currentWeatherDbModel.setCod(jsonModel.getCod());
-            currentWeatherDbModel.setId(jsonModel.getId());
             currentWeatherDbModel.setDescription(jsonWeatherInfo.getDescription());
             currentWeatherDbModel.setMain(jsonWeatherInfo.getMain());
             currentWeatherDbModel.setIcon(jsonWeatherInfo.getIcon());
-            currentWeatherDbModel.setLon(jsonModel.getJsonCoordInfo().getLon());
-            currentWeatherDbModel.setLat(jsonModel.getJsonCoordInfo().getLat());
             currentWeatherDbModel.setPressure(jsonModel.getJsonMainInfo().getPressure());
             currentWeatherDbModel.setTemp(jsonModel.getJsonMainInfo().getTemp());
             currentWeatherDbModel.setHumidity(jsonModel.getJsonMainInfo().getHumidity());

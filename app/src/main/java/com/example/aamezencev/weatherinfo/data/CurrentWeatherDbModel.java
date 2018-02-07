@@ -15,15 +15,10 @@ import org.greenrobot.greendao.DaoException;
 public class CurrentWeatherDbModel {
     @Id
     private Long key;
-    @NotNull
     private String main;
-    @NotNull
     private String description;
-    @NotNull
     private String icon;
-    @NotNull
     private String cod;
-    @NotNull
     private Long id;
     private Long foreignKey;
     private String lon;
@@ -38,12 +33,12 @@ public class CurrentWeatherDbModel {
     private String speed;
     private String deg;
     private Long all;
-    @Generated(hash = 1960436699)
-    public CurrentWeatherDbModel(Long key, @NotNull String main,
-            @NotNull String description, @NotNull String icon, @NotNull String cod,
-            @NotNull Long id, Long foreignKey, String lon, String lat, String temp,
-            String pressure, String humidity, String tempMin, String tempMax,
-            String seaLevel, String grndLevel, String speed, String deg, Long all) {
+    @Generated(hash = 2106161816)
+    public CurrentWeatherDbModel(Long key, String main, String description,
+            String icon, String cod, Long id, Long foreignKey, String lon,
+            String lat, String temp, String pressure, String humidity,
+            String tempMin, String tempMax, String seaLevel, String grndLevel,
+            String speed, String deg, Long all) {
         this.key = key;
         this.main = main;
         this.description = description;

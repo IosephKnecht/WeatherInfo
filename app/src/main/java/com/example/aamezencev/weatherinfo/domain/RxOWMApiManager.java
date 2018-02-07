@@ -3,6 +3,7 @@ package com.example.aamezencev.weatherinfo.domain;
 
 import android.support.annotation.NonNull;
 
+import com.example.aamezencev.weatherinfo.data.owmApi.JsonModelList;
 import com.example.aamezencev.weatherinfo.data.owmApi.JsonWeatherModel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -50,17 +51,8 @@ public class RxOWMApiManager {
                 .map(response -> {
                     Gson gson = new Gson();
                     String jsonString = response.body().string();
-                    Type type = new TypeToken<List<JsonWeatherModel>>() {
-                    }.getType();
-                    List<JsonWeatherModel> jsonWeatherModelList = gson.fromJson(jsonString, type);
-                    return jsonWeatherModelList;
+                    JsonModelList jsonModelList = gson.fromJson(jsonString, JsonModelList.class);
+                    return jsonModelList.getJsonWeatherModelList();
                 });
-    }
-
-    @Provides
-    @NonNull
-    @Singleton
-    public RxOWMApiManager getOWMApiManager() {
-        return new RxOWMApiManager();
     }
 }

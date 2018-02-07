@@ -69,19 +69,39 @@ public class UpdateService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        dbManager.allItemQuery()
+        compositeDisposable.add(dbManager.clearWeatherTable()
                 .subscribeOn(Schedulers.io())
+                .flatMap(aBoolean -> dbManager.allItemQuery())
                 .flatMap(cities -> Observable.fromIterable(cities)
                         .flatMap(city -> googleApiManager.geoRequest(city.getPlaceId())
                                 .flatMap(geo -> owmApiManager.currentWeatherRequest(geo.getJsonLocationModel().getLat(), geo.getJsonLocationModel().getLng()))
                                 .map(jsonWeatherModels -> new JsonWeatherModelToDb(jsonWeatherModels).map())
                                 .map(currentWeatherDbModels -> new CreateRealation(city, currentWeatherDbModels).map())
                                 .flatMap(currentWeatherDbModels -> dbManager.addListToDbQuery(currentWeatherDbModels))
+                                .retryWhen(throwableObservable -> throwableObservable.flatMap(throwable -> {
+                                    Log.d("myLog", "retry");
+                                    return Observable.just(cities).delay(120_000, TimeUnit.MILLISECONDS);
+                                }))
                         )
                 )
+                .toList()
+                .repeatWhen(completed -> completed.delay(60_000, TimeUnit.MILLISECONDS))
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(currentWeatherDbModels -> {
-                    String s = null;
-                });
+                    EventBus.getDefault().post(new UpdatedCurrentWeather());
+                    Log.d("myLog", "connect");
+                }, error -> {
+                })
+        );
+//                .repeatWhen(completed -> completed.delay(60_000, TimeUnit.MILLISECONDS))
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(currentWeatherDbModels -> {
+//                            EventBus.getDefault().post(new UpdatedCurrentWeather());
+//                            Log.d("myLog", "connect");
+//                        },
+//                        error -> {
+//
+//                        }));
 //        compositeDisposable.add(dbManager.allItemQuery()
 //                .subscribeOn(Schedulers.io())
 //                .flatMap(cities -> Observable.fromIterable(cities)

@@ -22,6 +22,7 @@ public class CreateRealation {
     public List<CurrentWeatherDbModel> map() {
         for (CurrentWeatherDbModel weatherDbModel : currentWeatherDbModelList) {
             weatherDbModel.setForeignKey(promptCityDbModel.getKey());
+            promptCityDbModel.resetWeatherDbModelList();
         }
         return currentWeatherDbModelList;
     }

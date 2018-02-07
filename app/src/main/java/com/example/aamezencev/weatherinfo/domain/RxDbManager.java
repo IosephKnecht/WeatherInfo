@@ -67,8 +67,8 @@ public class RxDbManager {
         return Observable.<List<CurrentWeatherDbModel>>create(e -> {
             CurrentWeatherDbModelDao currentWeatherDbModelDao = daoSession.getCurrentWeatherDbModelDao();
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
-            currentWeatherDbModelDao.deleteAll();
-            promptCityDbModelDao.deleteAll();
+            //currentWeatherDbModelDao.deleteAll();
+            //promptCityDbModelDao.deleteAll();
             try {
                 currentWeatherDbModelDao.insertInTx(currentWeatherDbModelList);
                 e.onNext(currentWeatherDbModelList);
@@ -109,15 +109,14 @@ public class RxDbManager {
         });
     }
 
-    public Observable<List<PromptCityDbModel>> addPromptListToDb(List<PromptCityDbModel> promptCityDbModelList) {
-        return Observable.<List<PromptCityDbModel>>create(emitter -> {
-            PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
-            promptCityDbModelDao.deleteAll();
+    public Observable<Boolean> clearWeatherTable() {
+        return Observable.<Boolean>create(emitter -> {
+            CurrentWeatherDbModelDao currentWeatherDbModelDao = daoSession.getCurrentWeatherDbModelDao();
             try {
-                promptCityDbModelDao.insertInTx(promptCityDbModelList);
-                emitter.onNext(promptCityDbModelDao.queryBuilder().list());
+                currentWeatherDbModelDao.deleteAll();
+                emitter.onNext(true);
             } catch (Exception ex) {
-                emitter.onError(new Exception("do not write an array in DB"));
+                emitter.onError(new Exception("do not clear weather table"));
             }
             emitter.onComplete();
         });

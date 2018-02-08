@@ -3,13 +3,17 @@ package com.example.aamezencev.weatherinfo.view;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.ImageButton;
 
+import com.example.aamezencev.weatherinfo.fragments.PageFragment;
+import com.example.aamezencev.weatherinfo.view.adapters.PagerAdapter;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
 import com.example.aamezencev.weatherinfo.view.interfaces.IWeatherInfoActivity;
 import com.example.aamezencev.weatherinfo.view.presenters.IWeatherInfoPresenter;
@@ -29,8 +33,10 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
 
     private ImageButton btnDeleteWeather;
 
-    private RecyclerView mRecyclerView;
-    private WeatherInfoAdapter mAdapter;
+    //    private RecyclerView mRecyclerView;
+//    private WeatherInfoAdapter mAdapter;
+    private ViewPager pager;
+    private PagerAdapter pagerAdapter;
     private CompositeDisposable compositeDisposable;
 
     private IWeatherInfoPresenter weatherInfoPresenter;
@@ -46,13 +52,13 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         baseRouter = new Router(this);
         compositeDisposable = new CompositeDisposable();
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.weatherInfoRecycler);
-        mRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mAdapter = new WeatherInfoAdapter(new ViewCurrentWeatherModel());
-        mRecyclerView.setAdapter(mAdapter);
+//        mRecyclerView = (RecyclerView) findViewById(R.id.weatherInfoRecycler);
+//        mRecyclerView.setHasFixedSize(true);
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+//        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+//        mRecyclerView.setLayoutManager(layoutManager);
+//        mAdapter = new WeatherInfoAdapter(new ViewCurrentWeatherModel());
+//        mRecyclerView.setAdapter(mAdapter);
 
         btnDeleteWeather = (ImageButton) findViewById(R.id.btnDeleteWeather);
         btnDeleteWeather.setOnClickListener(btn -> {
@@ -62,6 +68,15 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         weatherInfoPresenter = ((SaveInfoPresenter) getLoaderManager().initLoader(1234, null, this)).getWeatherInfoPresenter();
         weatherInfoPresenter.onAttachView(this, baseRouter);
 
+        pager = (ViewPager) findViewById(R.id.pager);
+        pagerAdapter = new PagerAdapter(getSupportFragmentManager());
+        pager.setAdapter(pagerAdapter);
+        pagerAdapter.setViewCurrentWeatherModelList(weatherInfoPresenter.getViewModelList());
+        pagerAdapter.notifyDataSetChanged();
+
+        if (savedInstanceState != null) {
+            pager.setCurrentItem(savedInstanceState.getInt("currentPage"));
+        }
     }
 
     @Override
@@ -73,11 +88,17 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         super.onDestroy();
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("currentPage", pager.getCurrentItem());
+    }
+
     public void updateRecyclerView(ViewCurrentWeatherModel currentWeatherModel) {
-        DiffUtilWeatherInfoAdapter diffUtilWeatherInfoAdapter = new DiffUtilWeatherInfoAdapter(mAdapter.getViewCurrentWeatherModel(), currentWeatherModel);
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilWeatherInfoAdapter);
-        mAdapter.setViewCurrentWeatherModel(currentWeatherModel);
-        diffResult.dispatchUpdatesTo(mAdapter);
+//        DiffUtilWeatherInfoAdapter diffUtilWeatherInfoAdapter = new DiffUtilWeatherInfoAdapter(mAdapter.getViewCurrentWeatherModel(), currentWeatherModel);
+//        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilWeatherInfoAdapter);
+//        mAdapter.setViewCurrentWeatherModel(currentWeatherModel);
+//        diffResult.dispatchUpdatesTo(mAdapter);
     }
 
     @Override
@@ -104,7 +125,9 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
 
     @Override
     public void paintWeather(List weatherModels) {
-        updateRecyclerView((ViewCurrentWeatherModel) weatherModels.get(0));
+        //updateRecyclerView((ViewCurrentWeatherModel) weatherModels.get(0));
+        pagerAdapter.setViewCurrentWeatherModelList(weatherModels);
+        pagerAdapter.notifyDataSetChanged();
     }
 
     private static class SaveInfoPresenter extends Loader<IWeatherInfoPresenter> {

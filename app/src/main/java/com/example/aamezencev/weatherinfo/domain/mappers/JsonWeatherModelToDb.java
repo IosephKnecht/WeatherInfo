@@ -35,6 +35,7 @@ public class JsonWeatherModelToDb {
             currentWeatherDbModel.setSpeed(jsonModel.getJsonWindInfo().getSpeed());
             currentWeatherDbModel.setDeg(jsonModel.getJsonWindInfo().getDeg());
             currentWeatherDbModel.setAll(jsonModel.getJsonCloudsInfo().getAll());
+            currentWeatherDbModel.setDate(jsonModel.getDate());
             currentWeatherDbModelList.add(currentWeatherDbModel);
         }
 

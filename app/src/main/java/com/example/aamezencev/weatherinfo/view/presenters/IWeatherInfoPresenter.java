@@ -3,11 +3,13 @@ package com.example.aamezencev.weatherinfo.view.presenters;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
 import com.example.aamezencev.weatherinfo.view.interfaces.IWeatherInfoActivity;
 
+import java.util.List;
+
 /**
  * Created by aa.mezencev on 30.01.2018.
  */
 
-public interface IWeatherInfoPresenter {
+public interface IWeatherInfoPresenter<T> {
     void getCurrentWeather(Long key);
 
     void deleteCurrentWeather(Long key);
@@ -16,7 +18,7 @@ public interface IWeatherInfoPresenter {
 
     void onDetachView();
 
-    void getHashModel();
+    List<T> getViewModelList();
 
     void onDestroy();
 }

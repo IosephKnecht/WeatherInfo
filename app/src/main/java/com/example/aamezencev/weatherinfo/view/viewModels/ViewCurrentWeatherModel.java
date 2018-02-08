@@ -23,6 +23,7 @@ public class ViewCurrentWeatherModel {
     private String speed = new String();
     private String deg = new String();
     private Long all = (long) 0;
+    private String date;
 
     public Long getKey() {
         return key;
@@ -206,5 +207,13 @@ public class ViewCurrentWeatherModel {
                 this.speed.equals(weatherModel.getSpeed()) &&
                 this.deg.equals(weatherModel.getDeg()) &&
                 this.all.equals(weatherModel.getAll());
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

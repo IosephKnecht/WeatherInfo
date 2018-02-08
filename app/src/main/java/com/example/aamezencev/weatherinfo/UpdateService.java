@@ -93,41 +93,6 @@ public class UpdateService extends Service {
                 }, error -> {
                 })
         );
-//                .repeatWhen(completed -> completed.delay(60_000, TimeUnit.MILLISECONDS))
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(currentWeatherDbModels -> {
-//                            EventBus.getDefault().post(new UpdatedCurrentWeather());
-//                            Log.d("myLog", "connect");
-//                        },
-//                        error -> {
-//
-//                        }));
-//        compositeDisposable.add(dbManager.allItemQuery()
-//                .subscribeOn(Schedulers.io())
-//                .flatMap(cities -> Observable.fromIterable(cities)
-//                        .flatMap(city -> googleApiManager.geoRequest(city.getPlaceId()))
-//                        .flatMap(geo -> owmApiManager.currentWeatherRequest(geo.getJsonLocationModel().getLat(), geo.getJsonLocationModel().getLng()))
-//                        .toList()
-//                        .map(weatherModels -> new JsonWeatherModelToDb(weatherModels).map())
-//                        .toObservable()
-//                        .flatMap(aVoid -> dbManager.addListToDbQuery(aVoid))
-//                        .map(currentWeatherDbModels -> new CreateRealation(cities, currentWeatherDbModels).map())
-//                        .flatMap(promptCityDbModels -> dbManager.addPromptListToDb(promptCityDbModels))
-//                        .retryWhen(throwableObservable -> throwableObservable.flatMap(error -> {
-//                            Log.d("myLog", "retry");
-//                            return Observable.just(cities).delay(120_000, TimeUnit.MILLISECONDS);
-//                        }))
-//                )
-//                .repeatWhen(completed -> completed.delay(60_000, TimeUnit.MILLISECONDS))
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(
-//                        dbModelList -> {
-//                            EventBus.getDefault().post(new UpdatedCurrentWeather());
-//                            Log.d("myLog", "connect");
-//                        },
-//                        error -> {
-//                        }
-//                ));
 
         return super.onStartCommand(intent, flags, startId);
     }

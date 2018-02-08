@@ -22,7 +22,7 @@ public class WeatherInfoPresenter implements IWeatherInfoPresenter, IWeatherInfo
     private IWeatherInfoInteractor weatherInfoInteractor;
     private IWeatherInfoActivity weatherInfoActivity;
 
-    private List<ViewCurrentWeatherModel> viewCurrentWeatherModel = new ArrayList<>();
+    private List<ViewCurrentWeatherModel> viewCurrentWeatherModels = new ArrayList<>();
 
     public WeatherInfoPresenter() {
         weatherInfoInteractor = new WeatherInfoInteractor(this);
@@ -52,8 +52,8 @@ public class WeatherInfoPresenter implements IWeatherInfoPresenter, IWeatherInfo
     }
 
     @Override
-    public void getHashModel() {
-        weatherInfoActivity.paintWeather(viewCurrentWeatherModel);
+    public List getViewModelList() {
+        return viewCurrentWeatherModels;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class WeatherInfoPresenter implements IWeatherInfoPresenter, IWeatherInfo
 
     @Override
     public void onSucces(List weatherModels) {
-        viewCurrentWeatherModel = weatherModels;
+        viewCurrentWeatherModels = weatherModels;
         weatherInfoActivity.paintWeather(weatherModels);
     }
 

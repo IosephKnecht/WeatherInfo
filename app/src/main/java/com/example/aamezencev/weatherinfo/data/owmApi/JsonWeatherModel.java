@@ -39,4 +39,8 @@ public class JsonWeatherModel {
     public JsonCloudsInfo getJsonCloudsInfo() {
         return jsonCloudsInfo;
     }
+
+    public String getDate() {
+        return date;
+    }
 }

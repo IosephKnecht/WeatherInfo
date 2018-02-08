@@ -1,6 +1,7 @@
 package com.example.aamezencev.weatherinfo.domain.mappers;
 
 import com.example.aamezencev.weatherinfo.data.CurrentWeatherDbModel;
+import com.example.aamezencev.weatherinfo.data.owmApi.JsonModelList;
 import com.example.aamezencev.weatherinfo.data.owmApi.JsonWeatherInfo;
 import com.example.aamezencev.weatherinfo.data.owmApi.JsonWeatherModel;
 import com.example.aamezencev.weatherinfo.data.PromptCityDbModel;
@@ -13,15 +14,15 @@ import java.util.List;
  */
 
 public class JsonWeatherModelToDb {
-    private List<JsonWeatherModel> jsonWeatherModelList;
+    private JsonModelList jsonModelList;
 
-    public JsonWeatherModelToDb(List<JsonWeatherModel> jsonWeatherModelList) {
-        this.jsonWeatherModelList = jsonWeatherModelList;
+    public JsonWeatherModelToDb(JsonModelList jsonModelList) {
+        this.jsonModelList = jsonModelList;
     }
 
     public List<CurrentWeatherDbModel> map() {
         List<CurrentWeatherDbModel> currentWeatherDbModelList = new ArrayList<>();
-        for (JsonWeatherModel jsonModel : jsonWeatherModelList) {
+        for (JsonWeatherModel jsonModel : jsonModelList.getJsonWeatherModelList()) {
             CurrentWeatherDbModel currentWeatherDbModel = new CurrentWeatherDbModel();
             JsonWeatherInfo jsonWeatherInfo = jsonModel.getJsonWeatherInfoList().get(0);
             currentWeatherDbModel.setDescription(jsonWeatherInfo.getDescription());
@@ -36,6 +37,9 @@ public class JsonWeatherModelToDb {
             currentWeatherDbModel.setDeg(jsonModel.getJsonWindInfo().getDeg());
             currentWeatherDbModel.setAll(jsonModel.getJsonCloudsInfo().getAll());
             currentWeatherDbModel.setDate(jsonModel.getDate());
+            currentWeatherDbModel.setLat(jsonModelList.getJsonCoord().getLat());
+            currentWeatherDbModel.setLon(jsonModelList.getJsonCoord().getLon());
+            currentWeatherDbModel.setName(jsonModelList.getJsonCityInfo().getName());
             currentWeatherDbModelList.add(currentWeatherDbModel);
         }
 

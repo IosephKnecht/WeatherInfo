@@ -38,6 +38,7 @@ public class CurrentWeatherDbModelToView {
             viewCurrentWeatherModel.setDeg(currentWeatherDbModel.getDeg());
             viewCurrentWeatherModel.setAll(currentWeatherDbModel.getAll());
             viewCurrentWeatherModel.setDate(currentWeatherDbModel.getDate());
+            viewCurrentWeatherModel.setName(currentWeatherDbModel.getName());
             viewCurrentWeatherModelList.add(viewCurrentWeatherModel);
         }
         return viewCurrentWeatherModelList;

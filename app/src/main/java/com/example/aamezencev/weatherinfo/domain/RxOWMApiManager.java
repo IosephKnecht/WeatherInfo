@@ -35,7 +35,7 @@ public class RxOWMApiManager {
 
     }
 
-    public Observable<List<JsonWeatherModel>> currentWeatherRequest(String lat, String lon) {
+    public Observable<JsonModelList> currentWeatherRequest(String lat, String lon) {
         return Observable.<Response>create(aVoid -> {
             Request.Builder builder = new Request.Builder();
             builder.url(String.format("http://api.openweathermap.org/data/2.5/forecast?lat=%s&lon=%s%s&APPID=%s&cnt=7", lat, lon, tempMode, appId));
@@ -52,7 +52,7 @@ public class RxOWMApiManager {
                     Gson gson = new Gson();
                     String jsonString = response.body().string();
                     JsonModelList jsonModelList = gson.fromJson(jsonString, JsonModelList.class);
-                    return jsonModelList.getJsonWeatherModelList();
+                    return jsonModelList;
                 });
     }
 }

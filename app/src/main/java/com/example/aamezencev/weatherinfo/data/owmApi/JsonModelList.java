@@ -12,11 +12,26 @@ public class JsonModelList {
     @SerializedName("list")
     private List<JsonWeatherModel> jsonWeatherModelList;
 
+    @SerializedName("city")
+    private JsonCityInfo jsonCityInfo;
+
     public List<JsonWeatherModel> getJsonWeatherModelList() {
         return jsonWeatherModelList;
     }
 
     public void setJsonWeatherModelList(List<JsonWeatherModel> jsonWeatherModelList) {
         this.jsonWeatherModelList = jsonWeatherModelList;
+    }
+
+    public void setJsonCityInfo(JsonCityInfo jsonCityInfo) {
+        this.jsonCityInfo = jsonCityInfo;
+    }
+
+    public JsonCityInfo getJsonCityInfo() {
+        return jsonCityInfo;
+    }
+
+    public JsonCoordInfo getJsonCoord(){
+        return jsonCityInfo.getJsonCoordInfo();
     }
 }

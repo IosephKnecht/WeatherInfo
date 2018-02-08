@@ -34,12 +34,13 @@ public class CurrentWeatherDbModel {
     private String deg;
     private Long all;
     private String date;
-    @Generated(hash = 960571894)
+    private String name;
+    @Generated(hash = 1486258680)
     public CurrentWeatherDbModel(Long key, String main, String description,
             String icon, String cod, Long id, Long foreignKey, String lon,
             String lat, String temp, String pressure, String humidity,
             String tempMin, String tempMax, String seaLevel, String grndLevel,
-            String speed, String deg, Long all, String date) {
+            String speed, String deg, Long all, String date, String name) {
         this.key = key;
         this.main = main;
         this.description = description;
@@ -60,6 +61,7 @@ public class CurrentWeatherDbModel {
         this.deg = deg;
         this.all = all;
         this.date = date;
+        this.name = name;
     }
     @Generated(hash = 1721116696)
     public CurrentWeatherDbModel() {
@@ -183,5 +185,11 @@ public class CurrentWeatherDbModel {
     }
     public void setDate(String date) {
         this.date = date;
+    }
+    public String getName() {
+        return this.name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 }

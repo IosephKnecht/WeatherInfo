@@ -47,8 +47,6 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_weather_info);
 
-        setTitle(getIntent().getStringExtra("actionTitle"));
-
         baseRouter = new Router(this);
         compositeDisposable = new CompositeDisposable();
 

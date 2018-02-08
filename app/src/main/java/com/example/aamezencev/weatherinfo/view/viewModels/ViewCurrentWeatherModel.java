@@ -24,6 +24,7 @@ public class ViewCurrentWeatherModel {
     private String deg = new String();
     private Long all = (long) 0;
     private String date;
+    private String name;
 
     public Long getKey() {
         return key;
@@ -215,5 +216,13 @@ public class ViewCurrentWeatherModel {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

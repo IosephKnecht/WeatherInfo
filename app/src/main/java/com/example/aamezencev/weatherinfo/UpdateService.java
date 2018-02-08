@@ -75,7 +75,7 @@ public class UpdateService extends Service {
                 .flatMap(cities -> Observable.fromIterable(cities)
                         .flatMap(city -> googleApiManager.geoRequest(city.getPlaceId())
                                 .flatMap(geo -> owmApiManager.currentWeatherRequest(geo.getJsonLocationModel().getLat(), geo.getJsonLocationModel().getLng()))
-                                .map(jsonWeatherModels -> new JsonWeatherModelToDb(jsonWeatherModels).map())
+                                .map(jsonModelList -> new JsonWeatherModelToDb(jsonModelList).map())
                                 .map(currentWeatherDbModels -> new CreateRealation(city, currentWeatherDbModels).map())
                                 .flatMap(currentWeatherDbModels -> dbManager.addListToDbQuery(currentWeatherDbModels))
                                 .retryWhen(throwableObservable -> throwableObservable.flatMap(throwable -> {

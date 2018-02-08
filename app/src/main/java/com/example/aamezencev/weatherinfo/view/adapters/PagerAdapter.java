@@ -25,7 +25,7 @@ public class PagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         ViewCurrentWeatherModel weatherModel = viewCurrentWeatherModelList.get(position);
-        return PageFragment.newInstance(position, weatherModel.getFullInfotmation(), weatherModel.getIcon());
+        return PageFragment.newInstance(position, weatherModel.getFullInfotmation(), weatherModel.getIcon(), weatherModel.getName());
     }
 
     @Override

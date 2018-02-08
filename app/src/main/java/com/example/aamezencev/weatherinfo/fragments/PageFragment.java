@@ -23,12 +23,13 @@ public class PageFragment extends Fragment {
     int pageNumber;
     int backColor;
 
-    public static PageFragment newInstance(int page, String fullInfWeather, String image) {
+    public static PageFragment newInstance(int page, String fullInfWeather, String image, String name) {
         PageFragment pageFragment = new PageFragment();
         Bundle arguments = new Bundle();
         arguments.putInt(ARGUMENT_PAGE_NUMBER, page);
         arguments.putString("fullInfWeather", fullInfWeather);
         arguments.putString("image", image);
+        arguments.putString("name", name);
         pageFragment.setArguments(arguments);
         return pageFragment;
     }
@@ -63,6 +64,8 @@ public class PageFragment extends Fragment {
         Glide.with(getActivity())
                 .load("http://openweathermap.org/img/w/" + getArguments().getString("image") + ".png")
                 .into(weatherImage);
+
+        getActivity().setTitle(getArguments().getString("name"));
         return view;
     }
 }

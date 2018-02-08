@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.aamezencev.weatherinfo.data.CurrentWeatherDbModel;
+import com.example.aamezencev.weatherinfo.domain.FacadeManager;
 import com.example.aamezencev.weatherinfo.domain.RxDbManager;
 import com.example.aamezencev.weatherinfo.domain.RxGoogleApiManager;
 import com.example.aamezencev.weatherinfo.domain.RxOWMApiManager;
@@ -39,13 +40,7 @@ public class UpdateService extends Service {
 
     private CompositeDisposable compositeDisposable;
     @Inject
-    RxDbManager dbManager;
-    @Inject
-    RxGoogleApiManager googleApiManager;
-    @Inject
-    RxOWMApiManager owmApiManager;
-
-    private final PublishSubject<Void> retrySubject = PublishSubject.create();
+    FacadeManager facadeManager;
 
     @Override
     public void onCreate() {
@@ -69,23 +64,9 @@ public class UpdateService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        compositeDisposable.add(dbManager.clearWeatherTable()
+        compositeDisposable.add(facadeManager
+                .getUpdateObservable()
                 .subscribeOn(Schedulers.io())
-                .flatMap(aBoolean -> dbManager.allItemQuery())
-                .flatMap(cities -> Observable.fromIterable(cities)
-                        .flatMap(city -> googleApiManager.geoRequest(city.getPlaceId())
-                                .flatMap(geo -> owmApiManager.currentWeatherRequest(geo.getJsonLocationModel().getLat(), geo.getJsonLocationModel().getLng()))
-                                .map(jsonModelList -> new JsonWeatherModelToDb(jsonModelList).map())
-                                .map(currentWeatherDbModels -> new CreateRealation(city, currentWeatherDbModels).map())
-                                .flatMap(currentWeatherDbModels -> dbManager.addListToDbQuery(currentWeatherDbModels))
-                                .retryWhen(throwableObservable -> throwableObservable.flatMap(throwable -> {
-                                    Log.d("myLog", "retry");
-                                    return Observable.just(cities).delay(120_000, TimeUnit.MILLISECONDS);
-                                }))
-                        )
-                )
-                .toList()
-                .repeatWhen(completed -> completed.delay(60_000, TimeUnit.MILLISECONDS))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(currentWeatherDbModels -> {
                     EventBus.getDefault().post(new UpdatedCurrentWeather());

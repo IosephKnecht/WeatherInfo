@@ -3,27 +3,19 @@ package com.example.aamezencev.weatherinfo.view;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
+import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.widget.ImageButton;
 
-import com.example.aamezencev.weatherinfo.fragments.PageFragment;
+import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.view.adapters.PagerAdapter;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
 import com.example.aamezencev.weatherinfo.view.interfaces.IWeatherInfoActivity;
 import com.example.aamezencev.weatherinfo.view.presenters.IWeatherInfoPresenter;
-import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilWeatherInfoAdapter;
-import com.example.aamezencev.weatherinfo.view.adapters.WeatherInfoAdapter;
-import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.view.presenters.WeatherInfoPresenter;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewCurrentWeatherModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
@@ -33,8 +25,6 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
 
     private ImageButton btnDeleteWeather;
 
-    //    private RecyclerView mRecyclerView;
-//    private WeatherInfoAdapter mAdapter;
     private ViewPager pager;
     private PagerAdapter pagerAdapter;
     private CompositeDisposable compositeDisposable;
@@ -49,14 +39,6 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
 
         baseRouter = new Router(this);
         compositeDisposable = new CompositeDisposable();
-
-//        mRecyclerView = (RecyclerView) findViewById(R.id.weatherInfoRecycler);
-//        mRecyclerView.setHasFixedSize(true);
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-//        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-//        mRecyclerView.setLayoutManager(layoutManager);
-//        mAdapter = new WeatherInfoAdapter(new ViewCurrentWeatherModel());
-//        mRecyclerView.setAdapter(mAdapter);
 
         btnDeleteWeather = (ImageButton) findViewById(R.id.btnDeleteWeather);
         btnDeleteWeather.setOnClickListener(btn -> {
@@ -92,13 +74,6 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         outState.putInt("currentPage", pager.getCurrentItem());
     }
 
-    public void updateRecyclerView(ViewCurrentWeatherModel currentWeatherModel) {
-//        DiffUtilWeatherInfoAdapter diffUtilWeatherInfoAdapter = new DiffUtilWeatherInfoAdapter(mAdapter.getViewCurrentWeatherModel(), currentWeatherModel);
-//        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilWeatherInfoAdapter);
-//        mAdapter.setViewCurrentWeatherModel(currentWeatherModel);
-//        diffResult.dispatchUpdatesTo(mAdapter);
-    }
-
     @Override
     public Loader<IWeatherInfoPresenter> onCreateLoader(int i, Bundle bundle) {
         Loader loader = null;
@@ -123,7 +98,6 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
 
     @Override
     public void paintWeather(List weatherModels) {
-        //updateRecyclerView((ViewCurrentWeatherModel) weatherModels.get(0));
         pagerAdapter.setViewCurrentWeatherModelList(weatherModels);
         pagerAdapter.notifyDataSetChanged();
     }

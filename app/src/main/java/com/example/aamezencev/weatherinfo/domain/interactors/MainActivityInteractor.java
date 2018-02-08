@@ -2,6 +2,7 @@ package com.example.aamezencev.weatherinfo.domain.interactors;
 
 import com.example.aamezencev.weatherinfo.App;
 import com.example.aamezencev.weatherinfo.data.googleApi.JsonPromptModel;
+import com.example.aamezencev.weatherinfo.domain.FacadeManager;
 import com.example.aamezencev.weatherinfo.domain.RxDbManager;
 import com.example.aamezencev.weatherinfo.domain.RxGoogleApiManager;
 import com.example.aamezencev.weatherinfo.domain.interactors.interfaces.IMainInteractor;
@@ -31,9 +32,7 @@ public class MainActivityInteractor implements IMainInteractor {
     private IMainInteractorOutput mainInteractorOutput;
     private CompositeDisposable compositeDisposable;
     @Inject
-    RxDbManager dbManager;
-    @Inject
-    RxGoogleApiManager googleApiManager;
+    FacadeManager facadeManager;
 
     public MainActivityInteractor(IMainInteractorOutput mainInteractorOutput) {
         this.mainInteractorOutput = mainInteractorOutput;
@@ -44,21 +43,9 @@ public class MainActivityInteractor implements IMainInteractor {
 
     @Override
     public void onGetViewPromptCityModelList(String city) {
-        compositeDisposable.add(googleApiManager.promptRequest(city)
+        compositeDisposable.add(facadeManager
+                .getPromptAroundCity(city)
                 .subscribeOn(Schedulers.io())
-                .map(response -> {
-                    String jsonString = response.body().string();
-                    Gson gson = new Gson();
-                    Type type = new TypeToken<JsonPromptModel>() {
-                    }.getType();
-                    JsonPromptModel jsonPromptModel = gson.fromJson(jsonString, type);
-                    return jsonPromptModel;
-                })
-                .map(jsonPromptModel -> {
-                    JsonPromptModelToViewPromptModel mapper = new JsonPromptModelToViewPromptModel(jsonPromptModel);
-                    ViewPromptModel viewPromptModel = mapper.map();
-                    return viewPromptModel.getViewPromptCityModelList();
-                })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(viewPromptCityModelList -> mainInteractorOutput.OnSucces(viewPromptCityModelList),
                         error -> mainInteractorOutput.onError(error)));
@@ -66,7 +53,8 @@ public class MainActivityInteractor implements IMainInteractor {
 
     @Override
     public void onAddPromptListViewToDb(List viewModelList) {
-        compositeDisposable.add(dbManager.addPromptListViewToDb(viewModelList)
+        compositeDisposable.add(facadeManager
+                .insertViewModelsToDb(viewModelList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe());
@@ -74,22 +62,18 @@ public class MainActivityInteractor implements IMainInteractor {
 
     @Override
     public void onGetPromptCityDbModelList() {
-        compositeDisposable.add(
-                dbManager.allItemQuery()
-                        .subscribeOn(Schedulers.io())
-                        .map(promptCityDbModels -> {
-                            PromptCityDbModelToViewPromptCityModel mapper = new PromptCityDbModelToViewPromptCityModel(promptCityDbModels);
-                            List<ViewPromptCityModel> viewPromptCityModelList = mapper.map();
-                            return viewPromptCityModelList;
-                        })
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(viewPromptCityModels -> mainInteractorOutput.OnSucces(viewPromptCityModels))
+        compositeDisposable.add(facadeManager
+                .getAllPrompt()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(viewPromptCityModels -> mainInteractorOutput.OnSucces(viewPromptCityModels))
         );
     }
 
     @Override
     public void onDeleteItemAsDb(Long key) {
-        compositeDisposable.add(dbManager.deleteItemOdDbQuery(key)
+        compositeDisposable.add(facadeManager
+                .deletePrompt(key)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aVoid -> {
@@ -103,8 +87,7 @@ public class MainActivityInteractor implements IMainInteractor {
         mainInteractorOutput = null;
         compositeDisposable.dispose();
         compositeDisposable = null;
-        dbManager = null;
-        googleApiManager = null;
+        facadeManager = null;
     }
 
 }

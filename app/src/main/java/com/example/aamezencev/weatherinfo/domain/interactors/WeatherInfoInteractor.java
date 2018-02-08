@@ -1,6 +1,7 @@
 package com.example.aamezencev.weatherinfo.domain.interactors;
 
 import com.example.aamezencev.weatherinfo.App;
+import com.example.aamezencev.weatherinfo.domain.FacadeManager;
 import com.example.aamezencev.weatherinfo.domain.RxDbManager;
 import com.example.aamezencev.weatherinfo.domain.interactors.interfaces.IWeatherInfoInteractor;
 import com.example.aamezencev.weatherinfo.view.mappers.CurrentWeatherDbModelToView;
@@ -20,7 +21,7 @@ import io.reactivex.schedulers.Schedulers;
 public class WeatherInfoInteractor implements IWeatherInfoInteractor {
 
     @Inject
-    RxDbManager dbManager;
+    FacadeManager facadeManager;
     private CompositeDisposable compositeDisposable;
     private IWeatherInfoInteractorOutput interactorOutput;
 
@@ -33,7 +34,8 @@ public class WeatherInfoInteractor implements IWeatherInfoInteractor {
 
     @Override
     public void onGetCurrentWeather(Long key) {
-        compositeDisposable.add(dbManager.findWeatherByKey(key)
+        compositeDisposable.add(facadeManager
+                .getWeatherListByCity(key)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber -> {
@@ -44,19 +46,19 @@ public class WeatherInfoInteractor implements IWeatherInfoInteractor {
 
     @Override
     public void onDeleteCurrentWeather(Long key) {
-        compositeDisposable.add(dbManager.deleteItemOdDbQuery(key)
-                .map(promptCityDbModels -> new PromptCityDbModelToViewPromptCityModel(promptCityDbModels).map())
+        compositeDisposable.add(facadeManager
+                .deletePromptAndMap(key)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(viewPromptCityModels -> {
-                    interactorOutput.onSuccesDeleteItem(viewPromptCityModels);
-                }, error -> interactorOutput.onError(error)));
+                .subscribe(viewPromptCityModels -> interactorOutput.onSuccesDeleteItem(viewPromptCityModels),
+                        error -> interactorOutput.onError(error)));
     }
 
     @Override
     public void unRegister() {
-        dbManager = null;
         compositeDisposable.dispose();
         compositeDisposable = null;
         interactorOutput = null;
+        facadeManager = null;
     }
 }

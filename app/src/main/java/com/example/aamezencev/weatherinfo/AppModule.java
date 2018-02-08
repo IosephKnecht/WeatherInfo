@@ -4,9 +4,12 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.example.aamezencev.weatherinfo.data.DaoSession;
+import com.example.aamezencev.weatherinfo.domain.FacadeManager;
 import com.example.aamezencev.weatherinfo.domain.RxDbManager;
 import com.example.aamezencev.weatherinfo.domain.RxGoogleApiManager;
 import com.example.aamezencev.weatherinfo.domain.RxOWMApiManager;
+
+import org.greenrobot.greendao.annotation.NotNull;
 
 import javax.inject.Singleton;
 
@@ -26,37 +29,10 @@ public class AppModule {
     }
 
     @Provides
-    @NonNull
+    @NotNull
     @Singleton
-    public RxGoogleApiManager getGoogleApiManager() {
-        return new RxGoogleApiManager();
-    }
-
-    @Provides
-    @NonNull
-    @Singleton
-    public RxOWMApiManager getOWMApiManager() {
-        return new RxOWMApiManager();
-    }
-
-    @Provides
-    @NonNull
-    @Singleton
-    public RxDbManager getDbManager(DaoSession daoSession) {
-        return new RxDbManager(daoSession);
-    }
-
-    @Provides
-    @NonNull
-    @Singleton
-    public DaoSession getDaoSession(Context context) {
-        return new InitDb(context).getDaoSession();
-    }
-
-    @Provides
-    @NonNull
-    @Singleton
-    public Context getContext() {
-        return context;
+    public FacadeManager getFacadeManager() {
+        DaoSession daoSession = new InitDb(context).getDaoSession();
+        return new FacadeManager(new RxDbManager(daoSession), new RxGoogleApiManager(), new RxOWMApiManager());
     }
 }

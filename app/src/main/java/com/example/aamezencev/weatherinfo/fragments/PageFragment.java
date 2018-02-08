@@ -37,17 +37,7 @@ public class PageFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            pageNumber = savedInstanceState.getInt(ARGUMENT_PAGE_NUMBER);
-        } else {
-            pageNumber = getArguments().getInt(ARGUMENT_PAGE_NUMBER);
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putInt(ARGUMENT_PAGE_NUMBER, pageNumber);
-        super.onSaveInstanceState(outState);
+        pageNumber = getArguments().getInt(ARGUMENT_PAGE_NUMBER);
     }
 
     @Nullable
@@ -65,7 +55,7 @@ public class PageFragment extends Fragment {
                 .load("http://openweathermap.org/img/w/" + getArguments().getString("image") + ".png")
                 .into(weatherImage);
 
-        getActivity().setTitle(getArguments().getString("name"));
+        getActivity().setTitle("Station name: " + getArguments().getString("name"));
         return view;
     }
 }

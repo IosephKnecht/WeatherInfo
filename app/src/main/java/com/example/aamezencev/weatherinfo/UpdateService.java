@@ -68,6 +68,7 @@ public class UpdateService extends Service {
                 .getUpdateObservable()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .filter(lists -> lists.size() != 0)
                 .subscribe(currentWeatherDbModels -> {
                     EventBus.getDefault().post(new UpdatedCurrentWeather());
                     Log.d("myLog", "connect");

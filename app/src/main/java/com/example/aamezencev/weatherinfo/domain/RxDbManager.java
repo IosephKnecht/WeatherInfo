@@ -47,7 +47,7 @@ public class RxDbManager {
         });
     }
 
-    public Observable<List<PromptCityDbModel>> deleteItemOdDbQuery(Long key) {
+    public Observable<List<PromptCityDbModel>> deleteItemOfDbQuery(Long key) {
         return Observable.create(aVoid -> {
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
             CurrentWeatherDbModelDao currentWeatherDbModelDao = daoSession.getCurrentWeatherDbModelDao();
@@ -66,9 +66,6 @@ public class RxDbManager {
     public Observable<List<CurrentWeatherDbModel>> addListToDbQuery(List<CurrentWeatherDbModel> currentWeatherDbModelList) {
         return Observable.<List<CurrentWeatherDbModel>>create(e -> {
             CurrentWeatherDbModelDao currentWeatherDbModelDao = daoSession.getCurrentWeatherDbModelDao();
-            PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
-            //currentWeatherDbModelDao.deleteAll();
-            //promptCityDbModelDao.deleteAll();
             try {
                 currentWeatherDbModelDao.insertInTx(currentWeatherDbModelList);
                 e.onNext(currentWeatherDbModelList);
@@ -94,13 +91,11 @@ public class RxDbManager {
 
     public Observable addPromptListViewToDb(List<ViewPromptCityModel> viewPromptCityModelList) {
         return Observable.create(e -> {
-            List<PromptCityDbModel> promptCityDbModelList = new ArrayList<>();
             ViewPromptCityModelToPromptCityDbModel mapper = new ViewPromptCityModelToPromptCityDbModel(viewPromptCityModelList);
-            promptCityDbModelList = mapper.map();
             PromptCityDbModelDao promptCityDbModelDao = daoSession.getPromptCityDbModelDao();
             promptCityDbModelDao.deleteAll();
             try {
-                promptCityDbModelDao.insertInTx(promptCityDbModelList);
+                promptCityDbModelDao.insertInTx(mapper.map());
                 e.onNext(e);
             } catch (Exception ex) {
                 e.onError(new Exception("do not write an array in DB"));

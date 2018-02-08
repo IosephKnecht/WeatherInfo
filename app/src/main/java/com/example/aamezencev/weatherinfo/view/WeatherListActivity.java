@@ -176,21 +176,16 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     private static class SaveWeatherListPresenter extends Loader<IWeatherListPresenter> {
 
         private IWeatherListPresenter weatherListPresenter;
-        private boolean isNewLoader;
 
         public SaveWeatherListPresenter(Context context, IWeatherListPresenter weatherListPresenter) {
             super(context);
             this.weatherListPresenter = weatherListPresenter;
-            isNewLoader = true;
+            this.weatherListPresenter.getPromptCityDbModelList();
         }
 
         @Override
         protected void onStartLoading() {
             super.onStartLoading();
-            if (isNewLoader) {
-                weatherListPresenter.getPromptCityDbModelList();
-                isNewLoader = false;
-            }
             deliverResult(weatherListPresenter);
         }
 

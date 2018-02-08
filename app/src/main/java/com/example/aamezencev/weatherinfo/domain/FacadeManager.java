@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
 
 /**
  * Created by aa.mezencev on 08.02.2018.
@@ -47,11 +46,11 @@ public class FacadeManager {
                                 .map(jsonModelList -> new JsonWeatherModelToDb(jsonModelList).map())
                                 .map(currentWeatherDbModels -> new CreateRealation(city, currentWeatherDbModels).map())
                                 .flatMap(currentWeatherDbModels -> dbManager.addListToDbQuery(currentWeatherDbModels))
-                                .retryWhen(throwableObservable -> throwableObservable.flatMap(throwable -> {
-                                    Log.d("myLog", "retry");
-                                    return io.reactivex.Observable.just(cities).delay(120_000, TimeUnit.MILLISECONDS);
-                                }))
                         )
+                        .retryWhen(throwableObservable -> throwableObservable.flatMap(throwable -> {
+                            Log.d("myLog", "retry");
+                            return io.reactivex.Observable.just(cities).delay(120_000, TimeUnit.MILLISECONDS);
+                        }))
                 )
                 .toList()
                 .toObservable()
@@ -88,11 +87,11 @@ public class FacadeManager {
     }
 
     public Observable<List<PromptCityDbModel>> deletePrompt(Long key) {
-        return dbManager.deleteItemOdDbQuery(key);
+        return dbManager.deleteItemOfDbQuery(key);
     }
 
     public Observable<List<ViewPromptCityModel>> deletePromptAndMap(Long key) {
-        return dbManager.deleteItemOdDbQuery(key)
+        return dbManager.deleteItemOfDbQuery(key)
                 .map(promptCityDbModels -> new PromptCityDbModelToViewPromptCityModel(promptCityDbModels).map());
     }
 

@@ -14,7 +14,6 @@ import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
 import com.example.aamezencev.weatherinfo.view.interfaces.IWeatherInfoActivity;
 import com.example.aamezencev.weatherinfo.view.presenters.IWeatherInfoPresenter;
 import com.example.aamezencev.weatherinfo.view.presenters.WeatherInfoPresenter;
-import com.example.aamezencev.weatherinfo.view.viewModels.ViewCurrentWeatherModel;
 
 import java.util.List;
 
@@ -79,7 +78,7 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         Loader loader = null;
         if (i == 1234) {
             weatherInfoPresenter = new WeatherInfoPresenter();
-            loader = new SaveInfoPresenter(this, weatherInfoPresenter);
+            loader = new SaveInfoPresenter(this, weatherInfoPresenter, getIntent().getLongExtra("promptKey", 0));
         }
         return loader;
     }
@@ -87,8 +86,6 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
     @Override
     public void onLoadFinished(Loader<IWeatherInfoPresenter> loader, IWeatherInfoPresenter weatherInfoPresenter) {
         this.weatherInfoPresenter = weatherInfoPresenter;
-        //Спамим в БД каждый раз, но получаем "свежую погоду" погоду...
-        this.weatherInfoPresenter.getCurrentWeather(getIntent().getLongExtra("promptKey", 0));
     }
 
     @Override
@@ -106,9 +103,10 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
 
         private IWeatherInfoPresenter weatherInfoPresenter;
 
-        public SaveInfoPresenter(Context context, IWeatherInfoPresenter weatherInfoPresenter) {
+        public SaveInfoPresenter(Context context, IWeatherInfoPresenter weatherInfoPresenter, Long key) {
             super(context);
             this.weatherInfoPresenter = weatherInfoPresenter;
+            this.weatherInfoPresenter.getCurrentWeather(key);
         }
 
         @Override

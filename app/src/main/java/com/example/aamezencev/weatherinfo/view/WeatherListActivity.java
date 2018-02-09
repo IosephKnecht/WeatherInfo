@@ -22,6 +22,7 @@ import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.UpdateService;
 import com.example.aamezencev.weatherinfo.events.UpdatedCurrentWeather;
 import com.example.aamezencev.weatherinfo.events.WeatherDeleteItemEvent;
+import com.example.aamezencev.weatherinfo.fragments.ServiceDialog;
 import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilWeatherListAdapter;
 import com.example.aamezencev.weatherinfo.view.adapters.RecyclerItemTouchHelper;
 import com.example.aamezencev.weatherinfo.view.adapters.WeatherListAdapter;
@@ -50,6 +51,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
 
     private IWeatherListPresenter weatherListPresenter;
     private IBaseRouter baseRouter;
+    private ServiceDialog serviceDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,11 +78,14 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         ItemTouchHelper.SimpleCallback simpleCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, this);
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(mRecyclerView);
 
+        serviceDialog = new ServiceDialog();
+
         boolean state = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("serviceSwitch", true);
-        if (state) {
-            baseRouter.startUpdateService();
+        if (!state) {
+            if (getFragmentManager().findFragmentByTag("serviceDialog") == null)
+                serviceDialog.show(getFragmentManager(), "serviceDialog");
         } else {
-            baseRouter.stopUpdateService();
+            baseRouter.startUpdateService();
         }
         EventBus.getDefault().register(this);
     }
@@ -92,6 +97,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         stopService(new Intent(this, UpdateService.class));
         compositeDisposable.dispose();
         baseRouter = null;
+        serviceDialog = null;
         super.onDestroy();
     }
 

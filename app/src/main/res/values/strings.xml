@@ -8,4 +8,7 @@
     <string name="etPrefKey">etDelayService</string>
     <string name="switchPrefTitle">Enable auto-update</string>
     <string name="etPrefTitle">Number of milliseconds</string>
+    <string name="tvDialogMessage">Oops. It seems the service is disabled. Do you want to enable it?</string>
+    <string name="btnDialogYes">Yes</string>
+    <string name="btnDialogNo">No</string>
 </resources>

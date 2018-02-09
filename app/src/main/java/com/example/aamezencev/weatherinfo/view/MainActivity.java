@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.util.DiffUtil;

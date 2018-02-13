@@ -16,7 +16,6 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.UpdateService;
@@ -28,22 +27,21 @@ import com.example.aamezencev.weatherinfo.view.adapters.RecyclerItemTouchHelper;
 import com.example.aamezencev.weatherinfo.view.adapters.WeatherListAdapter;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
 import com.example.aamezencev.weatherinfo.view.interfaces.IWeatherListActivity;
-import com.example.aamezencev.weatherinfo.view.interfaces.WeatherItemClick;
 import com.example.aamezencev.weatherinfo.view.presenters.IWeatherListPresenter;
 import com.example.aamezencev.weatherinfo.view.presenters.WeatherListPresenter;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel;
+import com.example.aamezencev.weatherinfo.view.viewModels.WeatherListHandlers;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
 
 public class WeatherListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<IWeatherListPresenter>,
-        WeatherItemClick, IWeatherListActivity, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+        IWeatherListActivity,RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
     private RecyclerView mRecyclerView;
     private WeatherListAdapter mAdapter;
 
@@ -72,7 +70,9 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
 
-        mAdapter = new WeatherListAdapter(new ArrayList<>(), this);
+        WeatherListHandlers weatherListHandlers = new WeatherListHandlers(weatherListPresenter, baseRouter);
+
+        mAdapter = new WeatherListAdapter(weatherListHandlers);
         mRecyclerView.setAdapter(mAdapter);
 
         ItemTouchHelper.SimpleCallback simpleCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, this);
@@ -154,11 +154,6 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     @Override
     public void onLoaderReset(Loader<IWeatherListPresenter> loader) {
 
-    }
-
-    @Override
-    public void weatherItemClick(View view, Long key, String actionTitle) {
-        baseRouter.openWeatherInfoActivity(key, actionTitle);
     }
 
     @Override

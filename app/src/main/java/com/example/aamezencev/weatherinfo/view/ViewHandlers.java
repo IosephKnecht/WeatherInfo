@@ -50,7 +50,6 @@ public class ViewHandlers extends BaseObservable {
         boolean state = city.isChecked();
         city.setChecked(!state);
         setFabIsVisible(mainPresenter.isVisibleFloatingButton());
-        //fab.setVisibility(mainPresenter.isVisibleFloatingButton());
     }
 
     @BindingAdapter("bind:vis")

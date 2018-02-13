@@ -61,12 +61,14 @@ public class ViewPromptCityModel extends BaseObservable {
         this.placeId = placeId;
     }
 
+    @Bindable
     public String getKey() {
         return key;
     }
 
     public void setKey(String key) {
         this.key = key;
+        notifyPropertyChanged(BR.key);
     }
 
     @Bindable

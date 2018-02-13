@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/viewForeground"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+<layout>
 
-    <TextView
-        android:id="@+id/weatherItem"
+    <data>
+
+        <variable
+            name="city"
+            type="com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel" />
+
+        <variable
+            name="handlers"
+            type="com.example.aamezencev.weatherinfo.view.viewModels.WeatherListHandlers" />
+
+        <import type="java.lang.Long" />
+    </data>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/viewForeground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_weight="5" />
+        android:onClick="@{(view)->handlers.weatherItemClick(view,Long.valueOf(city.key),city.briefInformation)}">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/weatherItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_weight="5"
+            android:text="@{city.structuredFormatting.mainText+city.structuredFormatting.secondaryText+city.briefInformation}" />
+
+    </LinearLayout>
+</layout>

@@ -1,16 +1,17 @@
 package com.example.aamezencev.weatherinfo.view.adapters;
 
+import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
-import com.example.aamezencev.weatherinfo.view.interfaces.WeatherItemClick;
-import com.example.aamezencev.weatherinfo.R;
+import com.example.aamezencev.weatherinfo.databinding.WeatherItemBinding;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel;
+import com.example.aamezencev.weatherinfo.view.viewModels.WeatherListHandlers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,32 +20,25 @@ import java.util.List;
 
 public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.ViewHolder> {
 
-    private List<ViewPromptCityModel> viewPromptCityModelList;
-    private WeatherItemClick weatherItemClick;
+    private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
+    private WeatherListHandlers weatherListHandlers;
 
-    public WeatherListAdapter(List<ViewPromptCityModel> viewPromptCityModelList, WeatherItemClick weatherItemClick) {
-        this.viewPromptCityModelList = viewPromptCityModelList;
-        this.weatherItemClick = weatherItemClick;
+    public WeatherListAdapter(WeatherListHandlers weatherListHandlers) {
+        this.weatherListHandlers = weatherListHandlers;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.weather_item, parent, false);
-        ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        WeatherItemBinding binding = WeatherItemBinding.inflate(inflater, parent, false);
+        return new ViewHolder(binding.getRoot());
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        String lineSep = String.format("%n");
-        holder.textView.setText(viewPromptCityModelList.get(position).getStructuredFormatting().getMainText() +
-                lineSep
-                + viewPromptCityModelList.get(position).getStructuredFormatting().getSecondaryText() + lineSep +
-                viewPromptCityModelList.get(position).getBriefInformation());
-
-        holder.textView.setOnClickListener(view -> weatherItemClick.weatherItemClick(view,
-                Long.valueOf(viewPromptCityModelList.get(holder.getAdapterPosition()).getKey()),
-                holder.textView.getText().toString()));
+        ViewPromptCityModel city = viewPromptCityModelList.get(position);
+        holder.binding.setCity(city);
+        holder.binding.setHandlers(weatherListHandlers);
     }
 
     @Override
@@ -66,17 +60,15 @@ public class WeatherListAdapter extends RecyclerView.Adapter<WeatherListAdapter.
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
-        private TextView textView;
-        private LinearLayout viewForeground;
+        private WeatherItemBinding binding;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            this.textView = itemView.findViewById(R.id.weatherItem);
-            this.viewForeground = itemView.findViewById(R.id.viewForeground);
+            binding = DataBindingUtil.bind(itemView);
         }
 
         public LinearLayout getViewForeground() {
-            return viewForeground;
+            return binding.viewForeground;
         }
     }
 }

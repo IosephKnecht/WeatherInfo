@@ -1,6 +1,22 @@
-<CheckBox xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/cbCity"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
-    android:checked="false" />
+<layout>
+
+    <data>
+
+        <variable
+            name="city"
+            type="com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel" />
+
+        <variable
+            name="handlers"
+            type="com.example.aamezencev.weatherinfo.view.ViewHandlers" />
+    </data>
+
+    <CheckBox xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/cbCity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:checked="false"
+        android:onClick="@{(view)->handlers.onCheckBoxClick(view,city)}"
+        android:text="@{city.briefInformation}" />
+</layout>

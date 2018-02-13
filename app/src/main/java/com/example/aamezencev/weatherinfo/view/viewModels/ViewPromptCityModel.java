@@ -1,12 +1,16 @@
 package com.example.aamezencev.weatherinfo.view.viewModels;
 
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 import android.support.v4.util.ObjectsCompat;
+
+import com.example.aamezencev.weatherinfo.BR;
 
 /**
  * Created by aa.mezencev on 11.01.2018.
  */
 
-public class ViewPromptCityModel {
+public class ViewPromptCityModel extends BaseObservable {
 
     private String description;
     private String id;
@@ -65,12 +69,14 @@ public class ViewPromptCityModel {
         this.key = key;
     }
 
+    @Bindable
     public String getBriefInformation() {
         return briefInformation;
     }
 
     public void setBriefInformation(String briefInformation) {
         this.briefInformation = briefInformation;
+        notifyPropertyChanged(BR.briefInformation);
     }
 
     @Override

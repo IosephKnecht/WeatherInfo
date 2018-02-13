@@ -1,16 +1,19 @@
 package com.example.aamezencev.weatherinfo.view.adapters;
 
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 
-import com.example.aamezencev.weatherinfo.view.interfaces.CheckBoxClick;
+import com.example.aamezencev.weatherinfo.databinding.CityItemBinding;
 import com.example.aamezencev.weatherinfo.R;
+import com.example.aamezencev.weatherinfo.view.ViewHandlers;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,30 +22,26 @@ import java.util.List;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
 
-    private List<ViewPromptCityModel> viewPromptCityModelList;
-    private CheckBoxClick checkBoxClick;
+    private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
+    private ViewHandlers handlers;
 
-    public MainAdapter(List<ViewPromptCityModel> viewPromptCityModelList, CheckBoxClick checkBoxClick) {
-        this.viewPromptCityModelList = viewPromptCityModelList;
-        this.checkBoxClick = checkBoxClick;
+    public MainAdapter(ViewHandlers handlers) {
+        this.handlers = handlers;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.city_item, parent, false);
-
-        final ViewHolder viewHolder = new ViewHolder(view);
-        return viewHolder;
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        CityItemBinding binding = CityItemBinding.inflate(inflater, parent, false);
+        binding.setHandlers(handlers);
+        return new ViewHolder(binding.getRoot());
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         final ViewPromptCityModel viewPromptCityModel = viewPromptCityModelList.get(position);
-        holder.cbCity.setText(stringConcatenation(viewPromptCityModelList.get(position)));
-        holder.cbCity.setChecked(viewPromptCityModel.isChecked());
-        holder.cbCity.setOnClickListener(view -> {
-            checkBoxClick.checkBoxClick(view, viewPromptCityModelList.get(holder.getAdapterPosition()));
-        });
+        viewPromptCityModel.setBriefInformation(stringConcatenation(viewPromptCityModel));
+        holder.binding.setCity(viewPromptCityModel);
     }
 
     @Override
@@ -58,12 +57,11 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
     }
 
     protected class ViewHolder extends RecyclerView.ViewHolder {
-
-        private CheckBox cbCity;
+        private CityItemBinding binding;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            cbCity = itemView.findViewById(R.id.cbCity);
+            binding = DataBindingUtil.bind(itemView);
         }
     }
 

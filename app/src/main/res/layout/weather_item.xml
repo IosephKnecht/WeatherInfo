@@ -12,6 +12,8 @@
             type="com.example.aamezencev.weatherinfo.view.viewModels.WeatherListHandlers" />
 
         <import type="java.lang.Long" />
+
+        <import type="java.lang.String" />
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -26,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_weight="5"
-            android:text="@{city.structuredFormatting.mainText+city.structuredFormatting.secondaryText+city.briefInformation}" />
+            android:text='@{String.format(" %s %n %s %n %s %n",city.structuredFormatting.mainText,city.structuredFormatting.secondaryText,city.briefInformation)}' />
 
     </LinearLayout>
 </layout>

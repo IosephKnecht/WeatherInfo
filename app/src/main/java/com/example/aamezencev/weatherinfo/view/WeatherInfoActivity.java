@@ -3,12 +3,16 @@ package com.example.aamezencev.weatherinfo.view;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
+import android.databinding.BindingAdapter;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageButton;
 
 import com.example.aamezencev.weatherinfo.R;
+import com.example.aamezencev.weatherinfo.databinding.ActivityWeatherInfoBinding;
 import com.example.aamezencev.weatherinfo.view.adapters.PagerAdapter;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
 import com.example.aamezencev.weatherinfo.view.interfaces.IWeatherInfoActivity;
@@ -24,17 +28,18 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
 
     private ImageButton btnDeleteWeather;
 
-    private ViewPager pager;
-    private PagerAdapter pagerAdapter;
     private CompositeDisposable compositeDisposable;
 
     private IWeatherInfoPresenter weatherInfoPresenter;
     private IBaseRouter baseRouter;
 
+    private ActivityWeatherInfoBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weather_info);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_weather_info);
+        binding.setPagerAdapter(new PagerAdapter(getSupportFragmentManager()));
 
         baseRouter = new Router(this);
         compositeDisposable = new CompositeDisposable();
@@ -47,15 +52,22 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         weatherInfoPresenter = ((SaveInfoPresenter) getLoaderManager().initLoader(1234, null, this)).getWeatherInfoPresenter();
         weatherInfoPresenter.onAttachView(this, baseRouter);
 
-        pager = (ViewPager) findViewById(R.id.pager);
-        pagerAdapter = new PagerAdapter(getSupportFragmentManager());
-        pager.setAdapter(pagerAdapter);
-        pagerAdapter.setViewCurrentWeatherModelList(weatherInfoPresenter.getViewModelList());
-        pagerAdapter.notifyDataSetChanged();
+        binding.getPagerAdapter().setViewCurrentWeatherModelList(weatherInfoPresenter.getViewModelList());
+
+//        pager = (ViewPager) findViewById(R.id.pager);
+//        pagerAdapter = new PagerAdapter(getSupportFragmentManager());
+//        pager.setAdapter(pagerAdapter);
+//        pagerAdapter.setViewCurrentWeatherModelList(weatherInfoPresenter.getViewModelList());
+//        pagerAdapter.notifyDataSetChanged();
 
         if (savedInstanceState != null) {
-            pager.setCurrentItem(savedInstanceState.getInt("currentPage"));
+            binding.pager.setCurrentItem(savedInstanceState.getInt("currentPage"));
         }
+    }
+
+    @BindingAdapter(value = {"android:pagerAdapter"}, requireAll = false)
+    public static void setViewPager(ViewPager viewPager, FragmentPagerAdapter adapter) {
+        viewPager.setAdapter(adapter);
     }
 
     @Override
@@ -63,6 +75,7 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         weatherInfoPresenter.onDetachView();
         compositeDisposable.dispose();
         baseRouter = null;
+        binding = null;
         weatherInfoPresenter = null;
         super.onDestroy();
     }
@@ -70,7 +83,7 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("currentPage", pager.getCurrentItem());
+        outState.putInt("currentPage", binding.pager.getCurrentItem());
     }
 
     @Override
@@ -95,8 +108,8 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
 
     @Override
     public void paintWeather(List weatherModels) {
-        pagerAdapter.setViewCurrentWeatherModelList(weatherModels);
-        pagerAdapter.notifyDataSetChanged();
+        binding.getPagerAdapter().setViewCurrentWeatherModelList(weatherModels);
+        binding.getPagerAdapter().notifyDataSetChanged();
     }
 
     private static class SaveInfoPresenter extends Loader<IWeatherInfoPresenter> {

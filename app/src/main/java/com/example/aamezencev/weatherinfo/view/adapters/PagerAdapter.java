@@ -1,10 +1,15 @@
 package com.example.aamezencev.weatherinfo.view.adapters;
 
+import android.databinding.BindingAdapter;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.aamezencev.weatherinfo.fragments.PageFragment;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewCurrentWeatherModel;
 
@@ -25,7 +30,12 @@ public class PagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         ViewCurrentWeatherModel weatherModel = viewCurrentWeatherModelList.get(position);
-        return PageFragment.newInstance(position, weatherModel.getFullInfotmation(), weatherModel.getIcon(), weatherModel.getName());
+        PageFragment pageFragment = new PageFragment();
+        Bundle bundle = new Bundle();
+        bundle.putString("fullInf", weatherModel.getFullInfotmation());
+        bundle.putString("icon", weatherModel.getIcon());
+        pageFragment.setArguments(bundle);
+        return pageFragment;
     }
 
     @Override

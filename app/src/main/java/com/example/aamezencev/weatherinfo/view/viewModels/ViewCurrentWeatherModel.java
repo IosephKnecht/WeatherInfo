@@ -1,10 +1,15 @@
 package com.example.aamezencev.weatherinfo.view.viewModels;
 
+import android.databinding.BaseObservable;
+import android.databinding.Bindable;
+
+import com.example.aamezencev.weatherinfo.BR;
+
 /**
  * Created by aa.mezencev on 19.01.2018.
  */
 
-public class ViewCurrentWeatherModel {
+public class ViewCurrentWeatherModel extends BaseObservable {
     private Long key = (long) 0;
     private String main = new String();
     private String description = new String();
@@ -50,12 +55,14 @@ public class ViewCurrentWeatherModel {
         this.description = description;
     }
 
+    @Bindable
     public String getIcon() {
         return icon;
     }
 
     public void setIcon(String icon) {
         this.icon = icon;
+        notifyPropertyChanged(BR.icon);
     }
 
     public String getCod() {

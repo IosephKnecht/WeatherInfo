@@ -3,6 +3,7 @@ package com.example.aamezencev.weatherinfo.view;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Loader;
+import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -18,30 +19,24 @@ import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.databinding.ActivityMainBinding;
 import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilMainAdapter;
 import com.example.aamezencev.weatherinfo.view.adapters.MainAdapter;
+import com.example.aamezencev.weatherinfo.view.handlers.ViewHandlers;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseActivity;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
 import com.example.aamezencev.weatherinfo.view.presenters.IMainPresenter;
 import com.example.aamezencev.weatherinfo.view.presenters.MainActivityPresenter;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<IMainPresenter>,
         IBaseActivity {
-
-    private RecyclerView mRecyclerView;
-    private SearchView searchView;
     private CompositeDisposable disposables;
-    private MainAdapter mAdapter;
     private ActivityMainBinding binding;
 
     private IMainPresenter mainPresenter;
     private IBaseRouter baseRouter;
-
-    private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +51,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         binding.setState(getIntent().getBooleanExtra("isFirstRun", true));
         ViewHandlers viewHandlers = new ViewHandlers(mainPresenter, baseRouter);
         binding.setHandlers(viewHandlers);
+        binding.setAdapter(new MainAdapter(viewHandlers));
+    }
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.mainRecyclerView);
-        mRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mAdapter = new MainAdapter(viewHandlers);
-        mRecyclerView.setAdapter(mAdapter);
+    @BindingAdapter(value = {"android:setAdapter"}, requireAll = false)
+    public static void setAdapter(RecyclerView recyclerView, MainAdapter adapter) {
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -82,24 +79,25 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         getMenuInflater().inflate(R.menu.main_menu, menu);
 
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        searchView = (SearchView) searchItem.getActionView();
+        SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(binding.getHandlers().getQueryTextListener(searchView));
 
         return true;
     }
 
     private void updateRecyclerView(List<ViewPromptCityModel> newList) {
-        DiffUtilMainAdapter diffUtilMainAdapter = new DiffUtilMainAdapter(mAdapter.getViewPromptCityModelList(), newList);
+        DiffUtilMainAdapter diffUtilMainAdapter = new DiffUtilMainAdapter(binding.getAdapter().getViewPromptCityModelList(), newList);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilMainAdapter);
-        mAdapter.setViewPromptCityModelList(newList);
-        diffResult.dispatchUpdatesTo(mAdapter);
+        binding.getAdapter().setViewPromptCityModelList(newList);
+        diffResult.dispatchUpdatesTo(binding.getAdapter());
         binding.getHandlers().setFabIsVisible(mainPresenter.isVisibleFloatingButton());
     }
 
     @Override
     public void paintList(List viewModelList) {
-        this.viewPromptCityModelList = viewModelList;
-        binding.getHandlers().setSpinnerIsVisible(View.INVISIBLE);
+        if (binding.getHandlers() != null) {
+            binding.getHandlers().setSpinnerIsVisible(View.INVISIBLE);
+        }
         updateRecyclerView(viewModelList);
     }
 

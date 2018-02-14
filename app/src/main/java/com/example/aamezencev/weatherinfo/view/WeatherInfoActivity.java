@@ -9,11 +9,11 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ImageButton;
 
 import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.databinding.ActivityWeatherInfoBinding;
 import com.example.aamezencev.weatherinfo.view.adapters.PagerAdapter;
+import com.example.aamezencev.weatherinfo.view.handlers.WeatherInfoHandlers;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
 import com.example.aamezencev.weatherinfo.view.interfaces.IWeatherInfoActivity;
 import com.example.aamezencev.weatherinfo.view.presenters.IWeatherInfoPresenter;
@@ -25,8 +25,6 @@ import io.reactivex.disposables.CompositeDisposable;
 
 public class WeatherInfoActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<IWeatherInfoPresenter>,
         IWeatherInfoActivity {
-
-    private ImageButton btnDeleteWeather;
 
     private CompositeDisposable compositeDisposable;
 
@@ -40,25 +38,17 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_weather_info);
         binding.setPagerAdapter(new PagerAdapter(getSupportFragmentManager()));
+        binding.setPromptKey(getIntent().getLongExtra("promptKey", 0));
 
         baseRouter = new Router(this);
         compositeDisposable = new CompositeDisposable();
 
-        btnDeleteWeather = (ImageButton) findViewById(R.id.btnDeleteWeather);
-        btnDeleteWeather.setOnClickListener(btn -> {
-            weatherInfoPresenter.deleteCurrentWeather(getIntent().getLongExtra("promptKey", 0));
-        });
-
         weatherInfoPresenter = ((SaveInfoPresenter) getLoaderManager().initLoader(1234, null, this)).getWeatherInfoPresenter();
         weatherInfoPresenter.onAttachView(this, baseRouter);
 
-        binding.getPagerAdapter().setViewCurrentWeatherModelList(weatherInfoPresenter.getViewModelList());
+        binding.setHandlers(new WeatherInfoHandlers(weatherInfoPresenter, baseRouter));
 
-//        pager = (ViewPager) findViewById(R.id.pager);
-//        pagerAdapter = new PagerAdapter(getSupportFragmentManager());
-//        pager.setAdapter(pagerAdapter);
-//        pagerAdapter.setViewCurrentWeatherModelList(weatherInfoPresenter.getViewModelList());
-//        pagerAdapter.notifyDataSetChanged();
+        binding.getPagerAdapter().setViewCurrentWeatherModelList(weatherInfoPresenter.getViewModelList());
 
         if (savedInstanceState != null) {
             binding.pager.setCurrentItem(savedInstanceState.getInt("currentPage"));
@@ -75,6 +65,7 @@ public class WeatherInfoActivity extends AppCompatActivity implements LoaderMana
         weatherInfoPresenter.onDetachView();
         compositeDisposable.dispose();
         baseRouter = null;
+        binding.getHandlers().onDestroy();
         binding = null;
         weatherInfoPresenter = null;
         super.onDestroy();

@@ -1,4 +1,4 @@
-package com.example.aamezencev.weatherinfo.view.viewModels;
+package com.example.aamezencev.weatherinfo.view.handlers;
 
 import android.databinding.BindingAdapter;
 import android.support.v7.widget.RecyclerView;

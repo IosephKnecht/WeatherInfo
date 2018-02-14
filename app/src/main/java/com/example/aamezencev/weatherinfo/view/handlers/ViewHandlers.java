@@ -1,4 +1,4 @@
-package com.example.aamezencev.weatherinfo.view;
+package com.example.aamezencev.weatherinfo.view.handlers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -52,7 +52,7 @@ public class ViewHandlers extends BaseObservable {
         setFabIsVisible(mainPresenter.isVisibleFloatingButton());
     }
 
-    @BindingAdapter("bind:vis")
+    @BindingAdapter("bind:onChangeFabVisibility")
     public static void vis(View view, int fabIsVisible) {
         view.setVisibility(fabIsVisible);
     }

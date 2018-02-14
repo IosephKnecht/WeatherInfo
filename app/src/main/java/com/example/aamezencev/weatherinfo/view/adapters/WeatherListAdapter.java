@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 
 import com.example.aamezencev.weatherinfo.databinding.WeatherItemBinding;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel;
-import com.example.aamezencev.weatherinfo.view.viewModels.WeatherListHandlers;
+import com.example.aamezencev.weatherinfo.view.handlers.WeatherListHandlers;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,6 +4,8 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.databinding.BindingAdapter;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
@@ -19,18 +21,19 @@ import android.view.MenuItem;
 
 import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.UpdateService;
+import com.example.aamezencev.weatherinfo.databinding.ActivityWeatherListBinding;
 import com.example.aamezencev.weatherinfo.events.UpdatedCurrentWeather;
 import com.example.aamezencev.weatherinfo.events.WeatherDeleteItemEvent;
 import com.example.aamezencev.weatherinfo.fragments.ServiceDialog;
 import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilWeatherListAdapter;
 import com.example.aamezencev.weatherinfo.view.adapters.RecyclerItemTouchHelper;
 import com.example.aamezencev.weatherinfo.view.adapters.WeatherListAdapter;
+import com.example.aamezencev.weatherinfo.view.handlers.WeatherListHandlers;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
 import com.example.aamezencev.weatherinfo.view.interfaces.IWeatherListActivity;
 import com.example.aamezencev.weatherinfo.view.presenters.IWeatherListPresenter;
 import com.example.aamezencev.weatherinfo.view.presenters.WeatherListPresenter;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel;
-import com.example.aamezencev.weatherinfo.view.viewModels.WeatherListHandlers;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -41,42 +44,28 @@ import java.util.List;
 import io.reactivex.disposables.CompositeDisposable;
 
 public class WeatherListActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<IWeatherListPresenter>,
-        IWeatherListActivity,RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
-    private RecyclerView mRecyclerView;
-    private WeatherListAdapter mAdapter;
+        IWeatherListActivity, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     private CompositeDisposable compositeDisposable;
 
     private IWeatherListPresenter weatherListPresenter;
     private IBaseRouter baseRouter;
     private ServiceDialog serviceDialog;
+    private ActivityWeatherListBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weather_list);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_weather_list);
 
         baseRouter = new Router(this);
         weatherListPresenter = ((SaveWeatherListPresenter) getLoaderManager().initLoader(123, null, this)).getPresenter();
         weatherListPresenter.onAttachView(this, baseRouter);
 
+        WeatherListHandlers handlers = new WeatherListHandlers(weatherListPresenter, baseRouter);
+        binding.setAdapter(new WeatherListAdapter(handlers));
+
         compositeDisposable = new CompositeDisposable();
-
-        mRecyclerView = findViewById(R.id.weatherRecycler);
-        mRecyclerView.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
-
-        WeatherListHandlers weatherListHandlers = new WeatherListHandlers(weatherListPresenter, baseRouter);
-
-        mAdapter = new WeatherListAdapter(weatherListHandlers);
-        mRecyclerView.setAdapter(mAdapter);
-
-        ItemTouchHelper.SimpleCallback simpleCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, this);
-        new ItemTouchHelper(simpleCallback).attachToRecyclerView(mRecyclerView);
 
         serviceDialog = new ServiceDialog();
 
@@ -90,6 +79,20 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         EventBus.getDefault().register(this);
     }
 
+    @BindingAdapter(value = {"android:setAdapter"}, requireAll = false)
+    public static void setAdapter(RecyclerView recyclerView, WeatherListAdapter adapter) {
+        recyclerView.setHasFixedSize(true);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(recyclerView.getContext());
+        linearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
+        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
+        ItemTouchHelper.SimpleCallback simpleCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, (WeatherListActivity)recyclerView.getContext());
+        new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
+        recyclerView.setAdapter(adapter);
+    }
+
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
@@ -98,6 +101,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         compositeDisposable.dispose();
         baseRouter = null;
         serviceDialog = null;
+        binding = null;
         super.onDestroy();
     }
 
@@ -129,10 +133,10 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     }
 
     public void updateRecyclerView(List<ViewPromptCityModel> newList) {
-        DiffUtilWeatherListAdapter diffUtilWeatherListAdapter = new DiffUtilWeatherListAdapter(mAdapter.getViewPromptCityModelList(), newList);
+        DiffUtilWeatherListAdapter diffUtilWeatherListAdapter = new DiffUtilWeatherListAdapter(binding.getAdapter().getViewPromptCityModelList(), newList);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilWeatherListAdapter);
-        mAdapter.setViewPromptCityModelList(newList);
-        diffResult.dispatchUpdatesTo(mAdapter);
+        binding.getAdapter().setViewPromptCityModelList(newList);
+        diffResult.dispatchUpdatesTo(binding.getAdapter());
     }
 
     @Override
@@ -169,8 +173,8 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         int adapterPosition = viewHolder.getAdapterPosition();
-        Long key = Long.valueOf(mAdapter.getViewPromptCityModelList().get(adapterPosition).getKey());
-        mAdapter.removeItem(adapterPosition);
+        Long key = Long.valueOf(binding.getAdapter().getViewPromptCityModelList().get(adapterPosition).getKey());
+        binding.getAdapter().removeItem(adapterPosition);
         weatherListPresenter.deleteItemAsDb(key);
     }
 

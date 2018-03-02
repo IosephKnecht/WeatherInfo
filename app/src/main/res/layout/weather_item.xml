@@ -9,7 +9,7 @@
 
         <variable
             name="handlers"
-            type="com.example.aamezencev.weatherinfo.view.viewModels.WeatherListHandlers" />
+            type="com.example.aamezencev.weatherinfo.view.handlers.WeatherListHandlers" />
 
         <import type="java.lang.Long" />
 

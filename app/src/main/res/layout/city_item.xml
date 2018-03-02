@@ -8,7 +8,7 @@
 
         <variable
             name="handlers"
-            type="com.example.aamezencev.weatherinfo.view.ViewHandlers" />
+            type="com.example.aamezencev.weatherinfo.view.handlers.ViewHandlers" />
     </data>
 
     <CheckBox xmlns:android="http://schemas.android.com/apk/res/android"

@@ -5,11 +5,15 @@
 
         <variable
             name="handlers"
-            type="com.example.aamezencev.weatherinfo.view.ViewHandlers" />
+            type="com.example.aamezencev.weatherinfo.view.handlers.ViewHandlers" />
 
         <variable
             name="state"
             type="java.lang.Boolean" />
+
+        <variable
+            name="adapter"
+            type="com.example.aamezencev.weatherinfo.view.adapters.MainAdapter" />
     </data>
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -24,7 +28,8 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/mainRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:setAdapter="@{adapter}" />
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/floatingActionButton"
@@ -39,7 +44,7 @@
                 app:backgroundTint="@color/colorPrimary"
                 app:layout_behavior="com.example.aamezencev.weatherinfo.FabBehavior"
                 app:srcCompat="@android:drawable/ic_input_add"
-                app:vis="@{handlers.fabIsVisible}"/>
+                app:onChangeFabVisibility="@{handlers.fabIsVisible}" />
         </android.support.design.widget.CoordinatorLayout>
 
         <ProgressBar
@@ -50,7 +55,7 @@
             android:layout_marginTop="@android:dimen/thumbnail_width"
             android:indeterminate="true"
             android:visibility="invisible"
-            app:onChangeVisible="@{handlers.spinnerIsVisible}"/>
+            app:onChangeVisible="@{handlers.spinnerIsVisible}" />
 
     </FrameLayout>
 </layout>

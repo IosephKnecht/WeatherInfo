@@ -36,7 +36,7 @@ public class PageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //View view = inflater.inflate(R.layout.page, null);
-        PageBinding binding = DataBindingUtil.inflate(inflater, R.layout.page, container, false);
+        PageBinding binding = DataBindingUtil.inflate(inflater,R.layout.page,container,false);
         View view = binding.getRoot();
         binding.setFullInf(getArguments().getString("fullInf"));
         binding.setIcon(getArguments().getString("icon"));

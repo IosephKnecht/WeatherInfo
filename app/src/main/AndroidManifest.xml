@@ -15,8 +15,7 @@
         <activity
             android:name=".view.MainActivity"
             android:noHistory="true" />
-        <activity android:name=".view.WeatherListActivity"
-            android:noHistory="true"/>
+        <activity android:name=".view.WeatherListActivity" />
         <activity android:name=".view.WeatherInfoActivity" />
         <activity android:name=".view.ActivityController">
             <intent-filter>
@@ -28,7 +27,7 @@
 
         <service android:name=".UpdateService" />
 
-        <activity android:name=".view.SettingsActivity"/>
+        <activity android:name=".view.SettingsActivity" />
     </application>
 
 </manifest>

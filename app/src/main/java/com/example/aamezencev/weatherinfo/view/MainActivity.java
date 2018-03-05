@@ -6,6 +6,7 @@ import android.content.Loader;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v4.util.ObjectsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +18,7 @@ import android.view.View;
 
 import com.example.aamezencev.weatherinfo.R;
 import com.example.aamezencev.weatherinfo.databinding.ActivityMainBinding;
+import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilHelper;
 import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilMainAdapter;
 import com.example.aamezencev.weatherinfo.view.adapters.MainAdapter;
 import com.example.aamezencev.weatherinfo.view.handlers.ViewHandlers;
@@ -27,6 +29,7 @@ import com.example.aamezencev.weatherinfo.view.presenters.MainActivityPresenter;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel;
 
 import java.util.List;
+import java.util.Objects;
 
 import io.reactivex.disposables.CompositeDisposable;
 
@@ -86,8 +89,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void updateRecyclerView(List<ViewPromptCityModel> newList) {
-        DiffUtilMainAdapter diffUtilMainAdapter = new DiffUtilMainAdapter(binding.getAdapter().getViewPromptCityModelList(), newList);
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilMainAdapter);
+        DiffUtilHelper<ViewPromptCityModel> diffUtilHelper = new DiffUtilHelper<>(binding.getAdapter().getViewPromptCityModelList(),
+                newList, (oldModel, newModel) -> ObjectsCompat.equals(oldModel.getKey(), newModel.getKey()));
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilHelper);
         binding.getAdapter().setViewPromptCityModelList(newList);
         diffResult.dispatchUpdatesTo(binding.getAdapter());
         binding.getHandlers().setFabIsVisible(mainPresenter.isVisibleFloatingButton());

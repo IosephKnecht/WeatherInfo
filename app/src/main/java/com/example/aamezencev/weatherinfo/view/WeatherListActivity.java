@@ -8,6 +8,7 @@ import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.util.ObjectsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -25,6 +26,7 @@ import com.example.aamezencev.weatherinfo.databinding.ActivityWeatherListBinding
 import com.example.aamezencev.weatherinfo.events.UpdatedCurrentWeather;
 import com.example.aamezencev.weatherinfo.events.WeatherDeleteItemEvent;
 import com.example.aamezencev.weatherinfo.fragments.ServiceDialog;
+import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilHelper;
 import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilWeatherListAdapter;
 import com.example.aamezencev.weatherinfo.view.adapters.RecyclerItemTouchHelper;
 import com.example.aamezencev.weatherinfo.view.adapters.WeatherListAdapter;
@@ -88,7 +90,7 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
-        ItemTouchHelper.SimpleCallback simpleCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, (WeatherListActivity)recyclerView.getContext());
+        ItemTouchHelper.SimpleCallback simpleCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT, (WeatherListActivity) recyclerView.getContext());
         new ItemTouchHelper(simpleCallback).attachToRecyclerView(recyclerView);
         recyclerView.setAdapter(adapter);
     }
@@ -133,8 +135,9 @@ public class WeatherListActivity extends AppCompatActivity implements LoaderMana
     }
 
     public void updateRecyclerView(List<ViewPromptCityModel> newList) {
-        DiffUtilWeatherListAdapter diffUtilWeatherListAdapter = new DiffUtilWeatherListAdapter(binding.getAdapter().getViewPromptCityModelList(), newList);
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilWeatherListAdapter);
+        DiffUtilHelper<ViewPromptCityModel> diffUtilHelper = new DiffUtilHelper<>(binding.getAdapter().getViewPromptCityModelList(),
+                newList, (oldModel, newModel) -> ObjectsCompat.equals(oldModel.getKey(), newModel.getKey()));
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffUtilHelper);
         binding.getAdapter().setViewPromptCityModelList(newList);
         diffResult.dispatchUpdatesTo(binding.getAdapter());
     }

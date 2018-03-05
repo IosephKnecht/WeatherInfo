@@ -1,15 +1,15 @@
 package com.example.aamezencev.weatherinfo.view.presenters;
 
-import android.content.Context;
-import android.content.Loader;
 import android.view.View;
 
 import com.example.aamezencev.weatherinfo.domain.interactors.MainActivityInteractor;
-import com.example.aamezencev.weatherinfo.view.Router;
+import com.example.aamezencev.weatherinfo.domain.interactors.interfaces.IMainInteractor;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseActivity;
 import com.example.aamezencev.weatherinfo.view.interfaces.IBaseRouter;
-import com.example.aamezencev.weatherinfo.domain.interactors.interfaces.IMainInteractor;
+import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityList;
 import com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityModel;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class MainActivityPresenter implements IMainInteractorOutput, IMainPresen
         mainInteractor = new MainActivityInteractor(this);
     }
 
-    private List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
+    private ViewPromptCityList viewPromptCityList = new ViewPromptCityList();
 
     @Override
     public void getViewPromptCityModelList(String city) {
@@ -50,7 +50,7 @@ public class MainActivityPresenter implements IMainInteractorOutput, IMainPresen
 
     @Override
     public void getHashList() {
-        baseActivity.paintList(viewPromptCityModelList);
+        //baseActivity.paintList(viewPromptCityModelList);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class MainActivityPresenter implements IMainInteractorOutput, IMainPresen
 
     @Override
     public int isVisibleFloatingButton() {
-        for (ViewPromptCityModel viewPromptCityModel : viewPromptCityModelList) {
+        for (ViewPromptCityModel viewPromptCityModel : viewPromptCityList.getList()) {
             if (viewPromptCityModel.isChecked()) return View.VISIBLE;
         }
         return View.INVISIBLE;
@@ -75,8 +75,8 @@ public class MainActivityPresenter implements IMainInteractorOutput, IMainPresen
 
     @Override
     public void OnSucces(List viewModelList) {
-        this.viewPromptCityModelList = viewModelList;
-        baseActivity.paintList(viewModelList);
+        this.viewPromptCityList.setList(viewModelList);
+        //baseActivity.paintList(viewModelList);
     }
 
     @Override
@@ -88,10 +88,19 @@ public class MainActivityPresenter implements IMainInteractorOutput, IMainPresen
     @Override
     public List selectIsCheckedItem() {
         List<ViewPromptCityModel> viewPromptCityModelList = new ArrayList<>();
-        for (ViewPromptCityModel viewPromptCityModel : this.viewPromptCityModelList) {
+        for (ViewPromptCityModel viewPromptCityModel : this.viewPromptCityList.getList()) {
             if (viewPromptCityModel.isChecked()) viewPromptCityModelList.add(viewPromptCityModel);
         }
         return viewPromptCityModelList;
     }
 
+    public ViewPromptCityList getViewPromptCityList() {
+        return viewPromptCityList;
+    }
+
+    @NotNull
+    @Override
+    public Object getViewModel() {
+        return viewPromptCityList;
+    }
 }

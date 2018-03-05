@@ -27,7 +27,6 @@ import com.example.aamezencev.weatherinfo.events.UpdatedCurrentWeather;
 import com.example.aamezencev.weatherinfo.events.WeatherDeleteItemEvent;
 import com.example.aamezencev.weatherinfo.fragments.ServiceDialog;
 import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilHelper;
-import com.example.aamezencev.weatherinfo.view.adapters.DiffUtilWeatherListAdapter;
 import com.example.aamezencev.weatherinfo.view.adapters.RecyclerItemTouchHelper;
 import com.example.aamezencev.weatherinfo.view.adapters.WeatherListAdapter;
 import com.example.aamezencev.weatherinfo.view.handlers.WeatherListHandlers;

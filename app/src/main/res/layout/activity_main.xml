@@ -14,6 +14,10 @@
         <variable
             name="adapter"
             type="com.example.aamezencev.weatherinfo.view.adapters.MainAdapter" />
+
+        <!--<variable-->
+            <!--name="viewPromptCityList"-->
+            <!--type="com.example.aamezencev.weatherinfo.view.viewModels.ViewPromptCityList" />-->
     </data>
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -29,7 +33,9 @@
                 android:id="@+id/mainRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:setAdapter="@{adapter}" />
+                android:setAdapter="@{adapter}"/>
+                <!--android:updateViewModel="@{viewPromptCityList}" -->
+
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/floatingActionButton"
@@ -43,8 +49,8 @@
                 android:visibility="invisible"
                 app:backgroundTint="@color/colorPrimary"
                 app:layout_behavior="com.example.aamezencev.weatherinfo.FabBehavior"
-                app:srcCompat="@android:drawable/ic_input_add"
-                app:onChangeFabVisibility="@{handlers.fabIsVisible}" />
+                app:onChangeFabVisibility="@{handlers.fabIsVisible}"
+                app:srcCompat="@android:drawable/ic_input_add" />
         </android.support.design.widget.CoordinatorLayout>
 
         <ProgressBar

@@ -7,5 +7,4 @@ import java.util.List;
  */
 
 public interface IBaseActivity<T> {
-    void paintList(List<T> viewModelList);
 }
